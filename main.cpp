@@ -1,6 +1,8 @@
 #include <iostream>
 #include <gpgme.h>
 
+#include "libpgpfactory.h"
+
 void
 init_gpgme (gpgme_protocol_t proto)
 {
@@ -57,6 +59,7 @@ int listKeys()
 
 int main(int, char **)
 {
+    GpgFactory g{};
     std::cout << "Hello, world!\n";
     listKeys();
 }
