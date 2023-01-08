@@ -8,7 +8,7 @@ class GpgKeys{
   bool can_encrypt;
   std::string keyid,name, email;
   std::string getKeyStr(){
-    return keyid + " :" + name + " <" + email + ">";
+    return keyid + " # " + name + " <" + email + ">";
   }
 };
 
@@ -37,13 +37,13 @@ public:
     gpgme_release(ctx);
   }
 
-  std::vector<GpgKeys> listKeys()
+  std::vector<GpgKeys> listKeys(const std::string pattern = "")
   {
     std::vector<GpgKeys> retKeys = {};
 
     checkCtxInitialized();
     gpgme_key_t key;
-    gpgme_error_t err = gpgme_op_keylist_start(ctx, "", 0);
+    gpgme_error_t err = gpgme_op_keylist_start(ctx, pattern.c_str(), 0);
     while (!err)
     {
       err = gpgme_op_keylist_next(ctx, &key);

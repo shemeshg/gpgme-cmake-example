@@ -1,6 +1,4 @@
 #include <iostream>
-#include <gpgme.h>
-
 #include "libpgpfactory.h"
 
 
