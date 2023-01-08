@@ -17,7 +17,6 @@ class GpgFactory
 public:
   GpgFactory()
   { 
-
   }
 
   void initPgpFactory(){
@@ -90,8 +89,7 @@ private:
     err = gpgme_engine_check_version(proto);
     if (err)
     {
-      fprintf(stderr, "can not init_gpgme: %s\n", gpgme_strerror(err));
-      exit(1);
+      std::throw_with_nested( std::runtime_error(gpgme_strerror(err)) );      
     }
   }
 };
