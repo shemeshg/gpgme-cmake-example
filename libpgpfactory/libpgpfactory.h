@@ -5,7 +5,7 @@
 
 class GpgKeys{  
   public:
-  bool can_encrypt, invalid;
+  bool can_encrypt = false, invalid = false;
   std::string keyid,name, email;
   std::string getKeyStr(){
     return keyid + " # " + name + " <" + email + ">";
@@ -14,10 +14,13 @@ class GpgKeys{
 
 class GpgFactory
 {
-public:
-  GpgFactory()
-  { 
-  }
+public:  
+  GpgFactory() = default;
+  
+  GpgFactory(GpgFactory const&) = delete;
+  GpgFactory& operator =(GpgFactory const&) = delete;
+  GpgFactory(GpgFactory&&) = delete;
+  GpgFactory& operator=(GpgFactory&&) = delete;
 
   void initPgpFactory(){
     if (ctxInitialized) {return;}
@@ -42,7 +45,7 @@ public:
     std::vector<GpgKeys> retKeys = {};
 
     checkCtxInitialized();
-    gpgme_key_t key;
+    gpgme_key_t key = nullptr;
     gpgme_error_t err = gpgme_op_keylist_start(ctx, pattern.c_str(), 0);
     while (!err)
     {
@@ -55,8 +58,8 @@ public:
       k.name = key->uids->name;
       k.email = key->uids->email;
       k.invalid = key->uids->invalid;
-      retKeys.push_back(k);
-      
+      retKeys.push_back(std::move(k));
+      k.invalid = key->uids->invalid;
       gpgme_key_release(key);
     }
 
@@ -67,9 +70,21 @@ public:
     return retKeys;
   }
 
+  void setArmor(bool t){
+    checkCtxInitialized();
+    if (t) {
+      gpgme_set_armor (ctx,1);
+      isArmor = true;
+    } else {
+      gpgme_set_armor (ctx,0);
+      isArmor = false;
+    }
+  }
 private:
-  gpgme_ctx_t ctx;
+  
+  gpgme_ctx_t ctx=nullptr;
   bool ctxInitialized = false;
+  bool isArmor = false; //Produce output in text mode
   void checkCtxInitialized(){
     if (!ctxInitialized) {
       std::throw_with_nested( std::runtime_error("checkCtxInitialized") );
@@ -78,7 +93,7 @@ private:
   
   void init_gpgme(gpgme_protocol_t proto)
   {
-    gpgme_error_t err;
+    gpgme_error_t err=0;
 
     gpgme_check_version(NULL);
     setlocale(LC_ALL, "");
