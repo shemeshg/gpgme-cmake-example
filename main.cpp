@@ -13,6 +13,6 @@ int main(int, char **)
     for(auto r : g.listKeys()){
         std::cout<<"we have "<<r.getKeyStr()<<"\n";
     }
-    g.getGpgMeKeys({"shemeshg",""});
+    g.getGpgMeKeys({"shemeshg"});
     
 }

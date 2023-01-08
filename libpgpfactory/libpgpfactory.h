@@ -3,6 +3,26 @@
 #include <vector>
 #include <gpgme.h>
 
+class GpgMeKeys
+{
+public:
+  GpgMeKeys() = default;
+
+  GpgMeKeys(GpgMeKeys const &) = delete;
+  GpgMeKeys &operator=(GpgMeKeys const &) = delete;
+  GpgMeKeys(GpgMeKeys &&) = delete;
+  GpgMeKeys &operator=(GpgMeKeys &&) = delete;
+
+  std::vector<gpgme_key_t> gpgmeKeys = {};
+  ~GpgMeKeys()
+  {
+    for (auto r : gpgmeKeys)
+    {
+      gpgme_key_unref(r);
+    }
+  }
+};
+
 class GpgKeys
 {
 public:
@@ -49,40 +69,23 @@ public:
     gpgme_release(ctx);
   }
 
-  class GpgMeKeys{
-    public:
-    GpgMeKeys() = default;
-
-    GpgMeKeys(GpgMeKeys const &) = delete;
-    GpgMeKeys &operator=(GpgMeKeys const &) = delete;
-    GpgMeKeys(GpgMeKeys &&) = delete;
-    GpgMeKeys &operator=(GpgMeKeys &&) = delete;
-
-    std::vector<gpgme_key_t> gpgmeKeys = {};
-    ~GpgMeKeys(){
-      for (auto r : gpgmeKeys){
-        gpgme_key_unref(r);
-      }
-    }
-  };
-
   std::unique_ptr<GpgMeKeys> getGpgMeKeys(std::vector<std::string> patterns)
   {
-    checkCtxInitialized();    
+    checkCtxInitialized();
     std::unique_ptr<GpgMeKeys> gmk = std::make_unique<GpgMeKeys>();
-     
 
     for (auto r : patterns)
     {
       gpgme_key_t key = nullptr;
-      gpgme_error_t err = gpgme_get_key (ctx,r.c_str(),&key,1);
+      gpgme_error_t err = gpgme_get_key(ctx, r.c_str(), &key, 1);
       if (gpg_err_code(err))
       {
         std::throw_with_nested(std::runtime_error(r + ": " + gpgme_strerror(err)));
-      } else {
+      }
+      else
+      {
         gmk->gpgmeKeys.push_back(key);
-      }     
-      
+      }
     }
     gmk->gpgmeKeys.push_back(NULL);
     return gmk;
