@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <gpgme.h>
+#include <sstream>
 
 class PgpmeDataRII
 {
@@ -25,6 +26,33 @@ public:
     }
   }
 
+  std::string getString()
+  {
+    std::stringstream stream;
+
+#define BUF_SIZE 512
+    char buf[BUF_SIZE + 1];
+    int ret;
+
+    ret = gpgme_data_seek(d, 0, SEEK_SET);
+    if (ret)
+      std::throw_with_nested(std::runtime_error(std::to_string(errno)));
+    while ((ret = gpgme_data_read(d, buf, BUF_SIZE)) > 0)
+      // fwrite(buf, ret, 1, stdout);
+      stream << std::string(buf).substr(0,ret);
+    if (ret < 0)
+      std::throw_with_nested(std::runtime_error(std::to_string(errno)));
+
+    /* Reset read position to the beginning so that dh can be used as input
+       for another operation after this method call. For example, dh is an
+       output from encryption and also is used as an input for decryption.
+       Otherwise GPG_ERR_NO_DATA is returned since this method moves the
+       read position. */
+    ret = gpgme_data_seek(d, 0, SEEK_SET);
+
+    
+    return stream.str();
+  }
 
   ~PgpmeDataRII()
   {
@@ -117,14 +145,12 @@ public:
     return gmk;
   }
 
-  void
-  encryptSign()
+  std::string encryptSign(std::string inMsg, std::vector<std::string> encryptTo)
   {
-    
-    std::vector<std::string> encryptTo = {"shemeshg"};
     auto gpgmeKeysTo = getGpgMeKeys(encryptTo);
-    PgpmeDataRII in{}, out{"shalom olam\nabc\n"};
+    PgpmeDataRII in{inMsg}, out{};
     
+
     gpgme_key_t *key = &gpgmeKeysTo->gpgmeKeys[0];
     gpgme_error_t err = gpgme_op_encrypt_sign(ctx, key, GPGME_ENCRYPT_ALWAYS_TRUST, in.d, out.d);
     failIfErr(err);
@@ -150,6 +176,8 @@ public:
                           r->subkeys->next->fpr);
       }
     }
+    return out.getString();
+    
   }
 
   void setCtxSigners(std::vector<std::string> signedBy)

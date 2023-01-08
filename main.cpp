@@ -16,7 +16,7 @@ int main(int, char **)
     }
     //g.getGpgMeKeys({"shemeshg"});
     g.setCtxSigners({"shemeshg"});
-    g.encryptSign();
-    std::cout<<"Finished\n";
+    std::string out = g.encryptSign("shalom olam",{"shemeshg"});
+    std::cout<<"Finished\n"<<out<<"\n";
     
 }
