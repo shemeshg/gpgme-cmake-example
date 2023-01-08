@@ -10,6 +10,7 @@
 int main(int, char **)
 {
     GpgFactory g{};
+    g.initPgpFactory();
     std::cout << "Hello, world!\n";
     g.listKeys();
 }

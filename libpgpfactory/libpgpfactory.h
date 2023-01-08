@@ -6,27 +6,31 @@ class GpgFactory
 {
 public:
   GpgFactory()
-  { // Constructor
-    std::cout << "Hello" << s;
+  { 
+
+  }
+
+  void initPgpFactory(){
+    if (ctxInitialized) {return;}
     init_gpgme(GPGME_PROTOCOL_OpenPGP);
     gpgme_error_t err = gpgme_new(&ctx);
     gpgme_check_version(NULL);
     if (gpg_err_code(err))
     {
-      fprintf(stderr, "can not init gpgme: %s\n", gpgme_strerror(err));
-      exit(1);
+      std::throw_with_nested( std::runtime_error(gpgme_strerror(err)) );
     }
+    ctxInitialized = true;
   }
 
   ~GpgFactory()
   {
+    if (!ctxInitialized) {return;}
     gpgme_release(ctx);
-    std::cout << "\n Destructor executed";
   }
 
   int listKeys()
   {
-
+    checkCtxInitialized();
     gpgme_key_t key;
     gpgme_error_t err = gpgme_op_keylist_start(ctx, "", 0);
     while (!err)
@@ -45,16 +49,20 @@ public:
 
     if (gpg_err_code(err) != GPG_ERR_EOF)
     {
-      fprintf(stderr, "can not list keys: %s\n", gpgme_strerror(err));
-      exit(1);
+      std::throw_with_nested( std::runtime_error(gpgme_strerror(err)) );
     }
     return 0;
   }
 
 private:
   gpgme_ctx_t ctx;
-  std::string s = "GpgFactory";
-
+  bool ctxInitialized = false;
+  void checkCtxInitialized(){
+    if (!ctxInitialized) {
+      std::throw_with_nested( std::runtime_error("checkCtxInitialized") );
+    }
+  }
+  
   void init_gpgme(gpgme_protocol_t proto)
   {
     gpgme_error_t err;
