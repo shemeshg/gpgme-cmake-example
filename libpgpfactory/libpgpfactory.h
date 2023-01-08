@@ -1,6 +1,16 @@
 #pragma once
 #include <iostream>
+#include <vector>
 #include <gpgme.h>
+
+class GpgKeys{  
+  public:
+  bool can_encrypt;
+  std::string keyid,name, email;
+  std::string getKeyStr(){
+    return keyid + " :" + name + " <" + email + ">";
+  }
+};
 
 class GpgFactory
 {
@@ -28,8 +38,10 @@ public:
     gpgme_release(ctx);
   }
 
-  int listKeys()
+  std::vector<GpgKeys> listKeys()
   {
+    std::vector<GpgKeys> retKeys = {};
+
     checkCtxInitialized();
     gpgme_key_t key;
     gpgme_error_t err = gpgme_op_keylist_start(ctx, "", 0);
@@ -38,12 +50,13 @@ public:
       err = gpgme_op_keylist_next(ctx, &key);
       if (err)
         break;
-      printf("%s:", key->subkeys->keyid);
-      if (key->uids && key->uids->name)
-        printf(" %s", key->uids->name);
-      if (key->uids && key->uids->email)
-        printf(" <%s>", key->uids->email);
-      putchar('\n');
+      GpgKeys k;
+      k.can_encrypt =  key->subkeys->can_encrypt;
+      k.keyid = key->subkeys->keyid;
+      k.name = key->uids->name;
+      k.email = key->uids->email;
+      retKeys.push_back(k);
+      
       gpgme_key_release(key);
     }
 
@@ -51,7 +64,7 @@ public:
     {
       std::throw_with_nested( std::runtime_error(gpgme_strerror(err)) );
     }
-    return 0;
+    return retKeys;
   }
 
 private:
