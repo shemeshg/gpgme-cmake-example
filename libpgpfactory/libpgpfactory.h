@@ -5,7 +5,7 @@
 
 class GpgKeys{  
   public:
-  bool can_encrypt;
+  bool can_encrypt, invalid;
   std::string keyid,name, email;
   std::string getKeyStr(){
     return keyid + " # " + name + " <" + email + ">";
@@ -54,6 +54,7 @@ public:
       k.keyid = key->subkeys->keyid;
       k.name = key->uids->name;
       k.email = key->uids->email;
+      k.invalid = key->uids->invalid;
       retKeys.push_back(k);
       
       gpgme_key_release(key);
