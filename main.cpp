@@ -23,8 +23,8 @@ int main(int, char **)
     PgpmeDataRII in{"/Volumes/RAM_Disk_4G/tmp/bb.txt",FROM_FILENAME}, 
                 out{"/Volumes/RAM_Disk_4G/tmp/gogo.gpg",TO_FILENAME};
 
-    g.encryptSign(in, out ,{"shemeshg"});
+    g.encryptSign(in, out ,{"shemeshg"}, false);
     //std::cout<<"Finished\n"<<out.getString()<<"\n";
-    //out.PrintStdout();
+    out.PrintStdout();
     //out.writeToFile("/Volumes/RAM_Disk_4G/tmp/writeText.pgp");
 }

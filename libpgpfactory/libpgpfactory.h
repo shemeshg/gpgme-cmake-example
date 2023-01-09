@@ -4,16 +4,14 @@
 #include <gpgme.h>
 #include <sstream>
 #include <fstream>
-#include <fcntl.h>
-#include <unistd.h>
 
-  void failIfErr(gpgme_error_t &err)
+void failIfErr(gpgme_error_t &err)
+{
+  if (gpg_err_code(err))
   {
-    if (gpg_err_code(err))
-    {
-      std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
-    }
+    std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
   }
+}
 
 enum PgmeDataInitType
 {
@@ -26,7 +24,7 @@ class PgpmeDataRII
 {
 public:
   gpgme_data_t d = NULL;
-  
+
   PgpmeDataRII()
   {
     gpgme_error_t err = gpgme_data_new(&d);
@@ -46,13 +44,14 @@ public:
         std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
       }
     }
-    else if (typ == FROM_FILENAME){
+    else if (typ == FROM_FILENAME)
+    {
       iBuffFile = fopen(s.c_str(), "r");
 
-       if (iBuffFile)
+      if (iBuffFile)
       {
         iBuffFileIsOpened = true;
-        gpgme_error_t  err = gpgme_data_new_from_stream(&d, iBuffFile); 
+        gpgme_error_t err = gpgme_data_new_from_stream(&d, iBuffFile);
         failIfErr(err);
       }
       else
@@ -60,13 +59,14 @@ public:
         std::throw_with_nested(std::runtime_error("Unable to open file"));
       }
     }
-  else if (typ == TO_FILENAME){
+    else if (typ == TO_FILENAME)
+    {
       oBuffFile = fopen(s.c_str(), "w+");
 
-       if (oBuffFile)
+      if (oBuffFile)
       {
         oBuffFileIsOpened = true;
-        gpgme_error_t  err = gpgme_data_new_from_stream(&d, oBuffFile); 
+        gpgme_error_t err = gpgme_data_new_from_stream(&d, oBuffFile);
         failIfErr(err);
       }
       else
@@ -74,7 +74,6 @@ public:
         std::throw_with_nested(std::runtime_error("Unable to open file"));
       }
     }
- 
   }
 
   PgpmeDataRII(PgpmeDataRII const &) = delete;
@@ -148,21 +147,27 @@ public:
 
   ~PgpmeDataRII()
   {
-    gpgme_data_release(d);   
+    gpgme_data_release(d);
     closeFiles();
   }
 
-  void closeFiles(){
-    if (oBuffFileIsOpened){fclose(oBuffFile);}
-    if (iBuffFileIsOpened){fclose(iBuffFile);}
+  void closeFiles()
+  {
+    if (oBuffFileIsOpened)
+    {
+      fclose(oBuffFile);
+    }
+    if (iBuffFileIsOpened)
+    {
+      fclose(iBuffFile);
+    }
   }
 
 private:
-  FILE* oBuffFile;
-  bool oBuffFileIsOpened=false;
-  FILE* iBuffFile;
-  bool iBuffFileIsOpened=false;
-  
+  FILE *oBuffFile;
+  bool oBuffFileIsOpened = false;
+  FILE *iBuffFile;
+  bool iBuffFileIsOpened = false;
 };
 
 class GpgMeKeys
@@ -250,13 +255,21 @@ public:
     return gmk;
   }
 
-  void encryptSign(PgpmeDataRII &in, PgpmeDataRII &out, std::vector<std::string> encryptTo)
+  void encryptSign(PgpmeDataRII &in, PgpmeDataRII &out, std::vector<std::string> encryptTo, bool doSign)
   {
     auto gpgmeKeysTo = getGpgMeKeys(encryptTo);
 
     gpgme_key_t *key = &gpgmeKeysTo->gpgmeKeys[0];
-    gpgme_error_t err = gpgme_op_encrypt_sign(ctx, key, GPGME_ENCRYPT_ALWAYS_TRUST, in.d, out.d);
-    failIfErr(err);
+    if (doSign)
+    {
+      gpgme_error_t err = gpgme_op_encrypt_sign(ctx, key, GPGME_ENCRYPT_ALWAYS_TRUST, in.d, out.d);
+      failIfErr(err);
+    }
+    else
+    {
+      gpgme_error_t err = gpgme_op_encrypt(ctx, key, GPGME_ENCRYPT_ALWAYS_TRUST, in.d, out.d);
+      failIfErr(err);
+    }
 
     /* Reset read position to 0 on in otherwise GPG_ERR_NO_DATA would occur when
         gpgme_op_sign() is called consecutively. */
@@ -269,14 +282,17 @@ public:
     {
       std::throw_with_nested(std::runtime_error("Invalid recipient encountered: " + std::string(result->invalid_recipients->fpr) + "\n"));
     }
-    gpgme_sign_result_t sign_result = gpgme_op_sign_result(ctx);
-
-    for (auto r : pgpMeKeysSigners->gpgmeKeys)
+    if (doSign)
     {
-      if (r != NULL)
+      gpgme_sign_result_t sign_result = gpgme_op_sign_result(ctx);
+
+      for (auto r : pgpMeKeysSigners->gpgmeKeys)
       {
-        check_sign_result(r, sign_result, GPGME_SIG_MODE_NORMAL,
-                          r->subkeys->next->fpr);
+        if (r != NULL)
+        {
+          check_sign_result(r, sign_result, GPGME_SIG_MODE_NORMAL,
+                            r->subkeys->next->fpr);
+        }
       }
     }
   }
@@ -374,8 +390,6 @@ private:
       std::throw_with_nested(std::runtime_error("checkCtxInitialized"));
     }
   }
-
-
 
   void
   check_sign_result(gpgme_key_t key, gpgme_sign_result_t result,
