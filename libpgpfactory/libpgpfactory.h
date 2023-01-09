@@ -5,6 +5,13 @@
 #include <sstream>
 #include <fstream>
 
+enum PgmeDataInitType
+{
+  FROM_STRING,
+  FROM_FILENAME,
+  TO_FILENAME
+};
+
 class PgpmeDataRII
 {
 public:
@@ -18,12 +25,15 @@ public:
     }
   }
 
-  PgpmeDataRII(std::string s)
+  PgpmeDataRII(std::string s, PgmeDataInitType typ)
   {
-    gpgme_error_t err = gpgme_data_new_from_mem(&d, s.c_str(), s.size(), 0);
-    if (gpg_err_code(err))
+    if (typ == FROM_STRING)
     {
-      std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
+      gpgme_error_t err = gpgme_data_new_from_mem(&d, s.c_str(), s.size(), 0);
+      if (gpg_err_code(err))
+      {
+        std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
+      }
     }
   }
 
