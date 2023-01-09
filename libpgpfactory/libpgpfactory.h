@@ -35,6 +35,18 @@ public:
   {
     std::stringstream stream;
 
+    std::function<void(int, char *)> func = [&](int ret, char *buf)
+    {
+      stream << std::string(buf).substr(0, ret);
+    };
+
+    getData(func);
+    return stream.str();
+  }
+
+  void getData(std::function<void(int, char *)> func)
+  {
+
 #define BUF_SIZE 512
     char buf[BUF_SIZE + 1];
     int ret;
@@ -44,7 +56,7 @@ public:
       std::throw_with_nested(std::runtime_error(std::to_string(errno)));
     while ((ret = gpgme_data_read(d, buf, BUF_SIZE)) > 0)
       // fwrite(buf, ret, 1, stdout);
-      stream << std::string(buf).substr(0,ret);
+      func(ret, buf);
     if (ret < 0)
       std::throw_with_nested(std::runtime_error(std::to_string(errno)));
 
@@ -54,9 +66,6 @@ public:
        Otherwise GPG_ERR_NO_DATA is returned since this method moves the
        read position. */
     ret = gpgme_data_seek(d, 0, SEEK_SET);
-
-    
-    return stream.str();
   }
 
   ~PgpmeDataRII()
@@ -154,7 +163,6 @@ public:
   {
     auto gpgmeKeysTo = getGpgMeKeys(encryptTo);
     PgpmeDataRII in{inMsg}, out{};
-    
 
     gpgme_key_t *key = &gpgmeKeysTo->gpgmeKeys[0];
     gpgme_error_t err = gpgme_op_encrypt_sign(ctx, key, GPGME_ENCRYPT_ALWAYS_TRUST, in.d, out.d);
@@ -182,7 +190,6 @@ public:
       }
     }
     return out.getString();
-    
   }
 
   void setCtxSigners(std::vector<std::string> signedBy)
