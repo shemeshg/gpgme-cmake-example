@@ -25,5 +25,5 @@ int main(int, char **)
     g.encryptSign(in, out ,{"shemeshg"});
     //std::cout<<"Finished\n"<<out.getString()<<"\n";
     //out.PrintStdout();
-    
+    out.writeToFile("/Volumes/RAM_Disk_4G/tmp/gogo.pgp");
 }

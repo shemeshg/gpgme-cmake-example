@@ -3,6 +3,7 @@
 #include <vector>
 #include <gpgme.h>
 #include <sstream>
+#include <fstream>
 
 class PgpmeDataRII
 {
@@ -44,13 +45,32 @@ public:
     return stream.str();
   }
 
-  void PrintStdout(){
+  void PrintStdout()
+  {
     std::function<void(int, char *)> func = [&](int ret, char *buf)
     {
       fwrite(buf, ret, 1, stdout);
     };
 
-    getData(func);    
+    getData(func);
+  }
+
+  void writeToFile(std::string fileName)
+  {
+    std::ofstream myfile(fileName);
+    if (myfile.is_open())
+    {
+      std::function<void(int, char *)> func = [&](int ret, char *buf)
+      {
+        myfile << std::string(buf).substr(0, ret);
+      };
+      getData(func);
+      myfile.close();
+    }
+    else
+    {
+      std::throw_with_nested(std::runtime_error("Unable to open file"));
+    }
   }
 
   void getData(std::function<void(int, char *)> func)
@@ -63,7 +83,7 @@ public:
     ret = gpgme_data_seek(d, 0, SEEK_SET);
     if (ret)
       std::throw_with_nested(std::runtime_error(std::to_string(errno)));
-    while ((ret = gpgme_data_read(d, buf, BUF_SIZE)) > 0)      
+    while ((ret = gpgme_data_read(d, buf, BUF_SIZE)) > 0)
       func(ret, buf);
     if (ret < 0)
       std::throw_with_nested(std::runtime_error(std::to_string(errno)));
@@ -167,10 +187,9 @@ public:
     return gmk;
   }
 
-  void encryptSign(PgpmeDataRII &in, PgpmeDataRII&out, std::vector<std::string> encryptTo)
+  void encryptSign(PgpmeDataRII &in, PgpmeDataRII &out, std::vector<std::string> encryptTo)
   {
     auto gpgmeKeysTo = getGpgMeKeys(encryptTo);
-    
 
     gpgme_key_t *key = &gpgmeKeysTo->gpgmeKeys[0];
     gpgme_error_t err = gpgme_op_encrypt_sign(ctx, key, GPGME_ENCRYPT_ALWAYS_TRUST, in.d, out.d);
@@ -197,7 +216,6 @@ public:
                           r->subkeys->next->fpr);
       }
     }
-    
   }
 
   void setCtxSigners(std::vector<std::string> signedBy)
