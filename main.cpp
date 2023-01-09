@@ -16,7 +16,9 @@ int main(int, char **)
     }
     //g.getGpgMeKeys({"shemeshg"});
     g.setCtxSigners({"shemeshg"});
-    //enum{TO_STD_STRING, TO_CONSOLE, TO_FILE}
+    //enum{TO_STD_STRING, TO_CONSOLE, TO_FILE} 
+    //encrypt without sign
+    //gpgme_data_new_from_file
     std::string out = g.encryptSign("shalom olam",{"shemeshg"});
     std::cout<<"Finished\n"<<out<<"\n";
     
