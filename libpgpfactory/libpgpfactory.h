@@ -255,6 +255,27 @@ public:
     return gmk;
   }
 
+  void decryptValidate(PgpmeDataRII &in, PgpmeDataRII &out, bool doValidate)
+  {
+
+    if (doValidate)
+    {
+      gpgme_error_t err = gpgme_op_decrypt_verify(ctx, in.d, out.d);
+      failIfErr(err);
+    }
+    else
+    {
+      gpgme_error_t err = gpgme_op_decrypt(ctx, in.d, out.d);
+      failIfErr(err);      
+    }
+    gpgme_decrypt_result_t decrypt_result = gpgme_op_decrypt_result(ctx);
+    if (decrypt_result->unsupported_algorithm)
+    {
+      std::throw_with_nested(std::runtime_error("unsupported algorithm: " + 
+      std::string(decrypt_result->unsupported_algorithm) + "\n"));
+    }
+  }
+
   void encryptSign(PgpmeDataRII &in, PgpmeDataRII &out, std::vector<std::string> encryptTo, bool doSign)
   {
     auto gpgmeKeysTo = getGpgMeKeys(encryptTo);
@@ -299,7 +320,6 @@ public:
 
   void setCtxSigners(std::vector<std::string> signedBy)
   {
-
     checkCtxInitialized();
     /* Include signature within key. */
     gpgme_keylist_mode_t kmode = gpgme_get_keylist_mode(ctx);
