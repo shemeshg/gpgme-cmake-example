@@ -4,6 +4,16 @@
 #include <gpgme.h>
 #include <sstream>
 #include <fstream>
+#include <fcntl.h>
+#include <unistd.h>
+
+  void failIfErr(gpgme_error_t &err)
+  {
+    if (gpg_err_code(err))
+    {
+      std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
+    }
+  }
 
 enum PgmeDataInitType
 {
@@ -16,6 +26,7 @@ class PgpmeDataRII
 {
 public:
   gpgme_data_t d = NULL;
+  
   PgpmeDataRII()
   {
     gpgme_error_t err = gpgme_data_new(&d);
@@ -35,6 +46,35 @@ public:
         std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
       }
     }
+    else if (typ == FROM_FILENAME){
+      iBuffFile = fopen(s.c_str(), "r");
+
+       if (iBuffFile)
+      {
+        iBuffFileIsOpened = true;
+        gpgme_error_t  err = gpgme_data_new_from_stream(&d, iBuffFile); 
+        failIfErr(err);
+      }
+      else
+      {
+        std::throw_with_nested(std::runtime_error("Unable to open file"));
+      }
+    }
+  else if (typ == TO_FILENAME){
+      oBuffFile = fopen(s.c_str(), "w+");
+
+       if (oBuffFile)
+      {
+        oBuffFileIsOpened = true;
+        gpgme_error_t  err = gpgme_data_new_from_stream(&d, oBuffFile); 
+        failIfErr(err);
+      }
+      else
+      {
+        std::throw_with_nested(std::runtime_error("Unable to open file"));
+      }
+    }
+ 
   }
 
   PgpmeDataRII(PgpmeDataRII const &) = delete;
@@ -108,8 +148,21 @@ public:
 
   ~PgpmeDataRII()
   {
-    gpgme_data_release(d);
+    gpgme_data_release(d);   
+    closeFiles();
   }
+
+  void closeFiles(){
+    if (oBuffFileIsOpened){fclose(oBuffFile);}
+    if (iBuffFileIsOpened){fclose(iBuffFile);}
+  }
+
+private:
+  FILE* oBuffFile;
+  bool oBuffFileIsOpened=false;
+  FILE* iBuffFile;
+  bool iBuffFileIsOpened=false;
+  
 };
 
 class GpgMeKeys
@@ -322,13 +375,7 @@ private:
     }
   }
 
-  void failIfErr(gpgme_error_t &err)
-  {
-    if (gpg_err_code(err))
-    {
-      std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
-    }
-  }
+
 
   void
   check_sign_result(gpgme_key_t key, gpgme_sign_result_t result,
