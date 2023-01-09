@@ -7,7 +7,7 @@
 class PgpmeDataRII
 {
 public:
-  gpgme_data_t d;
+  gpgme_data_t d = NULL;
   PgpmeDataRII()
   {
     gpgme_error_t err = gpgme_data_new(&d);
@@ -25,6 +25,11 @@ public:
       std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
     }
   }
+
+  PgpmeDataRII(PgpmeDataRII const &) = delete;
+  PgpmeDataRII &operator=(PgpmeDataRII const &) = delete;
+  PgpmeDataRII(PgpmeDataRII &&) = delete;
+  PgpmeDataRII &operator=(PgpmeDataRII &&) = delete;
 
   std::string getString()
   {
