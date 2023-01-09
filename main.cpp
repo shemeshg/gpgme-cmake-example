@@ -20,7 +20,10 @@ int main(int, char **)
     //exportString(), exportConsole(), exportFile() 
     //encrypt without sign
     //gpgme_data_new_from_file
-    std::string out = g.encryptSign("shalom olam",{"shemeshg"});
-    std::cout<<"Finished\n"<<out<<"\n";
+    PgpmeDataRII in{"shalom olam"}, out{};
+
+    g.encryptSign(in, out ,{"shemeshg"});
+    //std::cout<<"Finished\n"<<out.getString()<<"\n";
+    //out.PrintStdout();
     
 }
