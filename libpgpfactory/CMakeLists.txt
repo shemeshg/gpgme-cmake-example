@@ -10,6 +10,8 @@ include_directories(${GPGMEAPP_INCLUDES})
 set(libpgpfactory_SRCS
     libpgpfactory.h
     libpgpfactory.cpp
+    libpasshelper.h
+    libpasshelper.cpp    
 )
 
 # Declare the library

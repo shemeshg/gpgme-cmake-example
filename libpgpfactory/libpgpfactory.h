@@ -122,6 +122,26 @@ public:
     }
   }
 
+  ~PgpmeDataRII()
+  {
+    gpgme_data_release(d);
+    closeFiles();
+  }
+
+  void closeFiles()
+  {
+    if (oBuffFileIsOpened)
+    {
+      fclose(oBuffFile);
+    }
+    if (iBuffFileIsOpened)
+    {
+      fclose(iBuffFile);
+    }
+  }
+
+protected:
+
   void getData(std::function<void(int, char *)> func)
   {
 
@@ -145,23 +165,6 @@ public:
     ret = gpgme_data_seek(d, 0, SEEK_SET);
   }
 
-  ~PgpmeDataRII()
-  {
-    gpgme_data_release(d);
-    closeFiles();
-  }
-
-  void closeFiles()
-  {
-    if (oBuffFileIsOpened)
-    {
-      fclose(oBuffFile);
-    }
-    if (iBuffFileIsOpened)
-    {
-      fclose(iBuffFile);
-    }
-  }
 
 private:
   FILE *oBuffFile;
