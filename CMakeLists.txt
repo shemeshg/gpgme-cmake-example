@@ -14,9 +14,8 @@ include_directories(${LibGpgError_INCLUDE_DIRS})
 # End LibGpgError 
 
 add_subdirectory(libpgpfactory)
+add_subdirectory(main)
 
-add_executable(pass-cpp main.cpp)
-target_link_libraries(pass-cpp libpgpfactory)
 
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
