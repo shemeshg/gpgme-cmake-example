@@ -1,7 +1,8 @@
 #pragma once
-#include <iostream>
+
 #include <vector>
 #include <gpgme.h>
+#include <iostream>
 #include <sstream>
 #include <fstream>
 

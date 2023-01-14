@@ -1,6 +1,4 @@
 #pragma once
-#include <iostream>
-#include <filesystem>
 #include "libpgpfactory.h"
 
 class PassFile

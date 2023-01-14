@@ -1,5 +1,6 @@
 #include "libpasshelper.h"
-
+#include <iostream>
+#include <filesystem>
 
 PassFile::PassFile(std::string fullPath, GpgFactory *g):fullPath{fullPath},g{g}
 {
