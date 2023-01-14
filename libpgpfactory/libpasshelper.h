@@ -6,25 +6,13 @@
 class PassFile
 {
 public:
-  PassFile(std::string fullPath, GpgFactory *g):fullPath{fullPath},g{g}
-  {
-  }
+  PassFile(std::string fullPath, GpgFactory *g);
 
-  bool isGpgFile(){
-    std::filesystem::path path(fullPath);
-    return (path.extension().string() == ".gpg");
-  }
+  bool isGpgFile();
 
-  void decrypt(){ 
-    PgpmeDataRII din{fullPath,FROM_FILENAME}, 
-                    dout{};
-    g->decryptValidate(din,dout,false);
-    decrypted = dout.getString();
-  }
+  void decrypt();
 
-  std::string &getDecrypted(){
-    return decrypted;
-  }
+  std::string &getDecrypted();
 
 private:
   std::string fullPath, decrypted;
