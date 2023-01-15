@@ -27,19 +27,21 @@ void testLibrary(){
     g.decryptValidate(din,dout,false);
     dout.PrintStdout();
 }
-
 */
 
 int main(int, char **)
 {
     PassHelper ph{};
-
-        std::unique_ptr<PassFile> pf = ph.getPassFile("/Users/osx/.password-store/develop/boboadsf.gpg");
+    /*
+    std::unique_ptr<PassFile> pf = ph.getPassFile("/Users/osx/.password-store/develop/boboadsf.gpg");
     for (int i = 0; i < 10; ++i)
-    {        
-        std::cout << "is gpg " << pf->isGpgFile() <<" "<< i << "\n";
+    {
+        std::cout << "is gpg " << pf->isGpgFile() << " " << i << "\n";
         pf->decrypt();
-        //std::cout << pf->getDecrypted();
+        // std::cout << pf->getDecrypted();
         pf->getDecrypted();
     }
+    */
+   std::cout <<ph.getNearestGpgId("/Users/osx/.password-store/develop/koko/hu",
+                                    "/Users/osx/.password-store")<<"\n";
 }

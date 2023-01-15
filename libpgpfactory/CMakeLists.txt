@@ -11,7 +11,10 @@ set(libpgpfactory_SRCS
     libpgpfactory.h
     libpgpfactory.cpp
     libpasshelper.h
-    libpasshelper.cpp    
+    libpasshelper.cpp   
+    FileSearch.cpp
+    FileSearch.h
+    # hygen srcs 
 )
 
 # Declare the library
