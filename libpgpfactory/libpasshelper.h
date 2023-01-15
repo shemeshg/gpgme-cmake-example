@@ -59,8 +59,8 @@ public:
     g.exportPublicKey(keyId, filePath);
   }
 
-  void importPublicKey(const std::string &filePath){
-    g.importPublicKey(filePath);
+  void importPublicKey(const std::string &filePath, bool doTrust){
+    g.importPublicKey(filePath, doTrust);
   }
 
   void trustPublicKey(std::string const &keyId){

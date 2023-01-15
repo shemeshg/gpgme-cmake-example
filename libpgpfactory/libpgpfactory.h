@@ -96,7 +96,7 @@ public:
   void encryptSign(PgpmeDataRII &in, PgpmeDataRII &out, std::vector<std::string> encryptTo, bool doSign);
 
   void exportPublicKey(std::string const &keyId, std::string const &filePath);
-  void importPublicKey(std::string const &filePath);
+  void importPublicKey(std::string const &filePath, bool doTrust);
   void trustPublicKey(std::string const &keyId);  
 
   void setCtxSigners(std::vector<std::string> signedBy);

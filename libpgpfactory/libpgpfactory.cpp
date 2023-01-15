@@ -218,11 +218,18 @@ void GpgFactory::trustPublicKey(std::string const &keyId)
     failIfErr(err);
 }
 
-void GpgFactory::importPublicKey(std::string const &filePath)
+void GpgFactory::importPublicKey(std::string const &filePath, bool doTrust)
 {
     PgpmeDataRII din{filePath, FROM_FILENAME};
     gpgme_error_t err = gpgme_op_import(ctx, din.d);
     failIfErr(err);
+    gpgme_import_result_t result = gpgme_op_import_result (ctx);
+    if (doTrust){
+        trustPublicKey(result->imports->fpr);
+    }
+    
+
+    
 }
 
 void GpgFactory::decryptValidate(PgpmeDataRII &in, PgpmeDataRII &out, bool doValidate)

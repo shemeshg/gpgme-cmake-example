@@ -35,11 +35,11 @@ int main(int, char **)
     g.initPgpFactory();
     g.setArmor(true);
     g.setTextmode(true);
-    g.exportPublicKey("shemeshg","/Volumes/RAM_Disk_4G/gogo");   
-    //g.importPublicKey("/Volumes/RAM_Disk_4G/keyToImport");   
+    //g.exportPublicKey("shemeshg","/Volumes/RAM_Disk_4G/gogo");   
+    g.importPublicKey("/Volumes/RAM_Disk_4G/keyToImport", true);   
     //g.trustPublicKey("0441AFD40FEDEBC0A6C7B5775FA1A6B237A59E25");
 
-    g.listKeys();
+    //g.listKeys();
     /*
     PassHelper ph{};
 
