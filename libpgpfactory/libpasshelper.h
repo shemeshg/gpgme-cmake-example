@@ -62,6 +62,11 @@ public:
   void importPublicKey(const std::string &filePath){
     g.importPublicKey(filePath);
   }
+
+  void trustPublicKey(std::string const &keyId){
+    g.trustPublicKey(keyId);
+  }
+
   std::string getNearestGit(std::string currentPath, std::string stopPath )
   {
     return fileSearch.searchUp(".git", currentPath, stopPath);

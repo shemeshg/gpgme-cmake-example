@@ -8,7 +8,6 @@ void failIfErr(gpgme_error_t &err)
     }
 }
 
-
 PgpmeDataRII::PgpmeDataRII()
 {
     gpgme_error_t err = gpgme_data_new(&d);
@@ -77,7 +76,7 @@ void PgpmeDataRII::closeFiles()
     }
 }
 
-void PgpmeDataRII::getData(std::function<void (int, char *)> func)
+void PgpmeDataRII::getData(std::function<void(int, char *)> func)
 {
 
 #define BUF_SIZE 512
@@ -177,7 +176,7 @@ GpgFactory::~GpgFactory()
     gpgme_release(ctx);
 }
 
-std::unique_ptr<GpgMeKeys> GpgFactory::getGpgMeKeys(std::vector<std::string> &patterns)
+std::unique_ptr<GpgMeKeys> GpgFactory::getGpgMeKeys(std::vector<std::string> &patterns, bool onlyPrivateKey)
 {
     checkCtxInitialized();
     std::unique_ptr<GpgMeKeys> gmk = std::make_unique<GpgMeKeys>();
@@ -185,7 +184,7 @@ std::unique_ptr<GpgMeKeys> GpgFactory::getGpgMeKeys(std::vector<std::string> &pa
     for (auto r : patterns)
     {
         gpgme_key_t key = nullptr;
-        gpgme_error_t err = gpgme_get_key(ctx, r.c_str(), &key, 1);
+        gpgme_error_t err = gpgme_get_key(ctx, r.c_str(), &key, onlyPrivateKey);
         if (gpg_err_code(err))
         {
             std::throw_with_nested(std::runtime_error(r + ": " + gpgme_strerror(err)));
@@ -199,16 +198,31 @@ std::unique_ptr<GpgMeKeys> GpgFactory::getGpgMeKeys(std::vector<std::string> &pa
     return gmk;
 }
 
-void GpgFactory::exportPublicKey(std::string const &keyId, std::string const &filePath){
-        PgpmeDataRII dout{filePath,TO_FILENAME};
-        gpgme_error_t err = gpgme_op_export ( ctx, keyId.c_str(),0, dout.d);
-        failIfErr(err);
+void GpgFactory::exportPublicKey(std::string const &keyId, std::string const &filePath)
+{
+    PgpmeDataRII dout{filePath, TO_FILENAME};
+    gpgme_error_t err = gpgme_op_export(ctx, keyId.c_str(), 0, dout.d);
+    failIfErr(err);
 }
 
-void GpgFactory::importPublicKey(std::string const &filePath){
-        PgpmeDataRII din{filePath,FROM_FILENAME};
-        gpgme_error_t err = gpgme_op_import ( ctx, din.d);
-        failIfErr(err);
+void GpgFactory::trustPublicKey(std::string const &keyId)
+{
+    std::vector<std::string> keys{};
+    keys.push_back(keyId);
+
+    std::unique_ptr<GpgMeKeys> aryKeysToTrust = getGpgMeKeys(keys,false);
+
+    gpgme_key_t *key = &aryKeysToTrust->gpgmeKeys[0];
+
+    gpgme_error_t err = gpgme_op_keysign(ctx, *key, NULL, 0, 0);
+    failIfErr(err);
+}
+
+void GpgFactory::importPublicKey(std::string const &filePath)
+{
+    PgpmeDataRII din{filePath, FROM_FILENAME};
+    gpgme_error_t err = gpgme_op_import(ctx, din.d);
+    failIfErr(err);
 }
 
 void GpgFactory::decryptValidate(PgpmeDataRII &in, PgpmeDataRII &out, bool doValidate)
@@ -230,18 +244,18 @@ void GpgFactory::decryptValidate(PgpmeDataRII &in, PgpmeDataRII &out, bool doVal
         std::throw_with_nested(std::runtime_error("unsupported algorithm: " +
                                                   std::string(decrypt_result->unsupported_algorithm) + "\n"));
     }
-    
+
     gpgme_recipient_t recipient = decrypt_result->recipients;
-    while (recipient) {
+    while (recipient)
+    {
         out.decryptedSignedBy.push_back(recipient->keyid);
         recipient = recipient->next;
     }
-
 }
 
 void GpgFactory::encryptSign(PgpmeDataRII &in, PgpmeDataRII &out, std::vector<std::string> encryptTo, bool doSign)
 {
-    auto gpgmeKeysTo = getGpgMeKeys(encryptTo);
+    auto gpgmeKeysTo = getGpgMeKeys(encryptTo,false);
 
     gpgme_key_t *key = &gpgmeKeysTo->gpgmeKeys[0];
     if (doSign)
@@ -290,7 +304,7 @@ void GpgFactory::setCtxSigners(std::vector<std::string> signedBy)
     gpgme_error_t err = gpgme_set_keylist_mode(ctx, kmode);
     failIfErr(err);
     gpgme_signers_clear(ctx);
-    pgpMeKeysSigners = getGpgMeKeys(signedBy);
+    pgpMeKeysSigners = getGpgMeKeys(signedBy,true);
     for (auto r : pgpMeKeysSigners->gpgmeKeys)
     {
         if (r != NULL)
@@ -313,7 +327,7 @@ std::vector<GpgKeys> GpgFactory::listKeys(const std::string pattern)
         if (err)
             break;
         GpgKeys k;
-        setGpgKeysFromGpgme_key_t(k, key,retKeys);
+        setGpgKeysFromGpgme_key_t(k, key, retKeys);
         gpgme_key_unref(key);
     }
 

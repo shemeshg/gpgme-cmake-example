@@ -70,7 +70,7 @@ class GpgKeys
 public:
   bool can_encrypt = false, invalid = false;
   std::string keyid, name, email;
-  int owner_trust;
+  int validity;
   std::string getKeyStr();
 
 };
@@ -89,7 +89,7 @@ public:
 
   ~GpgFactory();
 
-  std::unique_ptr<GpgMeKeys> getGpgMeKeys(std::vector<std::string> &patterns);
+  std::unique_ptr<GpgMeKeys> getGpgMeKeys(std::vector<std::string> &patterns, bool onlyPrivateKey);
 
   void decryptValidate(PgpmeDataRII &in, PgpmeDataRII &out, bool doValidate);
 
@@ -97,6 +97,7 @@ public:
 
   void exportPublicKey(std::string const &keyId, std::string const &filePath);
   void importPublicKey(std::string const &filePath);
+  void trustPublicKey(std::string const &keyId);  
 
   void setCtxSigners(std::vector<std::string> signedBy);
 
@@ -125,7 +126,7 @@ private:
         k.name = key->uids->name;
         k.email = key->uids->email;
         k.invalid = key->uids->invalid;
-        k.owner_trust = key->owner_trust;
+        k.validity = key->uids->validity;
         retKeys.push_back(std::move(k));
   }
 };
