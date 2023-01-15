@@ -25,13 +25,16 @@ public:
       pathToDisplay = pathToDisplay.parent_path();      
     }
 
-    do
-    {
-      if (std::filesystem::exists(pathToDisplay.c_str() + std::string("/")+fileOrFolderToSearch)){
-        return pathToDisplay;
-      }
-      pathToDisplay = pathToDisplay.parent_path();
-    } while (pathToDisplay != sstopPath);
+  bool alreadyCheckStopPath = false;
+   while (!alreadyCheckStopPath){
+        if (std::filesystem::exists(pathToDisplay.c_str() + std::string("/")+fileOrFolderToSearch)){
+          return pathToDisplay;
+        }
+        if ( (pathToDisplay == sstopPath) || (pathToDisplay == pathToDisplay.parent_path())){
+          alreadyCheckStopPath = true;
+        }
+        pathToDisplay = pathToDisplay.parent_path();
+    };
 
     return "";
   }

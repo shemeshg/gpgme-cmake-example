@@ -42,6 +42,6 @@ int main(int, char **)
         pf->getDecrypted();
     }
     */
-   std::cout <<ph.getNearestGpgId("/Users/osx/.password-store/develop/koko/hu",
+   std::cout <<ph.getNearestGit("",
                                     "/Users/osx/.password-store")<<"\n";
 }

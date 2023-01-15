@@ -13,6 +13,10 @@ public:
 
   std::string &getDecrypted();
 
+  std::string const &getFullPath(){
+    return fullPath;
+  }
+
 private:
   std::string fullPath, decrypted;
   GpgFactory *g;
