@@ -48,13 +48,20 @@ public:
     g.initPgpFactory();
   };
 
+  GpgFactory g{};
+
   std::unique_ptr<PassFile> getPassFile(std::string fullPath)
   {
     return std::make_unique<PassFile>(fullPath, &g);
   }
 
-  GpgFactory g{};
+  void exportPublicKey(const std::string &keyId, const std::string &filePath){
+    g.exportPublicKey(keyId, filePath);
+  }
 
+  void importPublicKey(const std::string &filePath){
+    g.importPublicKey(filePath);
+  }
   std::string getNearestGit(std::string currentPath, std::string stopPath )
   {
     return fileSearch.searchUp(".git", currentPath, stopPath);

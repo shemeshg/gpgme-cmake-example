@@ -95,6 +95,9 @@ public:
 
   void encryptSign(PgpmeDataRII &in, PgpmeDataRII &out, std::vector<std::string> encryptTo, bool doSign);
 
+  void exportPublicKey(std::string const &keyId, std::string const &filePath);
+  void importPublicKey(std::string const &filePath);
+
   void setCtxSigners(std::vector<std::string> signedBy);
 
   std::vector<GpgKeys> listKeys(const std::string pattern = "");

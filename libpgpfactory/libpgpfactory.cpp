@@ -199,6 +199,18 @@ std::unique_ptr<GpgMeKeys> GpgFactory::getGpgMeKeys(std::vector<std::string> &pa
     return gmk;
 }
 
+void GpgFactory::exportPublicKey(std::string const &keyId, std::string const &filePath){
+        PgpmeDataRII dout{filePath,TO_FILENAME};
+        gpgme_error_t err = gpgme_op_export ( ctx, keyId.c_str(),0, dout.d);
+        failIfErr(err);
+}
+
+void GpgFactory::importPublicKey(std::string const &filePath){
+        PgpmeDataRII din{filePath,FROM_FILENAME};
+        gpgme_error_t err = gpgme_op_import ( ctx, din.d);
+        failIfErr(err);
+}
+
 void GpgFactory::decryptValidate(PgpmeDataRII &in, PgpmeDataRII &out, bool doValidate)
 {
 
