@@ -31,6 +31,12 @@ void testLibrary(){
 
 int main(int, char **)
 {
+    GpgFactory g{};
+    g.initPgpFactory();
+    g.setArmor(true);
+    g.setTextmode(true);    
+    g.listKeys();
+    /*
     PassHelper ph{};
 
     std::unique_ptr<PassFile> pf = ph.getPassFile("/Users/osx/.password-store/develop/boboadsf.gpg");
@@ -39,7 +45,7 @@ int main(int, char **)
     pf->decrypt();
     std::cout << pf->getDecrypted()<<" \n SIGNED BY \n"
     << pf->getDecryptedSignedBy();
-
+    */
 
     /*
     std::cout <<ph.getNearestGit("",

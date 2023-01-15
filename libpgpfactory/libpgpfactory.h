@@ -70,7 +70,9 @@ class GpgKeys
 public:
   bool can_encrypt = false, invalid = false;
   std::string keyid, name, email;
+  int owner_trust;
   std::string getKeyStr();
+
 };
 
 class GpgFactory
@@ -120,7 +122,7 @@ private:
         k.name = key->uids->name;
         k.email = key->uids->email;
         k.invalid = key->uids->invalid;
+        k.owner_trust = key->owner_trust;
         retKeys.push_back(std::move(k));
-        k.invalid = key->uids->invalid;
   }
 };
