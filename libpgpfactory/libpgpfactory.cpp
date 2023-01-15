@@ -218,6 +218,13 @@ void GpgFactory::decryptValidate(PgpmeDataRII &in, PgpmeDataRII &out, bool doVal
         std::throw_with_nested(std::runtime_error("unsupported algorithm: " +
                                                   std::string(decrypt_result->unsupported_algorithm) + "\n"));
     }
+    
+    gpgme_recipient_t recipient = decrypt_result->recipients;
+    while (recipient) {
+        out.decryptedSignedBy.push_back(recipient->keyid);
+        recipient = recipient->next;
+    }
+
 }
 
 void GpgFactory::encryptSign(PgpmeDataRII &in, PgpmeDataRII &out, std::vector<std::string> encryptTo, bool doSign)
@@ -294,13 +301,7 @@ std::vector<GpgKeys> GpgFactory::listKeys(const std::string pattern)
         if (err)
             break;
         GpgKeys k;
-        k.can_encrypt = key->subkeys->can_encrypt;
-        k.keyid = key->subkeys->keyid;
-        k.name = key->uids->name;
-        k.email = key->uids->email;
-        k.invalid = key->uids->invalid;
-        retKeys.push_back(std::move(k));
-        k.invalid = key->uids->invalid;
+        setGpgKeysFromGpgme_key_t(k, key,retKeys);
         gpgme_key_unref(key);
     }
 

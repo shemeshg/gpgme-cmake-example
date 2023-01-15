@@ -1,6 +1,12 @@
 #pragma once
+#include <ostream>
+#include <vector>
+#include <numeric>
+#include <string>
+#include <functional>
 #include "libpgpfactory.h"
 #include "FileSearch.h"
+
 
 class PassFile
 {
@@ -17,8 +23,20 @@ public:
     return fullPath;
   }
 
+  std::string getDecryptedSignedBy(){
+    std::ostringstream  imploded;
+
+    return decryptedSignedBy.empty() ? "" : /* leave early if there are no items in the list */
+    std::accumulate( /* otherwise, accumulate */
+    ++decryptedSignedBy.begin(), decryptedSignedBy.end(), /* the range 2nd to after-last */
+    *decryptedSignedBy.begin(), /* and start accumulating with the first item */
+    [](auto& a, auto& b) { return a + "," + b; });
+   
+  }
+
 private:
   std::string fullPath, decrypted;
+  std::vector<std::string> decryptedSignedBy = {};
   GpgFactory *g;
 };
 

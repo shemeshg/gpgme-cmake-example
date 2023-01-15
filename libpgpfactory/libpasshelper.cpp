@@ -16,6 +16,7 @@ void PassFile::decrypt(){
     dout{};
     g->decryptValidate(din,dout,false);
     decrypted = dout.getString();
+    decryptedSignedBy = dout.decryptedSignedBy;
 }
 
 std::string &PassFile::getDecrypted(){

@@ -39,6 +39,8 @@ public:
 
   void closeFiles();
 
+  std::vector<std::string> decryptedSignedBy = {};
+  
 protected:
   void getData(std::function<void(int, char *)> func);
 
@@ -112,4 +114,13 @@ private:
                     gpgme_sig_mode_t type, char *fpr);
 
   void init_gpgme(gpgme_protocol_t proto);
+  void setGpgKeysFromGpgme_key_t(GpgKeys &k, gpgme_key_t key,std::vector<GpgKeys> &retKeys){
+        k.can_encrypt = key->subkeys->can_encrypt;
+        k.keyid = key->subkeys->keyid;
+        k.name = key->uids->name;
+        k.email = key->uids->email;
+        k.invalid = key->uids->invalid;
+        retKeys.push_back(std::move(k));
+        k.invalid = key->uids->invalid;
+  }
 };

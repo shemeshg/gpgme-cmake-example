@@ -32,16 +32,17 @@ void testLibrary(){
 int main(int, char **)
 {
     PassHelper ph{};
-    /*
+
     std::unique_ptr<PassFile> pf = ph.getPassFile("/Users/osx/.password-store/develop/boboadsf.gpg");
-    for (int i = 0; i < 10; ++i)
-    {
-        std::cout << "is gpg " << pf->isGpgFile() << " " << i << "\n";
-        pf->decrypt();
-        // std::cout << pf->getDecrypted();
-        pf->getDecrypted();
-    }
-    */
-   std::cout <<ph.getNearestGit("",
-                                    "/Users/osx/.password-store")<<"\n";
+
+    std::cout << "is gpg " << pf->isGpgFile() << " " <<  "\n";
+    pf->decrypt();
+    std::cout << pf->getDecrypted()<<" \n SIGNED BY \n"
+    << pf->getDecryptedSignedBy();
+
+
+    /*
+    std::cout <<ph.getNearestGit("",
+                                     "/Users/osx/.password-store")<<"\n";
+     */
 }
