@@ -77,6 +77,8 @@ public:
     return fileSearch.searchUp(".gpg-id", currentPath, stopPath);
   }  
 
+  
+
 private:
   FileSearch fileSearch{};
 };

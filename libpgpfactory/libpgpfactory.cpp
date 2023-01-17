@@ -334,6 +334,7 @@ std::vector<GpgKeys> GpgFactory::listKeys(const std::string pattern)
         if (err)
             break;
         GpgKeys k;
+        k.foundUsingPattern=pattern;
         setGpgKeysFromGpgme_key_t(k, key, retKeys);
         gpgme_key_unref(key);
     }
