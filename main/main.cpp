@@ -37,6 +37,10 @@ int main(int, char **)
     GpgIdManage gpgIdManage{"/Users/osx/.password-store/develop/koko/readme.gpg",
                     "/Users/osx/.password-store",&ph};
     gpgIdManage.init();
+    //gpgIdManage.saveBackGpgIdFile();
+    //gpgIdManage.exportGpgIdToGpgPubKeysFolder();
+    //gpgIdManage.importAllGpgPubKeysFolder();
+    gpgIdManage.reEncryptStoreFolder();
     for (auto r : ph.listKeys(""))
     {
         std::cout << "we have " << r.getKeyStr() << "\n";

@@ -7,7 +7,6 @@
 #include "libpgpfactory.h"
 #include "FileSearch.h"
 
-
 class PassFile
 {
 public:
@@ -19,19 +18,21 @@ public:
 
   std::string &getDecrypted();
 
-  std::string const &getFullPath(){
+  std::string const &getFullPath()
+  {
     return fullPath;
   }
 
-  std::string getDecryptedSignedBy(){
-    std::ostringstream  imploded;
+  std::string getDecryptedSignedBy()
+  {
+    std::ostringstream imploded;
 
-    return decryptedSignedBy.empty() ? "" : /* leave early if there are no items in the list */
-    std::accumulate( /* otherwise, accumulate */
-    ++decryptedSignedBy.begin(), decryptedSignedBy.end(), /* the range 2nd to after-last */
-    *decryptedSignedBy.begin(), /* and start accumulating with the first item */
-    [](auto& a, auto& b) { return a + "," + b; });
-   
+    return decryptedSignedBy.empty() ? "" :                                          /* leave early if there are no items in the list */
+               std::accumulate(                                                      /* otherwise, accumulate */
+                               ++decryptedSignedBy.begin(), decryptedSignedBy.end(), /* the range 2nd to after-last */
+                               *decryptedSignedBy.begin(),                           /* and start accumulating with the first item */
+                               [](auto &a, auto &b)
+                               { return a + "," + b; });
   }
 
 private:
@@ -55,31 +56,48 @@ public:
     return std::make_unique<PassFile>(fullPath, &g);
   }
 
-  void exportPublicKey(const std::string &keyId, const std::string &filePath){
+  void exportPublicKey(const std::string &keyId, const std::string &filePath)
+  {
     g.exportPublicKey(keyId, filePath);
   }
 
-  void importPublicKey(const std::string &filePath, bool doTrust){
+  void importPublicKey(const std::string &filePath, bool doTrust)
+  {
     g.importPublicKey(filePath, doTrust);
   }
 
-  void trustPublicKey(std::string const &keyId){
+  void trustPublicKey(std::string const &keyId)
+  {
     g.trustPublicKey(keyId);
   }
 
-  std::string getNearestGit(std::string currentPath, std::string stopPath )
+  std::string getNearestGit(std::string currentPath, std::string stopPath)
   {
     return fileSearch.searchUp(".git", currentPath, stopPath);
   }
 
-  std::string getNearestGpgId(std::string currentPath, std::string stopPath )
+  std::string getNearestGpgId(std::string currentPath, std::string stopPath)
   {
     return fileSearch.searchUp(".gpg-id", currentPath, stopPath);
-  }  
+  }
 
-  std::vector<GpgKeys> listKeys(std::string pattern){
+  std::vector<GpgKeys> listKeys(std::string pattern)
+  {
     return g.listKeys(pattern);
-  } 
+  }
+
+  void reEncryptFile(std::string pathFileToReEncrypt, std::vector<std::string> encryptTo)
+  {
+    std::string backupFile = pathFileToReEncrypt + "backup";
+    std::filesystem::rename(pathFileToReEncrypt,backupFile);
+    PgpmeDataRII ein{backupFile, FROM_FILENAME},
+        emem{},
+        eout{pathFileToReEncrypt, TO_FILENAME};
+    g.decryptValidate(ein, emem, false);
+    emem.getString(); //get fseek to end of buffer
+    g.encryptSign(emem, eout, encryptTo, true);
+    std::filesystem::remove(backupFile);     
+  }
 
 private:
   FileSearch fileSearch{};
