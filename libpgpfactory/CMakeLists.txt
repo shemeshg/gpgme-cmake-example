@@ -14,6 +14,8 @@ set(libpgpfactory_SRCS
     libpasshelper.cpp   
     FileSearch.cpp
     FileSearch.h
+    GpgIdManage.cpp
+    GpgIdManage.h
     # hygen srcs 
 )
 

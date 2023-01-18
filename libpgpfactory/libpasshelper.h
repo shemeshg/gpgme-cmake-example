@@ -77,7 +77,9 @@ public:
     return fileSearch.searchUp(".gpg-id", currentPath, stopPath);
   }  
 
-  
+  std::vector<GpgKeys> listKeys(std::string pattern){
+    return g.listKeys(pattern);
+  } 
 
 private:
   FileSearch fileSearch{};

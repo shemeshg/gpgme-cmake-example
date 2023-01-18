@@ -1,7 +1,7 @@
 #include <iostream>
 // #include "libpgpfactory.h"
 #include "libpasshelper.h"
-
+#include "GpgIdManage.h"
 /*
 void testLibrary(){
     GpgFactory g{};
@@ -29,64 +29,18 @@ void testLibrary(){
 }
 */
 
-std::vector<std::string> split(std::string s)
-{
-    std::stringstream ss(s);
-    std::istream_iterator<std::string> begin(ss);
-    std::istream_iterator<std::string> end;
-    std::vector<std::string> vstrings(begin, end);
-    return vstrings;
-}
 
-// #include <fstream>
-void validateNearestGpgId()
-{
-    GpgFactory g{};
-    g.initPgpFactory();
-    g.setArmor(true);
-    g.setTextmode(true);
-    PassHelper ph{};
-
-    // Return class vars
-    std::vector<GpgKeys> allKeys = g.listKeys("");    
-    std::string nearestGpgId = ph.getNearestGpgId("/Users/osx/.password-store/develop/koko", "/Users/osx/.password-store");
-    std::string gpgPubKeysFolder = nearestGpgId + "/.gpg-pub-keys";
-    bool gpgPubKeysFolderExists = false;
-
-    std::ifstream infile(nearestGpgId + "/.gpg-id");
-    std::vector<std::string> stringsNotFound{};
-    std::vector<GpgKeys> keysFound{};
-
-    // End Return class vars
-    gpgPubKeysFolderExists = checkGpgPubKeysFolderExists
-
-    std::string line;
-    while (std::getline(infile, line))
-    {
-        auto keyToSearchVector = split(line);
-        if (keyToSearchVector.size() == 0)
-        {
-            continue;
-        }
-
-        std::string &keyToSearch = keyToSearchVector.at(0);
-        std::cout << "Searching " << keyToSearch << "\n";
-        std::vector<GpgKeys> keysListed = g.listKeys(keyToSearch);
-        if (keysListed.size() == 1)
-        {
-            keysFound.push_back(std::move(keysListed.at(0)));
-        }
-        else
-        {
-            stringsNotFound.push_back(keyToSearch);
-        }
-    }
-    std::cout << "Finished\n";
-}
 
 int main(int, char **)
 {
-    validateNearestGpgId();
+    PassHelper ph{};
+    GpgIdManage gpgIdManage{"/Users/osx/.password-store/develop/koko/readme.gpg",
+                    "/Users/osx/.password-store",&ph};
+    gpgIdManage.init();
+    for (auto r : ph.listKeys(""))
+    {
+        std::cout << "we have " << r.getKeyStr() << "\n";
+    }    
     /*
     GpgFactory g{};
     g.initPgpFactory();
