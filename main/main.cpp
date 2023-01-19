@@ -34,9 +34,9 @@ void testLibrary(){
 int main(int, char **)
 {
     PassHelper ph{};
-    GpgIdManage gpgIdManage{"/Users/osx/.password-store/develop/koko/readme.gpg",
-                    "/Users/osx/.password-store",&ph};
-    gpgIdManage.init();
+    GpgIdManage gpgIdManage{};
+    gpgIdManage.init("/Users/osx/.password-store/develop/koko/readme.gpg",
+                    "/Users/osx/.password-store",&ph);
     //gpgIdManage.saveBackGpgIdFile();
     //gpgIdManage.exportGpgIdToGpgPubKeysFolder();
     //gpgIdManage.importAllGpgPubKeysFolder();

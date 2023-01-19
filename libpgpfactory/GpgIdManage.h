@@ -4,9 +4,7 @@
 class GpgIdManage
 {
 public:
-  GpgIdManage(std::string currentPath, std::string stopPath, PassHelper *ph) : currentPath{currentPath}, stopPath{stopPath}, ph{ph}
-  {
-  }
+  GpgIdManage(){}
 
   GpgIdManage(GpgIdManage const &) = delete;
   GpgIdManage &operator=(GpgIdManage const &) = delete;
@@ -25,12 +23,12 @@ public:
   std::vector<GpgKeys> allKeys;
   std::vector<std::string> encryptTo{};
 
-  void init();
+  void init(std::string _currentPath, std::string _stopPath, PassHelper *_ph);
 
   void importPublicKeyAndTrust(const std::string &filePath)
   {
     ph->importPublicKey(filePath, true);
-    init();
+    init( currentPath,  stopPath, ph);
   }
 
   void ensureValidGpgIdFile()
@@ -85,7 +83,7 @@ public:
       ph->importPublicKey(entry.path(), true);
     }
 
-    init();
+    init( currentPath,  stopPath, ph);
   }
 
   void reEncryptFile(std::string pathFileToReEncrypt)

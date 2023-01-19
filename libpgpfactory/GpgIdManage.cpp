@@ -1,7 +1,11 @@
 #include "GpgIdManage.h"
 
-void GpgIdManage::init()
+void GpgIdManage::init(std::string _currentPath, std::string _stopPath, PassHelper *_ph)
 {
+    currentPath = _currentPath;
+    stopPath = _stopPath;
+    ph = _ph;
+
     allKeys = ph->listKeys("");
     nearestGpgIdFolder = ph->getNearestGpgId(currentPath, stopPath);
     gpgPubKeysFolder = nearestGpgIdFolder + "/.gpg-pub-keys";
@@ -9,10 +13,10 @@ void GpgIdManage::init()
     gpgPubKeysFolderExists = std::filesystem::exists(gpgPubKeysFolder);
     populateKeysParsedInGpgIdFile();
 
-    encryptTo={};
+    encryptTo = {};
     for (auto r : keysFoundInGpgIdFile)
     {
-      encryptTo.push_back(r.keyid);
+        encryptTo.push_back(r.keyid);
     }
 
     classInitialized = true;
