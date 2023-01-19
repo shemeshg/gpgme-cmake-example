@@ -6,6 +6,10 @@ void GpgIdManage::init(std::string _currentPath, std::string _stopPath, PassHelp
     stopPath = _stopPath;
     ph = _ph;
 
+    keysFoundInGpgIdFile.clear();
+    allKeys.clear();
+    encryptTo.clear();
+
     allKeys = ph->listKeys("");
     nearestGpgIdFolder = ph->getNearestGpgId(currentPath, stopPath);
     gpgPubKeysFolder = nearestGpgIdFolder + "/.gpg-pub-keys";
@@ -42,7 +46,7 @@ void GpgIdManage::populateKeysParsedInGpgIdFile()
         }
         else
         {
-            KeysNotFoundInGpgIdFile.push_back(keyToSearch);
+            KeysNotFoundInGpgIdFile.push_back(line);
         }
     }
 }
