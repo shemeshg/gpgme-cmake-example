@@ -7,8 +7,10 @@ void GpgIdManage::init(std::string _currentPath, std::string _stopPath, PassHelp
     ph = _ph;
 
     keysFoundInGpgIdFile.clear();
+    KeysNotFoundInGpgIdFile.clear();
     allKeys.clear();
     encryptTo.clear();
+
 
     allKeys = ph->listKeys("");
     nearestGpgIdFolder = ph->getNearestGpgId(currentPath, stopPath);
