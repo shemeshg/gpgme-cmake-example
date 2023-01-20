@@ -4,7 +4,7 @@
 class GpgIdManage
 {
 public:
-  GpgIdManage(){}
+  GpgIdManage() {}
 
   GpgIdManage(GpgIdManage const &) = delete;
   GpgIdManage &operator=(GpgIdManage const &) = delete;
@@ -25,94 +25,21 @@ public:
 
   void init(std::string _currentPath, std::string _stopPath, PassHelper *_ph);
 
-  void importPublicKeyAndTrust(const std::string &filePath)
-  {
-    if (!classInitialized)
-    {
-      std::throw_with_nested(std::runtime_error("Class not initialized"));
-    }
+  void importPublicKeyAndTrust(const std::string &filePath);
 
-    ph->importPublicKey(filePath, true);
+  void ensureValidGpgIdFile();
 
-    init( currentPath,  stopPath, ph);
-  }
+  void saveBackGpgIdFile();
 
-  void ensureValidGpgIdFile()
-  {
-    if (!classInitialized)
-    {
-      std::throw_with_nested(std::runtime_error("Class not initialized"));
-    }
+  void exportGpgIdToGpgPubKeysFolder();
 
-    if (KeysNotFoundInGpgIdFile.size() > 0)
-    {
-      std::throw_with_nested(std::runtime_error("Can not save back GpgIdFile with bad records in"));
-    }
-  }
+  void importAllGpgPubKeysFolder();
 
-  void saveBackGpgIdFile()
-  {
+  void reEncryptFile(std::string pathFileToReEncrypt);
 
-    ensureValidGpgIdFile();
-    std::ofstream MyFile(nearestGpgIdFile);
-    for (auto r : keysFoundInGpgIdFile)
-    {
-      MyFile << r.getKeyStr() << "\n";
-    }
-    MyFile.close();
-  }
+  void reEncryptStoreFolder(std::function<void(std::string)> func);
 
-  void exportGpgIdToGpgPubKeysFolder()
-  {
-    ensureValidGpgIdFile();
-    std::filesystem::remove_all(gpgPubKeysFolder);
-    std::filesystem::create_directories(gpgPubKeysFolder);
-    for (auto r : keysFoundInGpgIdFile)
-    {
-      ph->exportPublicKey(r.keyid,
-                          gpgPubKeysFolder + "/" + r.keyid + "_" + r.email + ".pub");
-    }
-  }
-
-  void importAllGpgPubKeysFolder()
-  {
-    if (!classInitialized)
-    {
-      std::throw_with_nested(std::runtime_error("Class not initialized"));
-    }
-    if (!gpgPubKeysFolderExists)
-    {
-      std::throw_with_nested(std::runtime_error(".gpg-pub-keys not found"));
-    }
-    for (const auto &entry : std::filesystem::directory_iterator(gpgPubKeysFolder))
-    {
-      ph->importPublicKey(entry.path(), true);
-    }
-
-    init( currentPath,  stopPath, ph);
-  }
-
-  void reEncryptFile(std::string pathFileToReEncrypt)
-  {
-    ensureValidGpgIdFile();
-    ph->reEncryptFile(pathFileToReEncrypt, encryptTo);
-  }
-
-  void reEncryptStoreFolder()
-  {
-    
-
-    for (const std::filesystem::directory_entry &dir_entry :
-         std::filesystem::recursive_directory_iterator(nearestGpgIdFolder))
-    {
-      if (!dir_entry.is_directory() && std::filesystem::path(dir_entry.path()).extension() == ".gpg")
-      {
-        std::cout << "Re-encrypt " << dir_entry.path() << "\n";
-        reEncryptFile(dir_entry.path());
-        // std::cout << " Finished\n";
-      }
-    }
-  }
+  void populateKeyFromString(const std::string &line);
 
   // hygen public
 private:
