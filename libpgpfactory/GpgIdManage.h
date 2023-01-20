@@ -27,7 +27,13 @@ public:
 
   void importPublicKeyAndTrust(const std::string &filePath)
   {
+    if (!classInitialized)
+    {
+      std::throw_with_nested(std::runtime_error("Class not initialized"));
+    }
+
     ph->importPublicKey(filePath, true);
+
     init( currentPath,  stopPath, ph);
   }
 

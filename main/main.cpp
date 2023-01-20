@@ -39,7 +39,7 @@ int main(int, char **)
                     "/Users/osx/.password-store",&ph);
     
     // ** Import new public key 
-    
+    // gpgIdManage.importPublicKeyAndTrust()
     // ** Import all public keys in .gpg-pub-keys folder
     //gpgIdManage.importAllGpgPubKeysFolder();
 
