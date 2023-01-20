@@ -225,7 +225,7 @@ void GpgFactory::importPublicKey(std::string const &filePath, bool doTrust)
     failIfErr(err);
     gpgme_import_result_t result = gpgme_op_import_result (ctx);
     if (result->considered == 0) {
-        std::throw_with_nested(std::runtime_error("No valid pub file"));
+        std::throw_with_nested(std::runtime_error("No valid pub file: " + filePath));
     }
     if (doTrust){
         trustPublicKey(result->imports->fpr);
