@@ -103,7 +103,7 @@ PgpmeDataRII::PgpmeDataRII(std::string s, PgmeDataInitType typ)
 {
     if (typ == FROM_STRING)
     {
-        gpgme_error_t err = gpgme_data_new_from_mem(&d, s.c_str(), s.size(), 0);
+        gpgme_error_t err = gpgme_data_new_from_mem(&d, s.c_str(), s.length()+1, 0);
         if (gpg_err_code(err))
         {
             std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));

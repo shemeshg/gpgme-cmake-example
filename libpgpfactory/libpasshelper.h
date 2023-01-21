@@ -16,6 +16,7 @@ public:
 
   void decrypt();
 
+
   std::string &getDecrypted();
 
   std::string const &getFullPath()
@@ -33,6 +34,12 @@ public:
                                *decryptedSignedBy.begin(),                           /* and start accumulating with the first item */
                                [](auto &a, auto &b)
                                { return a + "," + b; });
+  }
+
+  void encrypt(std::string s, std::vector<std::string> encryptTo){
+    decrypted = s;
+    PgpmeDataRII din{s,FROM_STRING}, dout{fullPath,TO_FILENAME};
+    g->encryptSign(din,dout,encryptTo,true);
   }
 
 private:
