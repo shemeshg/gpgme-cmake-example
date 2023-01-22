@@ -2,6 +2,7 @@
 // #include "libpgpfactory.h"
 #include "libpasshelper.h"
 #include "GpgIdManage.h"
+#include "RunShellCmd.h"
 /*
 void testLibrary(){
     GpgFactory g{};
@@ -38,6 +39,10 @@ int main(int, char **)
     gpgIdManage.init("/Users/osx/.password-store/develop/koko/readme.gpg",
                     "/Users/osx/.password-store",&ph);
     
+    RunShellCmd rsc{};
+    auto a = rsc.runCmdAsync({"code","--wait","/Volumes/RAM_Disk_4G/tmpfileNoWaitA.txt"});
+    a.wait();
+
     // ** Import new public key 
     // gpgIdManage.importPublicKeyAndTrust()
     // ** Import all public keys in .gpg-pub-keys folder

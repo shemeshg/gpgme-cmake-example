@@ -89,6 +89,7 @@
     "utility": "cpp",
     "stop_token": "cpp",
     "cinttypes": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "future": "cpp"
   }
 }

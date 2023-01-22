@@ -16,6 +16,8 @@ set(libpgpfactory_SRCS
     FileSearch.h
     GpgIdManage.cpp
     GpgIdManage.h
+    RunShellCmd.cpp
+    RunShellCmd.h
     # hygen srcs 
 )
 
