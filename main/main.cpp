@@ -30,6 +30,12 @@ void testLibrary(){
 }
 */
 
+void testEditFile(){
+    RunShellCmd rsc{};
+    TmpFileWacher tfe{"shloam olam"};
+    tfe.init("/Volumes/RAM_Disk_4G/tmp");
+    auto a = rsc.runCmd({"code","--wait",tfe.getFullFilePath()});
+}
 
 
 int main(int, char **)
@@ -38,10 +44,10 @@ int main(int, char **)
     GpgIdManage gpgIdManage{};
     gpgIdManage.init("/Users/osx/.password-store/develop/koko/readme.gpg",
                     "/Users/osx/.password-store",&ph);
-    
-    RunShellCmd rsc{};
-    auto a = rsc.runCmdAsync({"code","--wait","/Volumes/RAM_Disk_4G/tmpfileNoWaitA.txt"});
-    a.wait();
+    testEditFile();
+
+
+
 
     // ** Import new public key 
     // gpgIdManage.importPublicKeyAndTrust()
