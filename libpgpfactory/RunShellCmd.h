@@ -115,13 +115,15 @@ private:
 class TmpFileWacher
 {
 public:
-  TmpFileWacher(std::string fileName) : m_fileName{fileName}
-  {
-    createTmpFolder();
-  }
+  TmpFileWacher() {}
 
-  void init(std::string tmpFolder = ""){
-    if(!tmpFolder.empty()){m_tmpFolder = tmpFolder;}
+  void init(std::string fileName, std::string tmpFolder = "")
+  {
+    m_fileName = fileName;
+    if (!tmpFolder.empty())
+    {
+      m_tmpFolder = tmpFolder;
+    }
     createTmpFolder();
   }
 
@@ -133,7 +135,7 @@ public:
   std::filesystem::path getFullFilePath()
   {
     return m_tmpFolder / m_tmpSubfolder / m_fileName;
-  }  
+  }
 
   ~TmpFileWacher()
   {
@@ -147,15 +149,76 @@ private:
 
   void createTmpFolder()
   {
-    if (std::filesystem::exists(m_tmpFolder)){
+    if (std::filesystem::exists(m_tmpFolder))
+    {
       std::filesystem::create_directory(getSubfolderPath());
-    }  else {
+    }
+    else
+    {
       std::throw_with_nested(std::runtime_error("Temp folder not found"));
-    }      
+    }
   }
 
   void deleteTmpFolder()
   {
     std::filesystem::remove_all(getSubfolderPath());
+  }
+};
+
+class WatchWaitAndNoneWaitRunCmdItem
+{
+public:
+  void runWithWait(std::string fileName, std::string tmpFolder = "")
+  {
+    tfe.init(fileName, tmpFolder);
+    auto a = rsc.runCmd({"code", "--wait", tfe.getFullFilePath()});
+  }
+
+  void runWithoutWait(std::string fileName, std::string tmpFolder = "")
+  {
+    tfe.init(fileName, tmpFolder);
+    auto a = rsc.runCmd({"code", tfe.getFullFilePath()});
+  }
+  std::string uniqueId = "";
+
+private:
+  RunShellCmd rsc{};
+  TmpFileWacher tfe{};
+};
+
+class WatchWaitAndNoneWaitRunCmd
+{
+public:
+  std::vector<WatchWaitAndNoneWaitRunCmdItem> waitItems{};
+  std::vector<WatchWaitAndNoneWaitRunCmdItem> noneWaitItems{};
+
+  void addWithWait(std::string uniqueId)
+  {
+    WatchWaitAndNoneWaitRunCmdItem i;
+    i.uniqueId = uniqueId;
+    waitItems.push_back(i);
+    waitItems.back().runWithWait("shalom olam", "/Volumes/RAM_Disk_4G/tmp");
+    waitItems.erase(std::remove_if(waitItems.begin(),
+                                   waitItems.end(),
+                                   [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
+                                   { return itm.uniqueId == uniqueId; }),
+                    waitItems.end());
+  }
+
+  void addWithOutWait(std::string uniqueId)
+  {
+    WatchWaitAndNoneWaitRunCmdItem i;
+    i.uniqueId = uniqueId;
+    noneWaitItems.push_back(i);
+    noneWaitItems.back().runWithoutWait("shalom olam", "/Volumes/RAM_Disk_4G/tmp");
+  }
+
+  void closeWithoutWaitItem(std::string uniqueId)
+  {
+    noneWaitItems.erase(std::remove_if(noneWaitItems.begin(),
+                                       noneWaitItems.end(),
+                                       [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
+                                       { return itm.uniqueId == uniqueId; }),
+                        noneWaitItems.end());
   }
 };

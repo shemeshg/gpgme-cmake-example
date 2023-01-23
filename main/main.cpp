@@ -31,10 +31,10 @@ void testLibrary(){
 */
 
 void testEditFile(){
-    RunShellCmd rsc{};
-    TmpFileWacher tfe{"shloam olam"};
-    tfe.init("/Volumes/RAM_Disk_4G/tmp");
-    auto a = rsc.runCmd({"code","--wait",tfe.getFullFilePath()});
+    WatchWaitAndNoneWaitRunCmd c;
+    c.addWithOutWait("unique identifier");
+    getchar();
+    c.closeWithoutWaitItem("unique identifier");
 }
 
 
