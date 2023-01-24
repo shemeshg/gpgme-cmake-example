@@ -53,7 +53,7 @@ void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, Watch
     din.closeFiles();
     dout.closeFiles();
 
-    wi.runWithWait();
+    watchWaitAndNoneWaitRunCmd->runWithWait(wi);
     std::cout<<"from "<<fullPath<<" to "<< wi.getFullFilePath()<<"\n";
     PgpmeDataRII ein{wi.getFullFilePath(),FROM_FILENAME};
     PgpmeDataRII eout{fullPath,TO_FILENAME};

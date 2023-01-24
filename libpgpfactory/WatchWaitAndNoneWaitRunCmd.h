@@ -6,13 +6,17 @@ public:
   std::vector<WatchWaitAndNoneWaitRunCmdItem> waitItems{};
   std::vector<WatchWaitAndNoneWaitRunCmdItem> noneWaitItems{};
 
+  std::function<void()> callback=[&](){};
+
   std::mutex g_pages_mutex;
 
   WatchWaitAndNoneWaitRunCmdItem &addWithWait(std::string uniqueId, std::string fileName, std::string tmpFolder)
   {
+
     std::lock_guard<std::mutex> guard(g_pages_mutex);
     WatchWaitAndNoneWaitRunCmdItem i{uniqueId, fileName, tmpFolder};
     waitItems.push_back(i);
+    callback();
     return waitItems.back();
   }
 
@@ -25,6 +29,7 @@ public:
                                    [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
                                    { return itm.uniqueId == i.uniqueId; }),
                     waitItems.end());
+    callback();
   }
 
   WatchWaitAndNoneWaitRunCmdItem &addWithOutWait(std::string uniqueId, std::string fileName, std::string tmpFolder)
@@ -32,6 +37,7 @@ public:
     std::lock_guard<std::mutex> guard(g_pages_mutex);
     WatchWaitAndNoneWaitRunCmdItem i{uniqueId, fileName, tmpFolder};
     noneWaitItems.push_back(i);
+    callback();
     noneWaitItems.back().runWithoutWait();
     return noneWaitItems.back();
   }
@@ -44,5 +50,6 @@ public:
                                        [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
                                        { return itm.uniqueId == uniqueId; }),
                         noneWaitItems.end());
+    callback();
   }
 };
