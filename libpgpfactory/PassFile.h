@@ -4,6 +4,7 @@
 #include "libpgpfactory.h"
 #include "WatchWaitAndNoneWaitRunCmd.h"
 #include <numeric>
+#include <thread>
 
 class PassFile
 {
@@ -13,7 +14,6 @@ public:
   bool isGpgFile();
 
   void decrypt();
-
 
   std::string &getDecrypted();
 
@@ -27,12 +27,16 @@ public:
   void encrypt(std::string s, std::vector<std::string> encryptTo);
 
   void openExternalEncryptWait(std::vector<std::string> encryptTo);
-
+  void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo)
+  {
+    std::thread([=](){
+        PassFile threadassfile{fullPath,g};
+        return threadassfile.openExternalEncryptWait(encryptTo); }).detach();
+  }
 
 private:
   std::string fullPath, decrypted;
   std::vector<std::string> decryptedSignedBy = {};
   WatchWaitAndNoneWaitRunCmd watchWaitAndNoneWaitRunCmd{};
   GpgFactory *g;
-
 };
