@@ -41,11 +41,11 @@ void PassFile::encrypt(std::string s, std::vector<std::string> encryptTo){
     g->encryptSign(din,dout,encryptTo,true);
 }
 
-void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo){
+void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd){
 
     std::filesystem::path p = fullPath;
     p = p.replace_extension();
-    WatchWaitAndNoneWaitRunCmdItem wi = watchWaitAndNoneWaitRunCmd.addWithWait(fullPath,p.filename(),"/Volumes/RAM_Disk_4G/tmp");
+    WatchWaitAndNoneWaitRunCmdItem wi = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath,p.filename(),"/Volumes/RAM_Disk_4G/tmp");
     wi.init();
     PgpmeDataRII din{fullPath,FROM_FILENAME}, dout{wi.getFullFilePath(),TO_FILENAME};
 

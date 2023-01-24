@@ -26,17 +26,16 @@ public:
 
   void encrypt(std::string s, std::vector<std::string> encryptTo);
 
-  void openExternalEncryptWait(std::vector<std::string> encryptTo);
-  void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo)
+  void openExternalEncryptWait(std::vector<std::string> encryptTo,  WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd);
+  void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd)
   {
     std::thread([=](){
         PassFile threadassfile{fullPath,g};
-        return threadassfile.openExternalEncryptWait(encryptTo); }).detach();
+        return threadassfile.openExternalEncryptWait(encryptTo, watchWaitAndNoneWaitRunCmd); }).detach();
   }
 
 private:
   std::string fullPath, decrypted;
-  std::vector<std::string> decryptedSignedBy = {};
-  WatchWaitAndNoneWaitRunCmd watchWaitAndNoneWaitRunCmd{};
+  std::vector<std::string> decryptedSignedBy = {};  
   GpgFactory *g;
 };
