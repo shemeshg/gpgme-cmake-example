@@ -3,6 +3,7 @@
 #include "libpasshelper.h"
 #include "GpgIdManage.h"
 #include "RunShellCmd.h"
+
 /*
 void testLibrary(){
     GpgFactory g{};
@@ -32,7 +33,7 @@ void testLibrary(){
 
 void testEditFile(){
     WatchWaitAndNoneWaitRunCmd c;
-    c.addWithOutWait("unique identifier");
+    c.addWithOutWait("unique identifier","file name","/Volumes/RAM_Disk_4G/tmp");
     getchar();
     c.closeWithoutWaitItem("unique identifier");
 }

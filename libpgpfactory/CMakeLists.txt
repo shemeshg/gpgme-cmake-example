@@ -7,6 +7,7 @@ include_directories(${GPGMEAPP_INCLUDES})
 
 
 
+
 set(libpgpfactory_SRCS
     libpgpfactory.h
     libpgpfactory.cpp
@@ -18,6 +19,14 @@ set(libpgpfactory_SRCS
     GpgIdManage.h
     RunShellCmd.cpp
     RunShellCmd.h
+    uuid.cpp
+    uuid.h
+    PassFile.h
+    PassFile.cpp
+    WatchWaitAndNoneWaitRunCmdItem.h 
+    WatchWaitAndNoneWaitRunCmdItem.cpp
+    WatchWaitAndNoneWaitRunCmd.h 
+    WatchWaitAndNoneWaitRunCmd.cpp
     # hygen srcs 
 )
 
@@ -25,6 +34,7 @@ set(libpgpfactory_SRCS
 add_library(libpgpfactory STATIC
     ${libpgpfactory_SRCS}
 )
+
 target_link_libraries(libpgpfactory Gpgmepp  ${LibGpgError_LIBRARIES})
 
 # Specify here the include directories exported

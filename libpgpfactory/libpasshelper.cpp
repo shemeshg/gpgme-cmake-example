@@ -2,23 +2,16 @@
 #include <iostream>
 #include <filesystem>
 
-PassFile::PassFile(std::string fullPath, GpgFactory *g):fullPath{fullPath},g{g}
+
+void PassHelper::reEncryptFile(std::string pathFileToReEncrypt, std::vector<std::string> encryptTo)
 {
-}
-
-bool PassFile::isGpgFile(){
-    std::filesystem::path path(fullPath);
-    return (path.extension().string() == ".gpg");
-}
-
-void PassFile::decrypt(){
-    PgpmeDataRII din{fullPath,FROM_FILENAME},
-    dout{};
-    g->decryptValidate(din,dout,false);
-    decrypted = dout.getString();
-    decryptedSignedBy = dout.decryptedSignedBy;
-}
-
-std::string &PassFile::getDecrypted(){
-    return decrypted;
+    std::string backupFile = pathFileToReEncrypt + "backup";
+    std::filesystem::rename(pathFileToReEncrypt,backupFile);
+    PgpmeDataRII ein{backupFile, FROM_FILENAME},
+    emem{},
+    eout{pathFileToReEncrypt, TO_FILENAME};
+    g.decryptValidate(ein, emem, false);
+    emem.getString(); //get fseek to end of buffer
+    g.encryptSign(emem, eout, encryptTo, true);
+    std::filesystem::remove(backupFile);
 }

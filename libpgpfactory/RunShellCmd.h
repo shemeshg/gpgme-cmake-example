@@ -9,49 +9,8 @@
 #include <vector>
 #include <future>
 #include <filesystem>
-#include <random>
-#include <sstream>
 
-namespace uuid
-{
-  static std::random_device rd;
-  static std::mt19937 gen(rd());
-  static std::uniform_int_distribution<> dis(0, 15);
-  static std::uniform_int_distribution<> dis2(8, 11);
-
-  std::string generate_uuid_v4()
-  {
-    std::stringstream ss;
-    int i;
-    ss << std::hex;
-    for (i = 0; i < 8; i++)
-    {
-      ss << dis(gen);
-    }
-    ss << "-";
-    for (i = 0; i < 4; i++)
-    {
-      ss << dis(gen);
-    }
-    ss << "-4";
-    for (i = 0; i < 3; i++)
-    {
-      ss << dis(gen);
-    }
-    ss << "-";
-    ss << dis2(gen);
-    for (i = 0; i < 3; i++)
-    {
-      ss << dis(gen);
-    }
-    ss << "-";
-    for (i = 0; i < 12; i++)
-    {
-      ss << dis(gen);
-    };
-    return ss.str();
-  }
-}
+#include "uuid.h"
 
 class RunShellCmd
 {
@@ -165,60 +124,6 @@ private:
   }
 };
 
-class WatchWaitAndNoneWaitRunCmdItem
-{
-public:
-  void runWithWait(std::string fileName, std::string tmpFolder = "")
-  {
-    tfe.init(fileName, tmpFolder);
-    auto a = rsc.runCmd({"code", "--wait", tfe.getFullFilePath()});
-  }
 
-  void runWithoutWait(std::string fileName, std::string tmpFolder = "")
-  {
-    tfe.init(fileName, tmpFolder);
-    auto a = rsc.runCmd({"code", tfe.getFullFilePath()});
-  }
-  std::string uniqueId = "";
 
-private:
-  RunShellCmd rsc{};
-  TmpFileWacher tfe{};
-};
 
-class WatchWaitAndNoneWaitRunCmd
-{
-public:
-  std::vector<WatchWaitAndNoneWaitRunCmdItem> waitItems{};
-  std::vector<WatchWaitAndNoneWaitRunCmdItem> noneWaitItems{};
-
-  void addWithWait(std::string uniqueId)
-  {
-    WatchWaitAndNoneWaitRunCmdItem i;
-    i.uniqueId = uniqueId;
-    waitItems.push_back(i);
-    waitItems.back().runWithWait("shalom olam", "/Volumes/RAM_Disk_4G/tmp");
-    waitItems.erase(std::remove_if(waitItems.begin(),
-                                   waitItems.end(),
-                                   [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
-                                   { return itm.uniqueId == uniqueId; }),
-                    waitItems.end());
-  }
-
-  void addWithOutWait(std::string uniqueId)
-  {
-    WatchWaitAndNoneWaitRunCmdItem i;
-    i.uniqueId = uniqueId;
-    noneWaitItems.push_back(i);
-    noneWaitItems.back().runWithoutWait("shalom olam", "/Volumes/RAM_Disk_4G/tmp");
-  }
-
-  void closeWithoutWaitItem(std::string uniqueId)
-  {
-    noneWaitItems.erase(std::remove_if(noneWaitItems.begin(),
-                                       noneWaitItems.end(),
-                                       [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
-                                       { return itm.uniqueId == uniqueId; }),
-                        noneWaitItems.end());
-  }
-};

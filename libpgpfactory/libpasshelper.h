@@ -4,49 +4,13 @@
 #include <numeric>
 #include <string>
 #include <functional>
+#include <filesystem>
+
 #include "libpgpfactory.h"
 #include "FileSearch.h"
+#include "RunShellCmd.h"
+#include "PassFile.h"
 
-class PassFile
-{
-public:
-  PassFile(std::string fullPath, GpgFactory *g);
-
-  bool isGpgFile();
-
-  void decrypt();
-
-
-  std::string &getDecrypted();
-
-  std::string const &getFullPath()
-  {
-    return fullPath;
-  }
-
-  std::string getDecryptedSignedBy()
-  {
-    std::ostringstream imploded;
-
-    return decryptedSignedBy.empty() ? "" :                                          /* leave early if there are no items in the list */
-               std::accumulate(                                                      /* otherwise, accumulate */
-                               ++decryptedSignedBy.begin(), decryptedSignedBy.end(), /* the range 2nd to after-last */
-                               *decryptedSignedBy.begin(),                           /* and start accumulating with the first item */
-                               [](auto &a, auto &b)
-                               { return a + "," + b; });
-  }
-
-  void encrypt(std::string s, std::vector<std::string> encryptTo){
-    decrypted = s;
-    PgpmeDataRII din{s,FROM_STRING}, dout{fullPath,TO_FILENAME};
-    g->encryptSign(din,dout,encryptTo,true);
-  }
-
-private:
-  std::string fullPath, decrypted;
-  std::vector<std::string> decryptedSignedBy = {};
-  GpgFactory *g;
-};
 
 class PassHelper
 {
@@ -93,19 +57,8 @@ public:
     return g.listKeys(pattern);
   }
 
-  void reEncryptFile(std::string pathFileToReEncrypt, std::vector<std::string> encryptTo)
-  {
-    std::string backupFile = pathFileToReEncrypt + "backup";
-    std::filesystem::rename(pathFileToReEncrypt,backupFile);
-    PgpmeDataRII ein{backupFile, FROM_FILENAME},
-        emem{},
-        eout{pathFileToReEncrypt, TO_FILENAME};
-    g.decryptValidate(ein, emem, false);
-    emem.getString(); //get fseek to end of buffer
-    g.encryptSign(emem, eout, encryptTo, true);
-    std::filesystem::remove(backupFile);     
-  }
+  void reEncryptFile(std::string pathFileToReEncrypt, std::vector<std::string> encryptTo);
 
 private:
-  FileSearch fileSearch{};
+  FileSearch fileSearch{};  
 };
