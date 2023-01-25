@@ -30,6 +30,11 @@ public:
     return tfe.getFullFilePath();
   }
 
+  std::filesystem::path getSubfolderPath()
+  {
+    return tfe.getSubfolderPath();
+  }
+
 private:
   RunShellCmd rsc{};
   TmpFileWacher tfe{};
