@@ -61,7 +61,7 @@ private:
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
     if (!pipe)
     {
-      throw std::runtime_error("popen() failed!");
+      std::throw_with_nested( std::runtime_error("popen() failed!"));
     }
     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
     {
