@@ -62,12 +62,19 @@ void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, Watch
 
 void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd)
 {
+    if (!std::filesystem::exists("/Volumes/RAM_Disk_4G/tmp")){
+        std::throw_with_nested(std::runtime_error("tmp folder not found"));
+    }
     std::thread([=](){
         PassFile threadassfile{fullPath,g};
         return threadassfile.openExternalEncryptWait(encryptTo, watchWaitAndNoneWaitRunCmd); }).detach();
 }
 
 std::string PassFile::openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd){
+    if (!std::filesystem::exists("/Volumes/RAM_Disk_4G/tmp")){
+        std::throw_with_nested(std::runtime_error("tmp folder not found"));
+    }
+
     std::filesystem::path p = fullPath;
     p = p.replace_extension();
     WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithOutWait(fullPath,p.filename(),"/Volumes/RAM_Disk_4G/tmp");
