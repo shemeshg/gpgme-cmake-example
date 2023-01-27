@@ -62,4 +62,22 @@ public:
                             noneWaitItems.end());
         callback();
     }
+
+    void clearWaitItemsAfterUnExpectedCrash(std::string uniqueId){
+        std::cout<<" Clearing after crash"<<uniqueId;
+        std::lock_guard<std::mutex> guard(g_pages_mutex);
+        noneWaitItems.erase(std::remove_if(noneWaitItems.begin(),
+                                           noneWaitItems.end(),
+                                           [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
+        { return itm.uniqueId == uniqueId; }),
+                            noneWaitItems.end());
+
+        waitItems.erase(std::remove_if(waitItems.begin(),
+                                           waitItems.end(),
+                                           [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
+        { return itm.uniqueId == uniqueId; }),
+                            waitItems.end());
+
+        callback();
+    }
 };
