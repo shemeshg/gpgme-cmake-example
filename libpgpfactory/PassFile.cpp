@@ -44,13 +44,13 @@ void PassFile::encrypt(std::string s, std::vector<std::string> encryptTo)
     g->encryptSign(din, dout, encryptTo, true);
 }
 
-void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd)
+void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder)
 {
     try
     {
         std::filesystem::path p = fullPath;
         p = p.replace_extension();
-        WatchWaitAndNoneWaitRunCmdItem wi = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath, p.filename(), "/Volumes/RAM_Disk_4G/tmp");
+        WatchWaitAndNoneWaitRunCmdItem wi = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath, p.filename(), tmpFolder);
 
         wi.init();
         PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{wi.getFullFilePath(), TO_FILENAME};
@@ -71,22 +71,22 @@ void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, Watch
     }
 }
 
-void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd)
+void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder)
 {
-    if (!std::filesystem::exists("/Volumes/RAM_Disk_4G/tmp"))
+    if (!std::filesystem::exists(tmpFolder))
     {
         std::throw_with_nested(std::runtime_error("tmp folder not found"));
     }
     std::thread([=]()
                 {
         PassFile threadassfile{fullPath,g};
-        return threadassfile.openExternalEncryptWait(encryptTo, watchWaitAndNoneWaitRunCmd); })
+        return threadassfile.openExternalEncryptWait(encryptTo, watchWaitAndNoneWaitRunCmd,tmpFolder); })
         .detach();
 }
 
-std::string PassFile::openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd)
+std::string PassFile::openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder)
 {
-    if (!std::filesystem::exists("/Volumes/RAM_Disk_4G/tmp"))
+    if (!std::filesystem::exists(tmpFolder))
     {
         std::throw_with_nested(std::runtime_error("tmp folder not found"));
     }
@@ -94,7 +94,7 @@ std::string PassFile::openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watc
     {
         std::filesystem::path p = fullPath;
         p = p.replace_extension();
-        WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithOutWait(fullPath, p.filename(), "/Volumes/RAM_Disk_4G/tmp");
+        WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithOutWait(fullPath, p.filename(), tmpFolder);
         wi->init();
         PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{wi->getFullFilePath(), TO_FILENAME};
 
