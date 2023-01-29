@@ -22,6 +22,18 @@ public:
     return fullPath;
   }
 
+  std::string const getFullPathFolder()
+  {
+      if (std::filesystem::is_directory(fullPath))
+      {
+        return fullPath;
+
+      }
+      std::filesystem::path f{fullPath};
+      return f.parent_path();
+
+  }
+
   std::string getDecryptedSignedBy();
 
   void encrypt(std::string s, std::vector<std::string> encryptTo);
