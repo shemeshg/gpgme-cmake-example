@@ -45,6 +45,7 @@ public:
   void closeExternalEncryptNoWait(std::vector<std::string> encryptTo,
           WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd);
 
+  void encryptStringToFile(std::string s, std::string toFileName, std::vector<std::string> encryptTo);
 private:
   std::string fullPath, decrypted;
   std::vector<std::string> decryptedSignedBy = {};  

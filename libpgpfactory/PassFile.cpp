@@ -44,6 +44,13 @@ void PassFile::encrypt(std::string s, std::vector<std::string> encryptTo)
     g->encryptSign(din, dout, encryptTo, true);
 }
 
+void PassFile::encryptStringToFile(std::string s, std::string toFileName, std::vector<std::string> encryptTo)
+{
+    decrypted = s;
+    PgpmeDataRII din{s, FROM_STRING}, dout{toFileName, TO_FILENAME};
+    g->encryptSign(din, dout, encryptTo, true);
+}
+
 void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder)
 {
     try
@@ -59,10 +66,12 @@ void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, Watch
         din.closeFiles();
         dout.closeFiles();
 
-        watchWaitAndNoneWaitRunCmd->runWithWait(wi);
+        std::string ggg=wi.getFullFilePath();
+        wi.runWithWait();
         PgpmeDataRII ein{wi.getFullFilePath(), FROM_FILENAME};
         PgpmeDataRII eout{fullPath, TO_FILENAME};
         g->encryptSign(ein, eout, encryptTo, true);
+        watchWaitAndNoneWaitRunCmd->runWithWaitClear(wi);
     }
     catch (const std::exception &e)
     {
@@ -119,5 +128,6 @@ void PassFile::closeExternalEncryptNoWait(std::vector<std::string> encryptTo,
     PgpmeDataRII ein{wi->getFullFilePath(), FROM_FILENAME};
     PgpmeDataRII eout{fullPath, TO_FILENAME};
     g->encryptSign(ein, eout, encryptTo, true);
+
     watchWaitAndNoneWaitRunCmd->closeWithoutWaitItem(fullPath);
 }

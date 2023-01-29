@@ -20,9 +20,8 @@ public:
         return waitItems.back();
     }
 
-    void runWithWait(WatchWaitAndNoneWaitRunCmdItem &i)
+    void runWithWaitClear(WatchWaitAndNoneWaitRunCmdItem &i)
     {
-        i.runWithWait();
         std::lock_guard<std::mutex> guard(g_pages_mutex);
         waitItems.erase(std::remove_if(waitItems.begin(),
                                        waitItems.end(),
