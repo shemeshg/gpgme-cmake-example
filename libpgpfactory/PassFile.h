@@ -46,6 +46,8 @@ public:
           WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd);
 
   void encryptStringToFile(std::string s, std::string toFileName, std::vector<std::string> encryptTo);
+  void encryptFileToFile(std::string fromFileName, std::string toFileName, std::vector<std::string> encryptTo);
+  void decryptToFile(std::string toFileName);
 private:
   std::string fullPath, decrypted;
   std::vector<std::string> decryptedSignedBy = {};  

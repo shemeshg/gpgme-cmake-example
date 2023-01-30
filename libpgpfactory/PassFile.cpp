@@ -51,6 +51,19 @@ void PassFile::encryptStringToFile(std::string s, std::string toFileName, std::v
     g->encryptSign(din, dout, encryptTo, true);
 }
 
+void PassFile::encryptFileToFile(std::string fromFileName, std::string toFileName, std::vector<std::string> encryptTo)
+{
+    PgpmeDataRII din{fromFileName, FROM_FILENAME}, dout{toFileName, TO_FILENAME};
+    g->encryptSign(din, dout, encryptTo, true);
+}
+
+void PassFile::decryptToFile(std::string toFileName)
+{
+    PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{toFileName, TO_FILENAME};
+    g->decryptValidate(din, dout, false);
+}
+
+
 void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder)
 {
     try
