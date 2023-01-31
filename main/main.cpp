@@ -3,6 +3,7 @@
 #include "libpasshelper.h"
 #include "GpgIdManage.h"
 #include "RunShellCmd.h"
+#include "FileSearch.h"
 
 /*
 void testLibrary(){
@@ -41,12 +42,15 @@ void testEditFile(){
 
 int main(int, char **)
 {
+    
     PassHelper ph{};
     GpgIdManage gpgIdManage{};
     gpgIdManage.init("/Users/osx/.password-store/develop/koko/readme.gpg",
                     "/Users/osx/.password-store",&ph);
-    testEditFile();
+    //testEditFile();
 
+    FileSearch fsh;
+    fsh.searchDown("/Users/osx/.password-store",".*ME.*","");
 
 
 

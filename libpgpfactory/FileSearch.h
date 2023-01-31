@@ -2,6 +2,7 @@
 #include <string>
 #include <filesystem>
 #include <iostream>
+#include <regex>
 
 class FileSearch
 {
@@ -15,6 +16,37 @@ public:
 
   ~FileSearch(){};
 
+  void searchDown(std::string FolderToSearch, std::string fileRegExStr, std::string contentRegExStr)
+  {
+    const std::regex fileRegEx(fileRegExStr,std::regex_constants::icase);
+    const std::regex contentRegEx(contentRegExStr,std::regex_constants::icase);
+
+    try
+    {
+      for (std::filesystem::recursive_directory_iterator it(FolderToSearch); it != end(it); ++it)
+      {
+        auto entry = *it;
+        if (entry.is_directory() && isHidden(entry))
+        {
+          it.disable_recursion_pending();
+          continue;
+        }
+
+        if (entry.is_regular_file() && !isHidden(entry))
+        {
+          std::string path{entry.path()};
+          if (std::regex_match(path, fileRegEx))
+          {
+            std::cout << "File found: " << entry.path() << std::endl;
+          }
+        }
+      }
+    }
+    catch (std::filesystem::filesystem_error &fe)
+    {
+    }
+  }
+
   std::string searchUp(std::string fileOrFolderToSearch, std::string currentPath, std::string sstopPath)
   {
     std::filesystem::path pathToDisplay(currentPath);
@@ -22,18 +54,21 @@ public:
 
     if (!std::filesystem::is_directory(pathToDisplay))
     {
-      pathToDisplay = pathToDisplay.parent_path();      
+      pathToDisplay = pathToDisplay.parent_path();
     }
 
-  bool alreadyCheckStopPath = false;
-   while (!alreadyCheckStopPath){
-        if (std::filesystem::exists(pathToDisplay.c_str() + std::string("/")+fileOrFolderToSearch)){
-          return pathToDisplay;
-        }
-        if ( (pathToDisplay == sstopPath) || (pathToDisplay == pathToDisplay.parent_path())){
-          alreadyCheckStopPath = true;
-        }
-        pathToDisplay = pathToDisplay.parent_path();
+    bool alreadyCheckStopPath = false;
+    while (!alreadyCheckStopPath)
+    {
+      if (std::filesystem::exists(pathToDisplay.c_str() + std::string("/") + fileOrFolderToSearch))
+      {
+        return pathToDisplay;
+      }
+      if ((pathToDisplay == sstopPath) || (pathToDisplay == pathToDisplay.parent_path()))
+      {
+        alreadyCheckStopPath = true;
+      }
+      pathToDisplay = pathToDisplay.parent_path();
     };
 
     return "";
@@ -42,4 +77,16 @@ public:
   // hygen public
 private:
   // hygen private
+
+  bool isHidden(const std::filesystem::path &p)
+  {
+    std::string name = p.filename();
+    if (name != ".." &&
+        name != "." &&
+        name[0] == '.')
+    {
+      return true;
+    }
+    return false;
+  }
 };
