@@ -50,7 +50,7 @@ int main(int, char **)
     //testEditFile();
 
 
-    ph.searchDown("/Users/osx/.password-store",".*ME.*",".*hebrew.*");
+    //ph.searchDown("/Users/osx/.password-store",".*ME.*",".*hebrew.*");
 
 
 

@@ -20,7 +20,8 @@ public:
   void searchDown(std::string FolderToSearch, 
                 std::string fileRegExStr, 
                 std::string contentRegExStr,
-                 std::function<bool(std::string s)> contentSearch
+                 std::function<bool(std::string s)> contentSearch,
+                 std::function<void(std::string s)> callback
                 )
   {
     const std::regex fileRegEx(fileRegExStr,std::regex_constants::icase);
@@ -42,7 +43,7 @@ public:
           std::string path{entry.path()};
           if (std::regex_match(path, fileRegEx) && contentSearch(entry.path()))
           {
-            std::cout << "File found: " << entry.path() << std::endl;
+            callback(entry.path());            
           }
         }
       }

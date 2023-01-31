@@ -53,7 +53,8 @@ public:
 
   void searchDown(std::string FolderToSearch,
                   std::string fileRegExStr,
-                  std::string contentRegExStr)
+                  std::string contentRegExStr,
+                  std::function<void(std::string s)> callback)
   {
     PassFile pf = PassFile("", &g);
     fileSearch.searchDown(FolderToSearch, fileRegExStr, contentRegExStr,
@@ -79,7 +80,8 @@ public:
                 bool a = std::regex_match(content, contentRegEx);
 
                 return a ;
-              });
+              },
+              callback);
   }
 
   std::vector<GpgKeys> listKeys(std::string pattern)
