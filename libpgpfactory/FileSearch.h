@@ -4,6 +4,7 @@
 #include <iostream>
 #include <regex>
 
+
 class FileSearch
 {
 public:
@@ -16,10 +17,14 @@ public:
 
   ~FileSearch(){};
 
-  void searchDown(std::string FolderToSearch, std::string fileRegExStr, std::string contentRegExStr)
+  void searchDown(std::string FolderToSearch, 
+                std::string fileRegExStr, 
+                std::string contentRegExStr,
+                 std::function<bool(std::string s)> contentSearch
+                )
   {
     const std::regex fileRegEx(fileRegExStr,std::regex_constants::icase);
-    const std::regex contentRegEx(contentRegExStr,std::regex_constants::icase);
+    
 
     try
     {
@@ -35,7 +40,7 @@ public:
         if (entry.is_regular_file() && !isHidden(entry))
         {
           std::string path{entry.path()};
-          if (std::regex_match(path, fileRegEx))
+          if (std::regex_match(path, fileRegEx) && contentSearch(entry.path()))
           {
             std::cout << "File found: " << entry.path() << std::endl;
           }

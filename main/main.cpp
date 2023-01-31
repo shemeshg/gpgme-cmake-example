@@ -49,8 +49,8 @@ int main(int, char **)
                     "/Users/osx/.password-store",&ph);
     //testEditFile();
 
-    FileSearch fsh;
-    fsh.searchDown("/Users/osx/.password-store",".*ME.*","");
+
+    ph.searchDown("/Users/osx/.password-store",".*ME.*",".*hebrew.*");
 
 
 

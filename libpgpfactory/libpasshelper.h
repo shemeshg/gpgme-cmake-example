@@ -11,7 +11,6 @@
 #include "RunShellCmd.h"
 #include "PassFile.h"
 
-
 class PassHelper
 {
 public:
@@ -52,6 +51,37 @@ public:
     return fileSearch.searchUp(".gpg-id", currentPath, stopPath);
   }
 
+  void searchDown(std::string FolderToSearch,
+                  std::string fileRegExStr,
+                  std::string contentRegExStr)
+  {
+    PassFile pf = PassFile("", &g);
+    fileSearch.searchDown(FolderToSearch, fileRegExStr, contentRegExStr,
+              [&](std::string path)
+              {
+                if (contentRegExStr == ".*.*"){return true;}
+                pf.setFullPath(path);                
+                
+                if (!pf.isGpgFile())
+                {
+                  return false;
+                }
+                pf.decrypt();
+                
+                std::string content = pf.getDecrypted();
+                const std::regex contentRegEx(contentRegExStr, std::regex_constants::icase);
+
+                
+                content = std::regex_replace( content,
+                                    std::regex("\\r\\n|\\r|\\n"),
+                                    "");
+
+                bool a = std::regex_match(content, contentRegEx);
+
+                return a ;
+              });
+  }
+
   std::vector<GpgKeys> listKeys(std::string pattern)
   {
     return g.listKeys(pattern);
@@ -60,5 +90,5 @@ public:
   void reEncryptFile(std::string pathFileToReEncrypt, std::vector<std::string> encryptTo);
 
 private:
-  FileSearch fileSearch{};  
+  FileSearch fileSearch{};
 };
