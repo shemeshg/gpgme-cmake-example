@@ -49,7 +49,7 @@ public:
   void encryptFileToFile(std::string fromFileName, std::string toFileName, std::vector<std::string> encryptTo);
   void decryptToFile(std::string toFileName);
 
-  void setFullPath(std::string &s){
+  void setFullPath(std::string s){
     fullPath = s;
   }
 private:
