@@ -1,7 +1,21 @@
 include(FeatureSummary)
 
 
-find_package(Gpgmepp CONFIG REQUIRED) 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(MACOSX TRUE)
+endif()
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif()
+if(WIN32 OR MSVC OR MSYS OR MINGW)
+    set(WINDOWS TRUE)
+endif()
+
+
+find_package(Gpgmepp CONFIG REQUIRED)
+
+
+
 
 include_directories(${GPGMEAPP_INCLUDES})
 
@@ -35,7 +49,13 @@ add_library(libpgpfactory STATIC
     ${libpgpfactory_SRCS}
 )
 
-target_link_libraries(libpgpfactory Gpgmepp  ${LibGpgError_LIBRARIES})
+
+target_link_libraries(libpgpfactory  Gpgmepp  ${LibGpgError_LIBRARIES})
+
+
+
+
+
 
 # Specify here the include directories exported
 # by this library

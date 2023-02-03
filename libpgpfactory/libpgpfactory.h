@@ -5,6 +5,8 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <memory>
+#include <functional>
 
 void failIfErr(gpgme_error_t &err);
 

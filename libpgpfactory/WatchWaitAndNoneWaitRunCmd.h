@@ -1,4 +1,5 @@
 #include "WatchWaitAndNoneWaitRunCmdItem.h"
+#include <algorithm>
 
 class WatchWaitAndNoneWaitRunCmd
 {
