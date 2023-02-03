@@ -8,9 +8,12 @@ class WatchWaitAndNoneWaitRunCmdItem
 public:
   WatchWaitAndNoneWaitRunCmdItem(std::string uniqueId, 
                 std::string fileName, 
-                std::string tmpFolder) : uniqueId{uniqueId}, fileName{fileName}, tmpFolder{tmpFolder}
+                std::string tmpFolder,
+                std::string vscodePath) : uniqueId{uniqueId}, fileName{fileName}, tmpFolder{tmpFolder}, vscodePath{vscodePath}
   {
   }
+
+  std::string uniqueId, fileName, tmpFolder, vscodePath;
 
   void init(){
     tfe.init(fileName, tmpFolder);
@@ -18,14 +21,14 @@ public:
 
   void runWithWait()
   {    
-    auto a = rsc.runCmd({"/usr/local/bin/code", "--wait", tfe.getFullFilePath()});
+    auto a = rsc.runCmd({vscodePath, "--wait", tfe.getFullFilePath()});
   }
 
   void runWithoutWait()
   {
-    auto a = rsc.runCmd({"/usr/local/bin/code", tfe.getFullFilePath()});
+    auto a = rsc.runCmd({vscodePath, tfe.getFullFilePath()});
   }
-  std::string uniqueId, fileName, tmpFolder;
+  
 
   std::filesystem::path getFullFilePath()
   {
@@ -39,6 +42,5 @@ public:
 
 private:
   RunShellCmd rsc{};
-  TmpFileWacher tfe{};
-  
+  TmpFileWacher tfe{};  
 };

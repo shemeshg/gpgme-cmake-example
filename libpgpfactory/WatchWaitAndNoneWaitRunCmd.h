@@ -10,11 +10,11 @@ public:
 
     std::mutex g_pages_mutex;
 
-    WatchWaitAndNoneWaitRunCmdItem &addWithWait(std::string uniqueId, std::string fileName, std::string tmpFolder)
+    WatchWaitAndNoneWaitRunCmdItem &addWithWait(std::string uniqueId, std::string fileName, std::string tmpFolder,std::string  vscodePath)
     {
 
         std::lock_guard<std::mutex> guard(g_pages_mutex);
-        WatchWaitAndNoneWaitRunCmdItem i{uniqueId, fileName, tmpFolder};
+        WatchWaitAndNoneWaitRunCmdItem i{uniqueId, fileName, tmpFolder, vscodePath};
         waitItems.push_back(i);
         callback();
         return waitItems.back();
@@ -31,10 +31,10 @@ public:
         callback();
     }
 
-    WatchWaitAndNoneWaitRunCmdItem *addWithOutWait(std::string uniqueId, std::string fileName, std::string tmpFolder)
+    WatchWaitAndNoneWaitRunCmdItem *addWithOutWait(std::string uniqueId, std::string fileName, std::string tmpFolder,std::string  vscodePath)
     {
         std::lock_guard<std::mutex> guard(g_pages_mutex);
-        WatchWaitAndNoneWaitRunCmdItem i{uniqueId, fileName, tmpFolder};
+        WatchWaitAndNoneWaitRunCmdItem i{uniqueId, fileName, tmpFolder, vscodePath};
         noneWaitItems.push_back(i);
         callback();
 

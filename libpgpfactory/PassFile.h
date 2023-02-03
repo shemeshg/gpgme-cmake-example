@@ -38,10 +38,10 @@ public:
 
   void encrypt(std::string s, std::vector<std::string> encryptTo);
 
-  void openExternalEncryptWait(std::vector<std::string> encryptTo,  WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder);
-  void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder);
+  void openExternalEncryptWait(std::vector<std::string> encryptTo,  WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder, std::string  vscodePath);
+  void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder, std::string  vscodePath);
 
-  std::string openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder);
+  std::string openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder, std::string  vscodePath);
   void closeExternalEncryptNoWait(std::vector<std::string> encryptTo,
           WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd);
 
