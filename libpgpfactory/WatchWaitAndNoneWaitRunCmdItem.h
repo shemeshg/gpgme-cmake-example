@@ -6,7 +6,9 @@
 class WatchWaitAndNoneWaitRunCmdItem
 {
 public:
-  WatchWaitAndNoneWaitRunCmdItem(std::string uniqueId, std::string fileName, std::string tmpFolder) : uniqueId{uniqueId}, fileName{fileName}, tmpFolder{tmpFolder}
+  WatchWaitAndNoneWaitRunCmdItem(std::string uniqueId, 
+                std::string fileName, 
+                std::string tmpFolder) : uniqueId{uniqueId}, fileName{fileName}, tmpFolder{tmpFolder}
   {
   }
 
@@ -38,4 +40,5 @@ public:
 private:
   RunShellCmd rsc{};
   TmpFileWacher tfe{};
+  
 };
