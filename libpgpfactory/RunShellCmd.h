@@ -10,6 +10,8 @@
 #include <future>
 #include <filesystem>
 
+
+
 #include "uuid.h"
 
 class RunShellCmd
@@ -23,7 +25,7 @@ public:
     return result;
   }
 
-  std::string runCmd(std::vector<std::string> cmd)
+  std::string runCmd(std::vector<std::string> cmd,std::string noEscape = "")
   {
     std::string escapedString{};
     for (std::string s : cmd)
@@ -31,7 +33,7 @@ public:
       escapedString = escapedString + escapeshellarg(s) + " ";
     }
 
-    return exec(escapedString.c_str());
+    return exec( (escapedString + noEscape).c_str());
   }
 
 private:
@@ -54,19 +56,20 @@ private:
     return ret;
   }
 
-  std::string exec(const char *cmd)
-  {
-    std::array<char, 128> buffer;
-    std::string result;
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-    if (!pipe)
-    {
-      std::throw_with_nested( std::runtime_error("popen() failed!"));
-    }
-    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
-    {
-      result += buffer.data();
-    }
+   std::string exec(const char *cmd)
+     {
+      std::array<char, 128> buffer;
+      std::string result;
+      std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+      if (!pipe)
+      {
+        std::throw_with_nested( std::runtime_error("popen() failed!"));
+      }
+      while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+      {
+        result += buffer.data();
+      }
+
     return result;
   }
 };
