@@ -56,4 +56,5 @@ private:
   std::string fullPath, decrypted;
   std::vector<std::string> decryptedSignedBy = {};  
   GpgFactory *g;
+  void dectyptFileNameToFileName(std::string fromPath, std::string toPath);
 };

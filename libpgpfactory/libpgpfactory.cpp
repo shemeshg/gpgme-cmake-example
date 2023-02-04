@@ -68,7 +68,9 @@ void PgpmeDataRII::closeFiles()
 {
     if (oBuffFileIsOpened)
     {
+
         fclose(oBuffFile);
+
     }
     if (iBuffFileIsOpened)
     {

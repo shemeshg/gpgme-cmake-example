@@ -63,6 +63,12 @@ void PassFile::decryptToFile(std::string toFileName)
     g->decryptValidate(din, dout, false);
 }
 
+void PassFile::dectyptFileNameToFileName(std::string fromPath, std::string toPath){
+    PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{toPath, TO_FILENAME};
+
+    g->decryptValidate(din, dout, false);
+}
+
 
 void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                        std::string tmpFolder,std::string  vscodePath)
@@ -74,11 +80,7 @@ void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, Watch
         WatchWaitAndNoneWaitRunCmdItem wi = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath, p.filename(), tmpFolder, vscodePath);
 
         wi.init();
-        PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{wi.getFullFilePath(), TO_FILENAME};
-
-        g->decryptValidate(din, dout, false);
-        din.closeFiles();
-        dout.closeFiles();
+        dectyptFileNameToFileName(fullPath, wi.getFullFilePath());
 
         std::string ggg=wi.getFullFilePath();
         wi.runWithWait();
@@ -123,8 +125,6 @@ std::string PassFile::openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watc
         PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{wi->getFullFilePath(), TO_FILENAME};
 
         g->decryptValidate(din, dout, false);
-        din.closeFiles();
-        dout.closeFiles();
 
         return wi->getSubfolderPath();
     }
