@@ -41,7 +41,8 @@ public:
         if (entry.is_regular_file() && !isHidden(entry))
         {
           std::string path{entry.path()};
-          if (std::regex_match(path, fileRegEx) && contentSearch(entry.path()))
+          std::string relativePath{std::filesystem::relative(entry.path(),FolderToSearch).generic_string() };
+          if (std::regex_match(relativePath, fileRegEx) && contentSearch(entry.path()))
           {
             callback(entry.path());            
           }
