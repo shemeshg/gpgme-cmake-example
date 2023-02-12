@@ -25,6 +25,10 @@ public:
 
   void init(std::string _currentPath, std::string _stopPath, PassHelper *_ph);
 
+  void reInit(){
+      init(currentPath,stopPath,ph);
+  }
+
   void importPublicKeyAndTrust(const std::string &filePath);
 
   void ensureValidGpgIdFile();
