@@ -102,7 +102,7 @@ public:
 
   void setCtxSigners(std::vector<std::string> signedBy);
 
-  std::vector<GpgKeys> listKeys(const std::string pattern = "");
+  std::vector<GpgKeys> listKeys(const std::string pattern = "",bool secret_only=false);
 
   void setArmor(bool t);
 

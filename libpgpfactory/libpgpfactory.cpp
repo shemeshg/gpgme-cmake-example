@@ -328,13 +328,13 @@ void GpgFactory::setCtxSigners(std::vector<std::string> signedBy)
     }
 }
 
-std::vector<GpgKeys> GpgFactory::listKeys(const std::string pattern)
+std::vector<GpgKeys> GpgFactory::listKeys(const std::string pattern, bool secret_only)
 {
     std::vector<GpgKeys> retKeys = {};
 
     checkCtxInitialized();
     gpgme_key_t key = nullptr;
-    gpgme_error_t err = gpgme_op_keylist_start(ctx, pattern.c_str(), 0);
+    gpgme_error_t err = gpgme_op_keylist_start(ctx, pattern.c_str(), secret_only);
     while (!err)
     {
         err = gpgme_op_keylist_next(ctx, &key);

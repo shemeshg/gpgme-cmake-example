@@ -84,9 +84,9 @@ public:
               callback);
   }
 
-  std::vector<GpgKeys> listKeys(std::string pattern)
+  std::vector<GpgKeys> listKeys(std::string pattern,bool secret_only=false)
   {
-    return g.listKeys(pattern);
+    return g.listKeys(pattern, secret_only);
   }
 
   void reEncryptFile(std::string pathFileToReEncrypt, std::vector<std::string> encryptTo);

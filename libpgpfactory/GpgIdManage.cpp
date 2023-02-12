@@ -9,9 +9,11 @@ void GpgIdManage::init(std::string _currentPath, std::string _stopPath, PassHelp
     keysFoundInGpgIdFile.clear();
     KeysNotFoundInGpgIdFile.clear();
     allKeys.clear();
+    allPrivateKeys.clear();
     encryptTo.clear();
 
     allKeys = ph->listKeys("");
+    allPrivateKeys = ph->listKeys("", true);
     nearestGpgIdFolder = ph->getNearestGpgId(currentPath, stopPath);
     gpgPubKeysFolder = nearestGpgIdFolder + "/.gpg-pub-keys";
     nearestGpgIdFile = nearestGpgIdFolder + "/.gpg-id";

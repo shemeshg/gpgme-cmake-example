@@ -21,6 +21,7 @@ public:
   std::vector<std::string> KeysNotFoundInGpgIdFile{};
   std::vector<GpgKeys> keysFoundInGpgIdFile{};
   std::vector<GpgKeys> allKeys;
+  std::vector<GpgKeys> allPrivateKeys;
   std::vector<std::string> encryptTo{};
 
   void init(std::string _currentPath, std::string _stopPath, PassHelper *_ph);
