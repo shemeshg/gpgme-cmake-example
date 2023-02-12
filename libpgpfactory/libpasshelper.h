@@ -21,6 +21,10 @@ public:
 
   GpgFactory g{};
 
+  void setCtxSigner(std::vector<std::string> signedBy){
+      g.setCtxSigners(signedBy);
+  }
+
   std::unique_ptr<PassFile> getPassFile(std::string fullPath)
   {
     return std::make_unique<PassFile>(fullPath, &g);
