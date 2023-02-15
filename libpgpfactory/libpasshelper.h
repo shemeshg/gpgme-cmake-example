@@ -55,6 +55,25 @@ public:
     return fileSearch.searchUp(".gpg-id", currentPath, stopPath);
   }
 
+  void decryptFolderToFolder(std::string folderFrom, std::string folderTo){
+    PassFile pf = PassFile("", &g);
+        fileSearch.searchDown(folderFrom, ".*.*", ".*.*",
+              [&](std::string path)
+              {
+                return true;
+              },[&](std::string path)
+              {
+                std::filesystem::path toPath = std::filesystem::path(folderTo) / 
+                          std::filesystem::relative(path,folderFrom);
+                
+                std::filesystem::create_directories(toPath.parent_path() );
+                pf.setFullPath(path);
+                pf.decryptToFile(toPath.replace_extension());
+                std::cout << path<<" \n to" << toPath.parent_path() <<"\n";
+                return true;
+              });
+  }
+
   void searchDown(std::string FolderToSearch,
                   std::string fileRegExStr,
                   std::string contentRegExStr,

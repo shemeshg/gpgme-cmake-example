@@ -30,7 +30,7 @@ void testLibrary(){
     g.decryptValidate(din,dout,false);
     dout.PrintStdout();
 }
-*/
+
 
 void testEditFile(){
     WatchWaitAndNoneWaitRunCmd c;
@@ -38,15 +38,16 @@ void testEditFile(){
     getchar();
     c.closeWithoutWaitItem("unique identifier");
 }
-
+*/
 
 int main(int, char **)
 {
     
     PassHelper ph{};
-    GpgIdManage gpgIdManage{};
-    gpgIdManage.init("/Users/osx/.password-store/develop/koko/readme.gpg",
-                    "/Users/osx/.password-store",&ph);
+    ph.decryptFolderToFolder("/Volumes/FAST/password-store","/Volumes/RAM_Disk_4G/tmp");
+    //GpgIdManage gpgIdManage{};
+    //gpgIdManage.init("/Users/osx/.password-store/develop/koko/readme.gpg",
+    //                "/Users/osx/.password-store",&ph);
     //testEditFile();
 
 
