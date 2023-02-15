@@ -21,8 +21,9 @@ public:
 
   GpgFactory g{};
 
-  void setCtxSigner(std::vector<std::string> signedBy){
-      g.setCtxSigners(signedBy);
+  void setCtxSigner(std::vector<std::string> signedBy)
+  {
+    g.setCtxSigners(signedBy);
   }
 
   std::unique_ptr<PassFile> getPassFile(std::string fullPath)
@@ -55,23 +56,51 @@ public:
     return fileSearch.searchUp(".gpg-id", currentPath, stopPath);
   }
 
-  void decryptFolderToFolder(std::string folderFrom, std::string folderTo){
+
+  void encryptFolderToFolder(std::string folderFrom, std::string folderTo, std::vector<std::string> encryptTo)
+  {
     PassFile pf = PassFile("", &g);
-        fileSearch.searchDown(folderFrom, ".*.*", ".*.*",
-              [&](std::string path)
-              {
-                return true;
-              },[&](std::string path)
-              {
-                std::filesystem::path toPath = std::filesystem::path(folderTo) / 
-                          std::filesystem::relative(path,folderFrom);
-                
-                std::filesystem::create_directories(toPath.parent_path() );
-                pf.setFullPath(path);
-                pf.decryptToFile(toPath.replace_extension());
-                std::cout << path<<" \n to" << toPath.parent_path() <<"\n";
-                return true;
-              });
+    fileSearch.searchDown(
+        folderFrom, ".*.*", ".*.*",
+        [&](std::string path)
+        {
+          return true;
+        },
+        [&](std::string path)
+        {
+          std::filesystem::path toPath = std::filesystem::path(folderTo) /
+                                         std::filesystem::relative(path, folderFrom);
+
+          std::filesystem::create_directories(toPath.parent_path());
+          pf.encryptFileToFile(path, toPath.generic_string() + ".gpg",encryptTo);
+          
+          return true;
+        });
+  }
+
+
+
+
+  void decryptFolderToFolder(std::string folderFrom, std::string folderTo)
+  {
+    PassFile pf = PassFile("", &g);
+    fileSearch.searchDown(
+        folderFrom, ".*.*", ".*.*",
+        [&](std::string path)
+        {
+          return true;
+        },
+        [&](std::string path)
+        {
+          std::filesystem::path toPath = std::filesystem::path(folderTo) /
+                                         std::filesystem::relative(path, folderFrom);
+
+          std::filesystem::create_directories(toPath.parent_path());
+          pf.setFullPath(path);
+          pf.decryptToFile(toPath.replace_extension());
+          std::cout << path << " \n to" << toPath.parent_path() << "\n";
+          return true;
+        });
   }
 
   void searchDown(std::string FolderToSearch,
@@ -80,34 +109,37 @@ public:
                   std::function<void(std::string s)> callback)
   {
     PassFile pf = PassFile("", &g);
-    fileSearch.searchDown(FolderToSearch, fileRegExStr, contentRegExStr,
-              [&](std::string path)
-              {
-                if (contentRegExStr == ".*.*"){return true;}
-                pf.setFullPath(path);                
-                
-                if (!pf.isGpgFile())
-                {
-                  return false;
-                }
-                pf.decrypt();
-                
-                std::string content = pf.getDecrypted();
-                const std::regex contentRegEx(contentRegExStr, std::regex_constants::icase);
+    fileSearch.searchDown(
+        FolderToSearch, fileRegExStr, contentRegExStr,
+        [&](std::string path)
+        {
+          if (contentRegExStr == ".*.*")
+          {
+            return true;
+          }
+          pf.setFullPath(path);
 
-                
-                content = std::regex_replace( content,
-                                    std::regex("\\r\\n|\\r|\\n"),
-                                    "");
+          if (!pf.isGpgFile())
+          {
+            return false;
+          }
+          pf.decrypt();
 
-                bool a = std::regex_match(content, contentRegEx);
+          std::string content = pf.getDecrypted();
+          const std::regex contentRegEx(contentRegExStr, std::regex_constants::icase);
 
-                return a ;
-              },
-              callback);
+          content = std::regex_replace(content,
+                                       std::regex("\\r\\n|\\r|\\n"),
+                                       "");
+
+          bool a = std::regex_match(content, contentRegEx);
+
+          return a;
+        },
+        callback);
   }
 
-  std::vector<GpgKeys> listKeys(std::string pattern,bool secret_only=false)
+  std::vector<GpgKeys> listKeys(std::string pattern, bool secret_only = false)
   {
     return g.listKeys(pattern, secret_only);
   }

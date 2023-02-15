@@ -44,7 +44,7 @@ int main(int, char **)
 {
     
     PassHelper ph{};
-    ph.decryptFolderToFolder("/Volumes/FAST/password-store","/Volumes/RAM_Disk_4G/tmp");
+    //ph.decryptFolderToFolder("/Volumes/FAST/password-store","/Volumes/RAM_Disk_4G/tmp");
     //GpgIdManage gpgIdManage{};
     //gpgIdManage.init("/Users/osx/.password-store/develop/koko/readme.gpg",
     //                "/Users/osx/.password-store",&ph);
