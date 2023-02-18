@@ -1,4 +1,5 @@
 #include "GpgIdManage.h"
+#include <iterator>
 
 void GpgIdManage::init(std::string _currentPath, std::string _stopPath, PassHelper *_ph)
 {
