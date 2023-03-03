@@ -56,6 +56,10 @@ public:
     return fileSearch.searchUp(".gpg-id", currentPath, stopPath);
   }
 
+  std::string getNearestTemplateGpg(std::string currentPath, std::string stopPath)
+  {
+    return fileSearch.searchUp("template.gpg", currentPath, stopPath);
+  }
 
   void encryptFolderToFolder(std::string folderFrom, std::string folderTo, std::vector<std::string> encryptTo)
   {
