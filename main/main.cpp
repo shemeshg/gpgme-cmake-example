@@ -68,7 +68,7 @@ int main(int, char **)
 
 
 
-    for (auto r : ph.listKeys("4D0AB4528A227586"))
+    for (auto r : ph.listKeys(""))
     {
         std::cout << "we have " << r.getKeyStr() << "\n";
     }    
@@ -88,16 +88,15 @@ int main(int, char **)
     }
     std::cout << ph.getNearestGpgId("/Users/osx/.password-store/develop/koko", "/Users/osx/.password-store") << "\n";
     */
-    /*
-    PassHelper ph{};
+    
 
-    std::unique_ptr<PassFile> pf = ph.getPassFile("/Users/osx/.password-store/develop/boboadsf.gpg");
+    std::unique_ptr<PassFile> pf = ph.getPassFile("/Volumes/RAM_Disk_4G/courses.md.gpg");
 
     std::cout << "is gpg " << pf->isGpgFile() << " " <<  "\n";
     pf->decrypt();
     std::cout << pf->getDecrypted()<<" \n SIGNED BY \n"
     << pf->getDecryptedSignedBy();
-    */
+    
 
     /*
     std::cout <<ph.getNearestGit("",
