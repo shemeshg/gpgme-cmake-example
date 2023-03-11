@@ -90,10 +90,21 @@ int main(int, char **)
     */
     
 
-    std::unique_ptr<PassFile> pf = ph.getPassFile("/Volumes/RAM_Disk_4G/courses.md.gpg");
+
+    std::unique_ptr<PassFile> pf = ph.getPassFile("/Volumes/RAM_Disk_4G/courses.md.gpg");    
 
     std::cout << "is gpg " << pf->isGpgFile() << " " <<  "\n";
-    pf->decrypt();
+    try {
+           pf->decrypt();
+    } catch (...) {
+        std::cout <<"Failed once \n";
+    }
+    try {
+           pf->decrypt();
+    } catch (...) {
+        std::cout <<"Failed twice\n";
+    }    
+
     std::cout << pf->getDecrypted()<<" \n SIGNED BY \n"
     << pf->getDecryptedSignedBy();
     
