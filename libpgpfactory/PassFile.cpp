@@ -28,11 +28,11 @@ std::string &PassFile::getDecrypted()
 std::string PassFile::getDecryptedSignedBy()
 {
     std::ostringstream imploded;
-
+    auto vec=getPubIdDecryptedSignedBy();
     return decryptedSignedBy.empty() ? "" :                                          /* leave early if there are no items in the list */
                std::accumulate(                                                      /* otherwise, accumulate */
-                               ++decryptedSignedBy.begin(), decryptedSignedBy.end(), /* the range 2nd to after-last */
-                               *decryptedSignedBy.begin(),                           /* and start accumulating with the first item */
+                               ++vec.begin(), vec.end(), /* the range 2nd to after-last */
+                               *vec.begin(),                           /* and start accumulating with the first item */
                                [](auto &a, auto &b)
                                { return a + "," + b; });
 }
