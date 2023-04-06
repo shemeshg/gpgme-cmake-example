@@ -1,5 +1,8 @@
 #include <iostream>
-// #include "libpgpfactory.h"
+
+#include <pybind11/embed.h> // everything needed for embedding
+namespace py = pybind11;
+
 #include "libpasshelper.h"
 #include "GpgIdManage.h"
 #include "RunShellCmd.h"
@@ -40,15 +43,40 @@ void testEditFile(){
 }
 */
 
-int main(int, char **)
-{
-    
+
+class PassSimpleBal {
+public:
     PassHelper ph{};
-    for (auto r : ph.listKeys(""))
-    {
-        std::cout << "we have " << r.getKeyStr() << "\n";
-    }  
-        
+    void listKeys(std::string pattern="", bool secret_only=false){
+        for (auto r : ph.listKeys(pattern, secret_only))
+        {
+            std::cout << "we have " << r.getKeyStr() << "\n";
+        }  
+    }
+};
+
+PYBIND11_EMBEDDED_MODULE(pass_simple, m) {
+    py::class_<PassSimpleBal>(m, "PassSimpleBal")
+        .def("listKeys", &PassSimpleBal::listKeys,"list keys",
+             py::arg("pattern") = "", py::arg("secret_only") = false)
+        .def(py::init<>());            
+}
+
+int main(int, char **)
+{   
+    // https://pybind11.readthedocs.io/en/stable/advanced/embedding.html
+    py::scoped_interpreter guard{}; // start the interpreter and keep it alive
+    py::exec(R"(
+        import pass_simple
+        c=pass_simple.PassSimpleBal()
+        c.listKeys()
+    )");
+    for (std::string line; std::getline(std::cin, line);) {
+        py::exec(line);
+    }
+
+
+
     //ph.decryptFolderToFolder("/Volumes/FAST/password-store","/Volumes/RAM_Disk_4G/tmp");
     //GpgIdManage gpgIdManage{};
     //gpgIdManage.init("/Users/osx/.password-store/develop/koko/readme.gpg",
