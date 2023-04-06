@@ -44,6 +44,11 @@ int main(int, char **)
 {
     
     PassHelper ph{};
+    for (auto r : ph.listKeys(""))
+    {
+        std::cout << "we have " << r.getKeyStr() << "\n";
+    }  
+        
     //ph.decryptFolderToFolder("/Volumes/FAST/password-store","/Volumes/RAM_Disk_4G/tmp");
     //GpgIdManage gpgIdManage{};
     //gpgIdManage.init("/Users/osx/.password-store/develop/koko/readme.gpg",
@@ -65,13 +70,7 @@ int main(int, char **)
     //gpgIdManage.saveBackGpgIdFile();
     //gpgIdManage.exportGpgIdToGpgPubKeysFolder();    
     //gpgIdManage.reEncryptStoreFolder();
-
-
-
-    for (auto r : ph.listKeys(""))
-    {
-        std::cout << "we have " << r.getKeyStr() << "\n";
-    }    
+  
     /*
     GpgFactory g{};
     g.initPgpFactory();
@@ -90,7 +89,7 @@ int main(int, char **)
     */
     
 
-
+   /*
     std::unique_ptr<PassFile> pf = ph.getPassFile("/Volumes/RAM_Disk_4G/courses.md.gpg");    
 
     std::cout << "is gpg " << pf->isGpgFile() << " " <<  "\n";
@@ -108,6 +107,7 @@ int main(int, char **)
     std::cout << pf->getDecrypted()<<" \n SIGNED BY \n"
     << pf->getDecryptedSignedBy();
     
+    */
 
     /*
     std::cout <<ph.getNearestGit("",

@@ -10,8 +10,8 @@ void PassHelper::reEncryptFile(std::string pathFileToReEncrypt, std::vector<std:
     PgpmeDataRII ein{backupFile, FROM_FILENAME},
     emem{},
     eout{pathFileToReEncrypt, TO_FILENAME};
-    g.decryptValidate(ein, emem, false);
+    decryptValidate(ein, emem, false);
     emem.getString(); //get fseek to end of buffer
-    g.encryptSign(emem, eout, encryptTo, true);
+    encryptSign(emem, eout, encryptTo, true);
     std::filesystem::remove(backupFile);
 }
