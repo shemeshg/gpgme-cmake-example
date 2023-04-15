@@ -94,5 +94,6 @@
     "regex": "cpp",
     "forward_list": "cpp",
     "typeindex": "cpp"
-  }
+  },
+  "cmake.configureOnOpen": true
 }
