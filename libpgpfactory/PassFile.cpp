@@ -15,7 +15,7 @@ void PassFile::decrypt()
 {
     PgpmeDataRII din{fullPath, FROM_FILENAME},
         dout{};
-    g->decryptValidate(din, dout, false);
+    g->decryptValidate(din, dout, true);
     decrypted = dout.getString();
     decryptedSignedBy = dout.decryptedSignedBy;
 }

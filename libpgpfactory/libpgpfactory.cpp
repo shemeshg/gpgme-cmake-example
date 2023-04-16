@@ -245,7 +245,7 @@ void GpgFactory::decryptValidate(PgpmeDataRII &in, PgpmeDataRII &out, bool doVal
     if (doValidate)
     {
         gpgme_error_t err = gpgme_op_decrypt_verify(ctx, in.d, out.d);
-        failIfErr(err);
+        failIfErr(err);                
     }
     else
     {
@@ -259,11 +259,16 @@ void GpgFactory::decryptValidate(PgpmeDataRII &in, PgpmeDataRII &out, bool doVal
                                                   std::string(decrypt_result->unsupported_algorithm) + "\n"));
     }
 
-    gpgme_recipient_t recipient = decrypt_result->recipients;
-    while (recipient)
-    {
-        out.decryptedSignedBy.push_back(recipient->keyid);
-        recipient = recipient->next;
+    gpgme_verify_result_t vresult = gpgme_op_verify_result(ctx);
+
+    //gpgme_recipient_t recipient = decrypt_result->recipients;
+    if (doValidate) {
+        gpgme_signature_t signatures = vresult->signatures;
+        while (signatures)
+        {
+            out.decryptedSignedBy.push_back(signatures->fpr);
+            signatures = signatures->next;
+        }
     }
 }
 
