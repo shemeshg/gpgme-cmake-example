@@ -55,7 +55,7 @@ public:
                            std::vector<std::string> encryptTo);
     void decryptToFile(std::string toFileName);
 
-    void setFullPath(std::string s) { fullPath = s; }
+    void setFullPath(std::string s) { fullPath = s; decryptedSignedBy = {};}
 
 private:
     std::string fullPath, decrypted;
