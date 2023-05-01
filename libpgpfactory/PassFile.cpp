@@ -82,17 +82,17 @@ void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, Watch
     {
         std::filesystem::path p = fullPath;
         p = p.replace_extension();
-        WatchWaitAndNoneWaitRunCmdItem wi = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath, p.filename(), tmpFolder, vscodePath);
+        WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath, p.filename(), tmpFolder, vscodePath);
 
-        wi.init();
-        dectyptFileNameToFileName(fullPath, wi.getFullFilePath());
+        wi->init();
+        dectyptFileNameToFileName(fullPath, wi->getFullFilePath());
 
-        std::string ggg=wi.getFullFilePath();
-        wi.runWithWait();
-        PgpmeDataRII ein{wi.getFullFilePath(), FROM_FILENAME};
+        std::string ggg=wi->getFullFilePath();
+        wi->runWithWait();
+        PgpmeDataRII ein{wi->getFullFilePath(), FROM_FILENAME};
         PgpmeDataRII eout{fullPath, TO_FILENAME};
         g->encryptSign(ein, eout, encryptTo, true);
-        watchWaitAndNoneWaitRunCmd->runWithWaitClear(wi);
+        watchWaitAndNoneWaitRunCmd->runWithWaitClear(*wi);
     }
     catch (const std::exception &e)
     {

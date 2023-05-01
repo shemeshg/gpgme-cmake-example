@@ -4,79 +4,87 @@
 class WatchWaitAndNoneWaitRunCmd
 {
 public:
-    std::vector<WatchWaitAndNoneWaitRunCmdItem> waitItems{};
-    std::vector<WatchWaitAndNoneWaitRunCmdItem> noneWaitItems{};
+    std::vector<std::unique_ptr<WatchWaitAndNoneWaitRunCmdItem>> waitItems{};
+    std::vector<std::unique_ptr<WatchWaitAndNoneWaitRunCmdItem>> noneWaitItems{};
 
     std::function<void()> callback=[&](){};
 
     std::mutex g_pages_mutex;
 
-    WatchWaitAndNoneWaitRunCmdItem &addWithWait(std::string uniqueId, std::string fileName, std::string tmpFolder,std::string  vscodePath)
+    WatchWaitAndNoneWaitRunCmdItem *addWithWait(std::string uniqueId, std::string fileName, std::string tmpFolder,std::string  vscodePath)
     {
 
         std::lock_guard<std::mutex> guard(g_pages_mutex);
-        WatchWaitAndNoneWaitRunCmdItem i{uniqueId, fileName, tmpFolder, vscodePath};
-        waitItems.push_back(i);
+        waitItems.push_back(std::make_unique<WatchWaitAndNoneWaitRunCmdItem>(uniqueId, fileName, tmpFolder, vscodePath));
         callback();
-        return waitItems.back();
+        return waitItems.back().get();
     }
 
     void runWithWaitClear(WatchWaitAndNoneWaitRunCmdItem &i)
     {
         std::lock_guard<std::mutex> guard(g_pages_mutex);
-        waitItems.erase(std::remove_if(waitItems.begin(),
-                                       waitItems.end(),
-                                       [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
-        { return itm.uniqueId == i.uniqueId; }),
-                        waitItems.end());
+        for (auto it = waitItems.begin(); it != waitItems.end();)
+        {
+            if (it->get()->uniqueId == i.uniqueId)
+                it = waitItems.erase(it);
+            else
+                ++it;
+        }
         callback();
     }
 
     WatchWaitAndNoneWaitRunCmdItem *addWithOutWait(std::string uniqueId, std::string fileName, std::string tmpFolder,std::string  vscodePath)
     {
         std::lock_guard<std::mutex> guard(g_pages_mutex);
-        WatchWaitAndNoneWaitRunCmdItem i{uniqueId, fileName, tmpFolder, vscodePath};
-        noneWaitItems.push_back(i);
+        noneWaitItems.push_back(std::make_unique<WatchWaitAndNoneWaitRunCmdItem>(uniqueId, fileName, tmpFolder, vscodePath));
         callback();
 
-        return &noneWaitItems.back();
+        return noneWaitItems.back().get();
     }
 
     WatchWaitAndNoneWaitRunCmdItem *getNoneWaitItemsBuUiniqueId(std::string uniqueId){
-        auto it = find_if(noneWaitItems.begin(), noneWaitItems.end(),
-                          [&uniqueId](const WatchWaitAndNoneWaitRunCmdItem& obj) {return obj.uniqueId == uniqueId;});
-
-        // assume if (it != v.end()){
-        auto index = std::distance(noneWaitItems.begin(), it);
-        return &noneWaitItems.at(index);
+        for (auto it = noneWaitItems.begin(); it != noneWaitItems.end();)
+        {
+            if (it->get()->uniqueId == uniqueId){
+                return it->get();
+            }
+        }
+        return nullptr;
     }
 
 
     void closeWithoutWaitItem(std::string uniqueId)
     {
         std::lock_guard<std::mutex> guard(g_pages_mutex);
-        noneWaitItems.erase(std::remove_if(noneWaitItems.begin(),
-                                           noneWaitItems.end(),
-                                           [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
-        { return itm.uniqueId == uniqueId; }),
-                            noneWaitItems.end());
+        for (auto it = noneWaitItems.begin(); it != noneWaitItems.end();)
+        {
+            if (it->get()->uniqueId == uniqueId)
+                it = noneWaitItems.erase(it);
+            else
+                ++it;
+        }
+
         callback();
     }
 
     void clearWaitItemsAfterUnExpectedCrash(std::string uniqueId){
         std::cout<<" Clearing after crash"<<uniqueId;
         std::lock_guard<std::mutex> guard(g_pages_mutex);
-        noneWaitItems.erase(std::remove_if(noneWaitItems.begin(),
-                                           noneWaitItems.end(),
-                                           [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
-        { return itm.uniqueId == uniqueId; }),
-                            noneWaitItems.end());
+        for (auto it = noneWaitItems.begin(); it != noneWaitItems.end();)
+        {
+            if (it->get()->uniqueId == uniqueId)
+                it = noneWaitItems.erase(it);
+            else
+                ++it;
+        }
 
-        waitItems.erase(std::remove_if(waitItems.begin(),
-                                           waitItems.end(),
-                                           [&](const WatchWaitAndNoneWaitRunCmdItem itm) -> bool
-        { return itm.uniqueId == uniqueId; }),
-                            waitItems.end());
+        for (auto it = waitItems.begin(); it != waitItems.end();)
+        {
+            if (it->get()->uniqueId == uniqueId)
+                it = waitItems.erase(it);
+            else
+                ++it;
+        }
 
         callback();
     }
