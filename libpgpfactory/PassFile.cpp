@@ -112,7 +112,7 @@ void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, 
     std::thread([=]()
                 {
         std::unique_ptr<PassHelper> phLocal = std::make_unique<PassHelper>();
-                    std::unique_ptr<PassFile> pfLocal = phLocal->getPassFile(fullPath);
+        std::unique_ptr<PassFile> pfLocal = phLocal->getPassFile(fullPath);
 
         return pfLocal->openExternalEncryptWait(encryptTo, watchWaitAndNoneWaitRunCmd,tmpFolder, vscodePath); })
         .detach();
