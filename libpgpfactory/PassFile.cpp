@@ -1,5 +1,6 @@
 #include "PassFile.h"
 #include "WatchWaitAndNoneWaitRunCmdItem.h"
+#include "libpasshelper.h"
 
 PassFile::PassFile(std::string fullPath, GpgFactory *g) : fullPath{fullPath}, g{g}
 {
@@ -110,8 +111,10 @@ void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, 
     }
     std::thread([=]()
                 {
-        PassFile threadassfile{fullPath,g};
-        return threadassfile.openExternalEncryptWait(encryptTo, watchWaitAndNoneWaitRunCmd,tmpFolder, vscodePath); })
+        std::unique_ptr<PassHelper> phLocal = std::make_unique<PassHelper>();
+                    std::unique_ptr<PassFile> pfLocal = phLocal->getPassFile(fullPath);
+
+        return pfLocal->openExternalEncryptWait(encryptTo, watchWaitAndNoneWaitRunCmd,tmpFolder, vscodePath); })
         .detach();
 }
 
