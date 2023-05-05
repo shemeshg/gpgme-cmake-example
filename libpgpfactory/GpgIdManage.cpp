@@ -1,6 +1,26 @@
 #include "GpgIdManage.h"
 #include <iterator>
 
+// trim from start (in place)
+static inline void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+                return !std::isspace(ch);
+            }));
+}
+
+// trim from end (in place)
+static inline void rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+                return !std::isspace(ch);
+            }).base(), s.end());
+}
+
+// trim from both ends (in place)
+static inline void trim(std::string &s) {
+    rtrim(s);
+    ltrim(s);
+}
+
 void GpgIdManage::init(std::string _currentPath, std::string _stopPath, PassHelper *_ph)
 {
     currentPath = _currentPath;
@@ -121,13 +141,12 @@ void GpgIdManage::reEncryptStoreFolder(std::function<void (std::string)> func)
 
 void GpgIdManage::populateKeyFromString(const std::string &line)
 {
-    auto keyToSearchVector = split(line);
-    if (keyToSearchVector.size() == 0)
+    std::string keyToSearch = split(line);
+    if (keyToSearch.size() == 0)
     {
         return;
     }
 
-    std::string &keyToSearch = keyToSearchVector.at(0);
 
     std::vector<GpgKeys> keysListed = ph->listKeys(keyToSearch);
     if (keysListed.size() == 1)
@@ -150,11 +169,15 @@ void GpgIdManage::populateKeysParsedInGpgIdFile()
     }
 }
 
-std::vector<std::string> GpgIdManage::split(std::string s)
+std::string GpgIdManage::split(std::string str)
 {
-    std::stringstream ss(s);
-    std::istream_iterator<std::string> begin(ss);
-    std::istream_iterator<std::string> end;
-    std::vector<std::string> vstrings(begin, end);
-    return vstrings;
+    // Find the first occurrence of # in the string.
+    size_t pos = str.find_first_of('#');
+
+    // Extract the substring before the #.
+    std::string before = str.substr(0, pos);
+
+    // Print the results.
+    trim(before);
+    return before;
 }

@@ -50,7 +50,7 @@ public:
 private:
   void populateKeysParsedInGpgIdFile();
 
-  std::vector<std::string> split(std::string s);
+  std::string  split(std::string s);
 
   PassHelper *ph;
 
