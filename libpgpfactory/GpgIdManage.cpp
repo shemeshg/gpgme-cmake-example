@@ -36,7 +36,7 @@ void GpgIdManage::init(std::string _currentPath, std::string _stopPath, PassHelp
     allKeys = ph->listKeys("");
     allPrivateKeys = ph->listKeys("", true);
     nearestGpgIdFolder = ph->getNearestGpgId(currentPath, stopPath);
-    gpgPubKeysFolder = nearestGpgIdFolder + "/.gpg-pub-keys";
+    gpgPubKeysFolder = nearestGpgIdFolder + "/.gpg-keys";
     nearestGpgIdFile = nearestGpgIdFolder + "/.gpg-id";
     gpgPubKeysFolderExists = std::filesystem::exists(gpgPubKeysFolder);
     populateKeysParsedInGpgIdFile();
@@ -107,7 +107,7 @@ void GpgIdManage::importAllGpgPubKeysFolder()
     }
     if (!gpgPubKeysFolderExists)
     {
-        std::throw_with_nested(std::runtime_error(".gpg-pub-keys not found"));
+        std::throw_with_nested(std::runtime_error(".gpg-keys not found"));
     }
     for (const auto &entry : std::filesystem::directory_iterator(gpgPubKeysFolder))
     {
