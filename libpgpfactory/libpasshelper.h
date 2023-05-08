@@ -123,7 +123,7 @@ public:
         callback);
   }
 
-  void reEncryptFile(std::string pathFileToReEncrypt, std::vector<std::string> encryptTo);
+  void reEncryptFile(std::string pathFileToReEncrypt, std::vector<std::string> encryptTo,bool doSign);
 
 private:
   FileSearch fileSearch{};

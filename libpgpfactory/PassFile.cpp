@@ -38,13 +38,13 @@ std::string PassFile::getDecryptedSignedBy()
                                { return a + "," + b; });
 }
 
-void PassFile::encrypt(std::string s, std::vector<std::string> encryptTo)
+void PassFile::encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign)
 {
     std::string tmpName = fullPath + uuid::generate_uuid_v4();
 
     decrypted = s;
     PgpmeDataRII din{s, FROM_STRING}, dout{tmpName, TO_FILENAME};
-    g->encryptSign(din, dout, encryptTo, true);
+    g->encryptSign(din, dout, encryptTo, doSign);
 
     std::filesystem::rename(tmpName, fullPath);
 

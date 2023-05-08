@@ -40,9 +40,9 @@ public:
 
   void importAllGpgPubKeysFolder();
 
-  void reEncryptFile(std::string pathFileToReEncrypt);
+  void reEncryptFile(std::string pathFileToReEncrypt, bool doSign);
 
-  void reEncryptStoreFolder(std::function<void(std::string)> func);
+  void reEncryptStoreFolder(std::function<void(std::string)> func, bool doSign);
 
   void populateKeyFromString(const std::string &line);
 

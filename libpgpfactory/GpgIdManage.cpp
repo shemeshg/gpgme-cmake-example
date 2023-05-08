@@ -97,13 +97,13 @@ void GpgIdManage::importAllGpgPubKeysFolder()
     init(currentPath, stopPath, ph);
 }
 
-void GpgIdManage::reEncryptFile(std::string pathFileToReEncrypt)
+void GpgIdManage::reEncryptFile(std::string pathFileToReEncrypt, bool doSign)
 {
     ensureValidGpgIdFile();
-    ph->reEncryptFile(pathFileToReEncrypt, encryptTo);
+    ph->reEncryptFile(pathFileToReEncrypt, encryptTo,doSign);
 }
 
-void GpgIdManage::reEncryptStoreFolder(std::function<void (std::string)> func)
+void GpgIdManage::reEncryptStoreFolder(std::function<void (std::string)> func, bool doSign)
 {
 
     for (const std::filesystem::directory_entry &dir_entry :
@@ -113,7 +113,7 @@ void GpgIdManage::reEncryptStoreFolder(std::function<void (std::string)> func)
         {
             func(dir_entry.path());
             // std::cout << "Re-encrypt " << dir_entry.path() << "\n";
-            reEncryptFile(dir_entry.path());
+            reEncryptFile(dir_entry.path(), doSign);
             // std::cout << " Finished\n";
         }
     }

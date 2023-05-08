@@ -30,7 +30,7 @@ public:
 
     std::string getDecryptedSignedBy();
 
-    void encrypt(std::string s, std::vector<std::string> encryptTo);
+    void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign);
 
     void openExternalEncryptWait(std::vector<std::string> encryptTo,
                                  WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
