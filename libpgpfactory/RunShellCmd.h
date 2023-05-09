@@ -28,7 +28,7 @@ public:
   std::string runCmd(std::vector<std::string> cmd,std::string noEscape = "")
   {
     std::string escapedString{};
-    for (std::string s : cmd)
+    for (const std::string &s : cmd)
     {
       escapedString = escapedString + escapeshellarg(s) + " ";
     }

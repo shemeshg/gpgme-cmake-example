@@ -66,7 +66,7 @@ private:
     std::vector<std::string> getPubIdDecryptedSignedBy()
     {
         std::vector<std::string> ret;
-        for (auto row : decryptedSignedBy) {
+        for (const auto &row : decryptedSignedBy) {
             auto svec = g->listKeys(row);
             if (svec.size() == 1) {
                 ret.push_back(svec[0].getKeyStr());

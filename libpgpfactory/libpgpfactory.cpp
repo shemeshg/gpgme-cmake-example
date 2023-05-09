@@ -185,7 +185,7 @@ std::unique_ptr<GpgMeKeys> GpgFactory::getGpgMeKeys(std::vector<std::string> &pa
     checkCtxInitialized();
     std::unique_ptr<GpgMeKeys> gmk = std::make_unique<GpgMeKeys>();
 
-    for (auto r : patterns)
+    for (const auto &r : patterns)
     {
         gpgme_key_t key = nullptr;
         gpgme_error_t err = gpgme_get_key(ctx, r.c_str(), &key, onlyPrivateKey);

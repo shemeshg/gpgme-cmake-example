@@ -22,7 +22,7 @@ void GpgIdManage::init(std::string _currentPath, std::string _stopPath, PassHelp
     populateKeysParsedInGpgIdFile();
 
     encryptTo = {};
-    for (auto r : keysFoundInGpgIdFile)
+    for (const auto &r : keysFoundInGpgIdFile)
     {
         encryptTo.push_back(r.keyid);
     }
@@ -72,7 +72,7 @@ void GpgIdManage::exportGpgIdToGpgPubKeysFolder()
     ensureValidGpgIdFile();
     std::filesystem::remove_all(gpgPubKeysFolder);
     std::filesystem::create_directories(gpgPubKeysFolder);
-    for (auto r : keysFoundInGpgIdFile)
+    for (const auto &r : keysFoundInGpgIdFile)
     {
         ph->exportPublicKey(r.keyid,
                             gpgPubKeysFolder + "/" + r.keyid + "_" + r.email + ".pub");
