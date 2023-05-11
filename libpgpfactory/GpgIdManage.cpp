@@ -1,11 +1,10 @@
 #include "GpgIdManage.h"
 #include <iterator>
 
-void GpgIdManage::init(std::string _currentPath, std::string _stopPath, PassHelper *_ph)
+void GpgIdManage::init(std::string _currentPath, std::string _stopPath)
 {
     currentPath = _currentPath;
     stopPath = _stopPath;
-    ph = _ph;
 
     keysFoundInGpgIdFile.clear();
     KeysNotFoundInGpgIdFile.clear();
@@ -39,7 +38,7 @@ void GpgIdManage::importPublicKeyAndTrust(const std::string &filePath)
 
     ph->importPublicKey(filePath, true);
 
-    init(currentPath, stopPath, ph);
+    init(currentPath, stopPath);
 }
 
 void GpgIdManage::ensureValidGpgIdFile()
@@ -94,7 +93,7 @@ void GpgIdManage::importAllGpgPubKeysFolder()
         ph->importPublicKey(entry.path(), true);
     }
 
-    init(currentPath, stopPath, ph);
+    init(currentPath, stopPath);
 }
 
 void GpgIdManage::reEncryptFile(std::string pathFileToReEncrypt, bool doSign)

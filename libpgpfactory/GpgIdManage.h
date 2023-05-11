@@ -4,7 +4,9 @@
 class GpgIdManage
 {
 public:
-  GpgIdManage() {}
+  GpgIdManage(std::string _currentPath, std::string _stopPath) {
+      init(_currentPath,_stopPath);
+  }
 
   GpgIdManage(GpgIdManage const &) = delete;
   GpgIdManage &operator=(GpgIdManage const &) = delete;
@@ -24,10 +26,10 @@ public:
   std::vector<GpgKeys> allPrivateKeys;
   std::vector<std::string> encryptTo{};
 
-  void init(std::string _currentPath, std::string _stopPath, PassHelper *_ph);
+  void init(std::string _currentPath, std::string _stopPath);
 
   void reInit(){
-      init(currentPath,stopPath,ph);
+      init(currentPath,stopPath);
   }
 
   void importPublicKeyAndTrust(const std::string &filePath);
@@ -52,7 +54,8 @@ private:
 
   std::string  split(std::string s);
 
-  PassHelper *ph;
+
+  std::unique_ptr<PassHelper> ph=std::make_unique<PassHelper>();
 
   // trim from start (in place)
   static inline void ltrim(std::string &s) {
