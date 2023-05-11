@@ -3,6 +3,8 @@
 
 void GpgIdManage::init(std::string _currentPath, std::string _stopPath)
 {
+    ph=std::make_unique<PassHelper>();
+
     currentPath = _currentPath;
     stopPath = _stopPath;
 

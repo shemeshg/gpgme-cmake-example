@@ -26,12 +26,6 @@ public:
   std::vector<GpgKeys> allPrivateKeys;
   std::vector<std::string> encryptTo{};
 
-  void init(std::string _currentPath, std::string _stopPath);
-
-  void reInit(){
-      init(currentPath,stopPath);
-  }
-
   void importPublicKeyAndTrust(const std::string &filePath);
 
   void ensureValidGpgIdFile();
@@ -50,6 +44,9 @@ public:
 
   // hygen public
 private:
+
+  void init(std::string _currentPath, std::string _stopPath);
+
   void populateKeysParsedInGpgIdFile();
 
   std::string  split(std::string s);
