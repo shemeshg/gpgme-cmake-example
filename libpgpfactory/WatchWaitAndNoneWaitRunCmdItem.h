@@ -13,6 +13,12 @@ public:
   {
   }
 
+  WatchWaitAndNoneWaitRunCmdItem(WatchWaitAndNoneWaitRunCmdItem const &) = delete;
+  WatchWaitAndNoneWaitRunCmdItem &operator=(WatchWaitAndNoneWaitRunCmdItem const &) = delete;
+  WatchWaitAndNoneWaitRunCmdItem(WatchWaitAndNoneWaitRunCmdItem &&) = delete;
+  WatchWaitAndNoneWaitRunCmdItem &operator=(WatchWaitAndNoneWaitRunCmdItem &&) = delete;
+
+
   std::string uniqueId, fileName, tmpFolder, vscodePath;
 
   void init(){

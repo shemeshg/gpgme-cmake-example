@@ -99,6 +99,10 @@ void PgpmeDataRII::getData(std::function<void(int, char *)> func)
        Otherwise GPG_ERR_NO_DATA is returned since this method moves the
        read position. */
     ret = gpgme_data_seek(d, 0, SEEK_SET);
+
+    if (ret) {
+        std::throw_with_nested(std::runtime_error(std::to_string(errno)));   
+    }
 }
 
 PgpmeDataRII::PgpmeDataRII(std::string s, PgmeDataInitType typ)
@@ -164,7 +168,7 @@ void GpgFactory::initPgpFactory()
     {
         return;
     }
-    init_gpgme(GPGME_PROTOCOL_OpenPGP);
+    init_gpgme(GPGME_PROTOCOL_OpenPGP);    
     gpgme_error_t err = gpgme_new(&ctx);
     gpgme_check_version(NULL);
     failIfErr(err);

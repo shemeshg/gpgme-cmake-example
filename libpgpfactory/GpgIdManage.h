@@ -5,7 +5,7 @@ class GpgIdManage
 {
 public:
   GpgIdManage(std::string _currentPath, std::string _stopPath) {
-      init(_currentPath,_stopPath);
+      init(_currentPath,_stopPath);      
   }
 
   GpgIdManage(GpgIdManage const &) = delete;
