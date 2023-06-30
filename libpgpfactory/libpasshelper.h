@@ -90,6 +90,7 @@ public:
   void searchDown(std::string FolderToSearch,
                   std::string fileRegExStr,
                   std::string contentRegExStr,
+                  const std::vector<std::string> &ignoreBinaryExtensions,
                   std::function<void(std::string s)> callback)
   {
     std::unique_ptr<PassFile> pf = getPassFile("");
@@ -101,6 +102,16 @@ public:
           {
             return true;
           }
+
+          std::filesystem::path filePath(path);
+
+          if (std::find(ignoreBinaryExtensions.begin(), ignoreBinaryExtensions.end(),
+                filePath.stem().extension()) != ignoreBinaryExtensions.end()){
+            return false;
+          }
+
+
+
           pf->setFullPath(path);
 
           if (!pf->isGpgFile())
