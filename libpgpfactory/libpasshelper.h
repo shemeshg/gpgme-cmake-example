@@ -10,6 +10,7 @@
 #include "FileSearch.h"
 #include "RunShellCmd.h"
 #include "PassFile.h"
+#include <map>
 
 class PassHelper: public GpgFactory
 {
@@ -91,8 +92,13 @@ public:
                   std::string fileRegExStr,
                   std::string contentRegExStr,
                   const std::vector<std::string> &ignoreBinaryExtensions,
+                  bool isMemCash,
+                  std::map<std::string, std::string> &searchMemCash,
                   std::function<void(std::string s)> callback)
   {
+    if (!isMemCash){
+        searchMemCash.clear();
+    }
     std::unique_ptr<PassFile> pf = getPassFile("");
     fileSearch.searchDown(
         FolderToSearch, fileRegExStr, contentRegExStr,
@@ -110,17 +116,35 @@ public:
             return false;
           }
 
+          std::string content;
+          bool foundInCash = false;
+          long int millis = std::chrono::duration_cast<std::chrono::milliseconds>(
+                                std::filesystem::last_write_time(filePath).time_since_epoch()
+                                ).count();
 
-
-          pf->setFullPath(path);
-
-          if (!pf->isGpgFile())
-          {
-            return false;
+          std::string memCashKey = std::to_string( millis) + path;
+          if (isMemCash) {
+            if (searchMemCash.count(memCashKey) > 0) {
+                content = searchMemCash[memCashKey];
+                foundInCash = true;
+            }
           }
-          pf->decrypt();
 
-          std::string content = pf->getDecrypted();
+          if (!foundInCash) {
+            pf->setFullPath(path);
+
+            if (!pf->isGpgFile())
+            {
+                return false;
+            }
+            pf->decrypt();
+
+            content = pf->getDecrypted();
+            if (isMemCash) {
+                searchMemCash[memCashKey] = content;
+            }
+          }
+
           const std::regex contentRegEx(contentRegExStr, std::regex_constants::icase);
 
           content = std::regex_replace(content,
