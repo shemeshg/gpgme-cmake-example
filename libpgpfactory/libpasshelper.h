@@ -137,12 +137,19 @@ public:
             {
                 return false;
             }
-            pf->decrypt();
+            try {
+                pf->decrypt();
 
-            content = pf->getDecrypted();
-            if (isMemCash) {
-                searchMemCash[memCashKey] = content;
+                content = pf->getDecrypted();
+                if (isMemCash) {
+                    searchMemCash[memCashKey] = content;
+                }
+            } catch (const std::exception &e) {
+                throw
+                    std::runtime_error(path + ": " + e.what());
             }
+
+
           }
 
           const std::regex contentRegEx(contentRegExStr, std::regex_constants::icase);
