@@ -8,7 +8,6 @@
 
 #include "libpgpfactory.h"
 #include "FileSearch.h"
-#include "RunShellCmd.h"
 #include "PassFile.h"
 #include <map>
 
