@@ -55,13 +55,15 @@ public:
                            std::vector<std::string> encryptTo);
     void decryptToFile(std::string toFileName);
 
+    void dectyptFileNameToFileName(std::string fromPath, std::string toPath);
+
     void setFullPath(std::string s) { fullPath = s; decryptedSignedBy = {};}
+
 
 private:
     std::string fullPath, decrypted;
     std::vector<std::string> decryptedSignedBy = {};
     GpgFactory *g;
-    void dectyptFileNameToFileName(std::string fromPath, std::string toPath);
 
     std::vector<std::string> getPubIdDecryptedSignedBy()
     {

@@ -70,7 +70,7 @@ void PassFile::decryptToFile(std::string toFileName)
 }
 
 void PassFile::dectyptFileNameToFileName(std::string fromPath, std::string toPath){
-    PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{toPath, TO_FILENAME};
+    PgpmeDataRII din{fromPath, FROM_FILENAME}, dout{toPath, TO_FILENAME};
 
     g->decryptValidate(din, dout, false);
 }
