@@ -25,6 +25,16 @@ public:
     return result;
   }
 
+  int runSystem(std::vector<std::string> cmd,std::string noEscape = ""){
+    std::string escapedString{};
+    for (const std::string &s : cmd)
+    {
+        escapedString = escapedString + escapeshellarg(s) + " ";
+    }
+
+    return system( (escapedString + noEscape).c_str());
+  }
+
   std::string runCmd(std::vector<std::string> cmd,std::string noEscape = "")
   {
     std::string escapedString{};
