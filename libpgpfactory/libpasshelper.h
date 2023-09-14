@@ -72,6 +72,11 @@ public:
         folderFrom, ".*.*", ".*.*",
         [&](std::string path)
         {
+            pf->setFullPath(path);
+            if (!pf->isGpgFile()){
+                std::cout << path << " \n Skiped Not a .gpg file\n";
+                return false;
+            }
           return true;
         },
         [&](std::string path)
