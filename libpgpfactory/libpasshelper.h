@@ -74,7 +74,7 @@ public:
         {
             pf->setFullPath(path);
             if (!pf->isGpgFile()){
-                std::cout << path << " \n Skiped Not a .gpg file\n";
+                //std::cout << path << " \n Skiped Not a .gpg file\n";
                 return false;
             }
           return true;
@@ -87,7 +87,7 @@ public:
           std::filesystem::create_directories(toPath.parent_path());
           pf->setFullPath(path);
           pf->decryptToFile(toPath.replace_extension());
-          std::cout << path << " \n to" << toPath.parent_path() << "\n";
+          //std::cout << path << " \n to" << toPath.parent_path() << "\n";
           return true;
         });
   }

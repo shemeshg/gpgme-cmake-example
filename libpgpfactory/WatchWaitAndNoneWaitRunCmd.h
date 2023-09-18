@@ -68,7 +68,7 @@ public:
     }
 
     void clearWaitItemsAfterUnExpectedCrash(std::string uniqueId){
-        std::cout<<" Clearing after crash"<<uniqueId;
+        //std::cout<<" Clearing after crash"<<uniqueId;
         std::lock_guard<std::mutex> guard(g_pages_mutex);
         for (auto it = noneWaitItems.begin(); it != noneWaitItems.end();)
         {
