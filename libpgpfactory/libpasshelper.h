@@ -25,6 +25,10 @@ public:
     return std::make_unique<PassFile>(fullPath, this);
   }
 
+  bool isGpgFile(std::string pathToFile){
+    std::unique_ptr<PassFile> pf = getPassFile(pathToFile);
+    return  pf->isGpgFile();
+  }
 
   std::string getNearestGit(std::string currentPath, std::string stopPath)
   {
@@ -72,8 +76,7 @@ public:
         folderFrom, ".*.*", ".*.*",
         [&](std::string path)
         {
-            pf->setFullPath(path);
-            if (!pf->isGpgFile()){
+            if (!isGpgFile(path)){
                 //std::cout << path << " \n Skiped Not a .gpg file\n";
                 return false;
             }
@@ -170,6 +173,28 @@ public:
   }
 
   void reEncryptFile(std::string pathFileToReEncrypt, std::vector<std::string> encryptTo,bool doSign);
+
+
+  void reEncryptStoreFolder(std::string nearestGpgIdFolder, std::vector<std::string> encryptTo,std::function<void (std::string)> func, bool doSign){
+    fileSearch.searchDown(
+        nearestGpgIdFolder, ".*.*", ".*.*",
+        [&](std::string path)
+        {
+            if (!isGpgFile(path)){
+                //std::cout << path << " \n Skiped Not a .gpg file\n";
+                return false;
+            }
+            return true;
+        },
+        [&](std::string path)
+        {
+            func(path);
+            //std::cout << "Re-encrypt " << path<< "\n";
+            reEncryptFile(path, encryptTo, doSign);
+            //std::cout << " Finished\n";
+            return true;
+        });
+  }
 
 private:
   FileSearch fileSearch{};

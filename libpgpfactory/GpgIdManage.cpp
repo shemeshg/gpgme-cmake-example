@@ -106,18 +106,8 @@ void GpgIdManage::reEncryptFile(std::string pathFileToReEncrypt, bool doSign)
 
 void GpgIdManage::reEncryptStoreFolder(std::function<void (std::string)> func, bool doSign)
 {
-
-    for (const std::filesystem::directory_entry &dir_entry :
-         std::filesystem::recursive_directory_iterator(nearestGpgIdFolder))
-    {
-        if (!dir_entry.is_directory() && std::filesystem::path(dir_entry.path()).extension() == ".gpg")
-        {
-            func(dir_entry.path());
-            // std::cout << "Re-encrypt " << dir_entry.path() << "\n";
-            reEncryptFile(dir_entry.path(), doSign);
-            // std::cout << " Finished\n";
-        }
-    }
+    ensureValidGpgIdFile();
+    ph->reEncryptStoreFolder(nearestGpgIdFolder, encryptTo,func, doSign);
 }
 
 void GpgIdManage::populateKeyFromString(const std::string &line)

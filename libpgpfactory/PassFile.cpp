@@ -9,7 +9,7 @@ PassFile::PassFile(std::string fullPath, GpgFactory *g) : fullPath{fullPath}, g{
 bool PassFile::isGpgFile()
 {
     std::filesystem::path path(fullPath);
-    return (path.extension().string() == ".gpg");
+    return (!std::filesystem::is_directory(path) && path.extension().string() == ".gpg");
 }
 
 void PassFile::decrypt()

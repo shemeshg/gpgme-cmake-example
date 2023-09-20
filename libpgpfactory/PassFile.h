@@ -59,7 +59,6 @@ public:
 
     void setFullPath(std::string s) { fullPath = s; decryptedSignedBy = {};}
 
-
 private:
     std::string fullPath, decrypted;
     std::vector<std::string> decryptedSignedBy = {};
