@@ -43,10 +43,10 @@ public:
     }
 
     WatchWaitAndNoneWaitRunCmdItem *getNoneWaitItemsBuUiniqueId(std::string uniqueId){
-        for (auto it = noneWaitItems.begin(); it != noneWaitItems.end();)
+        for ( auto &it: noneWaitItems)
         {
-            if (it->get()->uniqueId == uniqueId){
-                return it->get();
+            if (it.get()->uniqueId == uniqueId){
+                return it.get();
             }
         }
         return nullptr;
