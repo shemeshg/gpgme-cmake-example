@@ -9,7 +9,7 @@ void GpgIdManage::init(std::string _currentPath, std::string _stopPath)
     stopPath = _stopPath;
 
     keysFoundInGpgIdFile.clear();
-    KeysNotFoundInGpgIdFile.clear();
+    keysNotFoundInGpgIdFile.clear();
     allKeys.clear();
     allPrivateKeys.clear();
     encryptTo.clear();
@@ -49,8 +49,8 @@ void GpgIdManage::ensureValidGpgIdFile()
     {
         std::throw_with_nested(std::runtime_error("Class not initialized"));
     }
-
-    if (KeysNotFoundInGpgIdFile.size() > 0)
+    
+    if (keysNotFoundInGpgIdFile.size() > 0)
     {
         std::throw_with_nested(std::runtime_error("Can not save back GpgIdFile with bad records in"));
     }
@@ -126,7 +126,7 @@ void GpgIdManage::populateKeyFromString(const std::string &line)
     }
     else
     {
-        KeysNotFoundInGpgIdFile.push_back(line);
+        keysNotFoundInGpgIdFile.push_back(line);
     }
 }
 

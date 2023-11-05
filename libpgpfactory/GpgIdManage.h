@@ -20,7 +20,7 @@ public:
   bool gpgPubKeysFolderExists = false;
   bool classInitialized = false;
 
-  std::vector<std::string> KeysNotFoundInGpgIdFile{};
+  std::vector<std::string> keysNotFoundInGpgIdFile{};
   std::vector<GpgKeys> keysFoundInGpgIdFile{};
   std::vector<GpgKeys> allKeys;
   std::vector<GpgKeys> allPrivateKeys;
