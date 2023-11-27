@@ -43,6 +43,13 @@ public:
   void populateKeyFromString(const std::string &line);
 
   // hygen public
+
+  void setSigner(std::string signerStr){
+      if (!signerStr.empty()) {
+          ph->setCtxSigners({signerStr});
+      }
+  }
+
 private:
 
   void init(std::string _currentPath, std::string _stopPath);
