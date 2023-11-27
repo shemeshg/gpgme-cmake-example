@@ -35,24 +35,29 @@ public:
     void openExternalEncryptWait(std::vector<std::string> encryptTo,
                                  WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                  std::string tmpFolder,
-                                 std::string vscodePath);
+                                 std::string vscodePath,
+                                 bool doSign);
     void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo,
                                       WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                       std::string tmpFolder,
-                                      std::string vscodePath);
+                                      std::string vscodePath,
+                                      bool doSign);
 
     std::string openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                           std::string tmpFolder,
                                           std::string vscodePath);
     void closeExternalEncryptNoWait(std::vector<std::string> encryptTo,
-                                    WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd);
+                                    WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+                                    bool doSign);
 
     void encryptStringToFile(std::string s,
                              std::string toFileName,
-                             std::vector<std::string> encryptTo);
+                             std::vector<std::string> encryptTo,
+                             bool doSign);
     void encryptFileToFile(std::string fromFileName,
                            std::string toFileName,
-                           std::vector<std::string> encryptTo);
+                           std::vector<std::string> encryptTo,
+                           bool doSign);
     void decryptToFile(std::string toFileName);
 
     void dectyptFileNameToFileName(std::string fromPath, std::string toPath);

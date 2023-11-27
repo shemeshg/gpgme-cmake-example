@@ -45,7 +45,8 @@ public:
     return fileSearch.searchUp("template.gpg", currentPath, stopPath);
   }
 
-  void encryptFolderToFolder(std::string folderFrom, std::string folderTo, std::vector<std::string> encryptTo)
+  void encryptFolderToFolder(std::string folderFrom, std::string folderTo, std::vector<std::string> encryptTo,
+        bool doSign)
   {
     std::unique_ptr<PassFile> pf = getPassFile("");
     fileSearch.searchDown(
@@ -60,7 +61,7 @@ public:
                                          std::filesystem::relative(path, folderFrom);
 
           std::filesystem::create_directories(toPath.parent_path());
-          pf->encryptFileToFile(path, toPath.generic_string() + ".gpg",encryptTo);
+          pf->encryptFileToFile(path, toPath.generic_string() + ".gpg",encryptTo, doSign);
           
           return true;
         });
