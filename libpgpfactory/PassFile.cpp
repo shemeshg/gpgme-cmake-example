@@ -109,7 +109,8 @@ void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, Watch
 void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                             std::string tmpFolder,
                                             std::string  vscodePath,
-                                            bool doSign    )
+                                            bool doSign,
+                                            std::string signerStr)
 {
     if (!std::filesystem::exists(tmpFolder))
     {
@@ -118,7 +119,12 @@ void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, 
     std::thread([=]()
                 {
         std::unique_ptr<PassHelper> phLocal = std::make_unique<PassHelper>();
+
+        if (!signerStr.empty()) {
+            phLocal->setCtxSigners({signerStr});
+        }
         std::unique_ptr<PassFile> pfLocal = phLocal->getPassFile(fullPath);
+
 
         return pfLocal->openExternalEncryptWait(encryptTo, watchWaitAndNoneWaitRunCmd,tmpFolder, vscodePath, doSign); })
         .detach();

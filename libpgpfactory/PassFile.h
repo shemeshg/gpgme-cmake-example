@@ -41,7 +41,8 @@ public:
                                       WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                       std::string tmpFolder,
                                       std::string vscodePath,
-                                      bool doSign);
+                                      bool doSign,
+                                      std::string signerStr);
 
     std::string openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                           std::string tmpFolder,
