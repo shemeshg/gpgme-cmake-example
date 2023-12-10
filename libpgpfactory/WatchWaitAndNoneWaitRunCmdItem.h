@@ -27,12 +27,12 @@ public:
 
   void runWithWait()
   {    
-    auto a = rsc.runCmd({vscodePath, "--wait", tfe.getFullFilePath()});
+    auto a = rsc.runCmd({vscodePath, "--wait", tfe.getFullFilePath().u8string()});
   }
 
   void runWithoutWait()
   {
-    auto a = rsc.runCmd({vscodePath, tfe.getFullFilePath()});
+    auto a = rsc.runCmd({vscodePath, tfe.getFullFilePath().u8string()});
   }
   
 

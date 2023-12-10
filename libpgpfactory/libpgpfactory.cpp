@@ -338,7 +338,7 @@ void GpgFactory::setCtxSigners(std::vector<std::string> signedBy)
 }
 
 std::vector<GpgKeys> GpgFactory::listKeys(const std::string pattern, bool secret_only)
-{
+{    
     std::vector<GpgKeys> retKeys = {};
 
     checkCtxInitialized();
@@ -357,6 +357,7 @@ std::vector<GpgKeys> GpgFactory::listKeys(const std::string pattern, bool secret
 
     if (gpg_err_code(err) != GPG_ERR_EOF)
     {
+        std::cout << "In ERROR\n";
         std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
     }
     return retKeys;
@@ -438,9 +439,6 @@ void GpgFactory::init_gpgme(gpgme_protocol_t proto)
     gpgme_check_version(NULL);
     setlocale(LC_ALL, "");
     gpgme_set_locale(NULL, LC_CTYPE, setlocale(LC_CTYPE, NULL));
-#ifndef HAVE_W32_SYSTEM
-    gpgme_set_locale(NULL, LC_MESSAGES, setlocale(LC_MESSAGES, NULL));
-#endif
 
     err = gpgme_engine_check_version(proto);
     if (err)

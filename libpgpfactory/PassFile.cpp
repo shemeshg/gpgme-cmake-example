@@ -87,14 +87,14 @@ void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, Watch
     {
         std::filesystem::path p = fullPath;
         p = p.replace_extension();
-        WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath, p.filename(), tmpFolder, vscodePath);
+        WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath, p.filename().u8string(), tmpFolder, vscodePath);
 
         wi->init();
-        dectyptFileNameToFileName(fullPath, wi->getFullFilePath());
+        dectyptFileNameToFileName(fullPath, wi->getFullFilePath().u8string());
 
-        std::string ggg=wi->getFullFilePath();
+        std::string ggg=wi->getFullFilePath().u8string();
         wi->runWithWait();
-        PgpmeDataRII ein{wi->getFullFilePath(), FROM_FILENAME};
+        PgpmeDataRII ein{wi->getFullFilePath().u8string(), FROM_FILENAME};
         PgpmeDataRII eout{fullPath, TO_FILENAME};
         g->encryptSign(ein, eout, encryptTo, doSign);
         watchWaitAndNoneWaitRunCmd->runWithWaitClear(*wi);
@@ -140,13 +140,13 @@ std::string PassFile::openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watc
     {
         std::filesystem::path p = fullPath;
         p = p.replace_extension();
-        WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithOutWait(fullPath, p.filename(), tmpFolder, vscodePath);
+        WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithOutWait(fullPath, p.filename().u8string(), tmpFolder, vscodePath);
         wi->init();
-        PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{wi->getFullFilePath(), TO_FILENAME};
+        PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{wi->getFullFilePath().u8string(), TO_FILENAME};
 
         g->decryptValidate(din, dout, false);
 
-        return wi->getSubfolderPath();
+        return wi->getSubfolderPath().u8string();
     }
     catch (const std::exception &e)
     {
@@ -160,7 +160,7 @@ void PassFile::closeExternalEncryptNoWait(std::vector<std::string> encryptTo,
 {
     WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->getNoneWaitItemsBuUiniqueId(fullPath);
 
-    PgpmeDataRII ein{wi->getFullFilePath(), FROM_FILENAME};
+    PgpmeDataRII ein{wi->getFullFilePath().u8string(), FROM_FILENAME};
     PgpmeDataRII eout{fullPath, TO_FILENAME};
     g->encryptSign(ein, eout, encryptTo, doSign);
 

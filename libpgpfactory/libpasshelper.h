@@ -90,7 +90,7 @@ public:
 
           std::filesystem::create_directories(toPath.parent_path());
           pf->setFullPath(path);
-          pf->decryptToFile(toPath.replace_extension());
+          pf->decryptToFile(toPath.replace_extension().u8string());
           //std::cout << path << " \n to" << toPath.parent_path() << "\n";
           return true;
         });

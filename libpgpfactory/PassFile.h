@@ -25,7 +25,7 @@ public:
             return fullPath;
         }
         std::filesystem::path f{fullPath};
-        return f.parent_path();
+        return f.parent_path().u8string();
     }
 
     std::string getDecryptedSignedBy();

@@ -92,7 +92,7 @@ void GpgIdManage::importAllGpgPubKeysFolder()
     }
     for (const auto &entry : std::filesystem::directory_iterator(gpgPubKeysFolder))
     {
-        ph->importPublicKey(entry.path(), true);
+        ph->importPublicKey(entry.path().u8string(), true);
     }
 
     init(currentPath, stopPath);
