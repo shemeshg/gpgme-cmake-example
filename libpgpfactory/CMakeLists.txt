@@ -1,10 +1,5 @@
 include(FeatureSummary)
 
-# LibGpgError bug must include_directories on root, but can be linked in subdirectory
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/gpgfactory/cmake)
-find_package(LibGpgError REQUIRED)
-include_directories(${LibGpgError_INCLUDE_DIRS})
-# End LibGpgError
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(MACOSX TRUE)
@@ -16,13 +11,21 @@ if(WIN32 OR MSVC OR MSYS OR MINGW)
     set(WINDOWS TRUE)
 endif()
 
+if(UNIX)
+    # LibGpgError bug must include_directories on root, but can be linked in subdirectory
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/gpgfactory/cmake)
+    find_package(LibGpgError REQUIRED)
+    include_directories(${LibGpgError_INCLUDE_DIRS})
+    # End LibGpgError
 
-find_package(Gpgmepp CONFIG REQUIRED)
+    find_package(Gpgmepp CONFIG REQUIRED)
 
 
 
 
-include_directories(${GPGMEAPP_INCLUDES})
+    include_directories(${GPGMEAPP_INCLUDES})
+endif()
+
 
 
 
@@ -56,11 +59,44 @@ add_library(libpgpfactory STATIC
 
 
 
+if(UNIX)
+    target_link_libraries(libpgpfactory  Gpgmepp  ${LibGpgError_LIBRARIES})
+endif()
 
-target_link_libraries(libpgpfactory  Gpgmepp  ${LibGpgError_LIBRARIES})
+if (WINDOWS)
+    # Create an IMPORTED target for the libgpgmepp6-6 DLL
+    add_library(libgpgmepp6-6 SHARED IMPORTED)
+    # Set the location of the DLL file
+    set_target_properties(libgpgmepp6-6 PROPERTIES
+    IMPORTED_LOCATION "C:/Program Files (x86)/Gpg4win/bin_64/libgpgmepp6-6.dll"
+    )
+    # Set the location of the .imp file
+    set_target_properties(libgpgmepp6-6 PROPERTIES
+    IMPORTED_IMPLIB "C:/Program Files (x86)/Gpg4win/lib/libgpgme.imp"
+    )
+    # Set the include directories for the IMPORTED target
+    set_target_properties(libgpgmepp6-6 PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "C:/Program Files (x86)/Gpg4win/include"
+    )
 
+    # Create an IMPORTED target for the libgpg-error6-0 DLL
+    add_library(libgpg-error6-0 SHARED IMPORTED)
+    # Set the location of the DLL file
+    set_target_properties(libgpg-error6-0 PROPERTIES
+    IMPORTED_LOCATION "C:/Program Files (x86)/Gpg4win/bin_64/libgpg-error6-0.dll"
+    )
+    # Set the location of the .imp file
+    set_target_properties(libgpg-error6-0 PROPERTIES
+    IMPORTED_IMPLIB "C:/Program Files (x86)/Gpg4win/lib/libgpg-error.imp"
+    )
+    # Set the include directories for the IMPORTED target
+    set_target_properties(libgpg-error6-0 PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "C:/Program Files (x86)/Gpg4win/include"
+    )
 
-
+    # Link your executable target against the IMPORTED targets
+    target_link_libraries(libpgpfactory libgpgmepp6-6 libgpg-error6-0)
+endif()
 
 
 
