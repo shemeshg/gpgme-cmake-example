@@ -1,5 +1,7 @@
 include(FeatureSummary)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(MACOSX TRUE)
@@ -13,7 +15,7 @@ endif()
 
 if(UNIX)
     # LibGpgError bug must include_directories on root, but can be linked in subdirectory
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/gpgfactory/cmake)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
     find_package(LibGpgError REQUIRED)
     include_directories(${LibGpgError_INCLUDE_DIRS})
     # End LibGpgError

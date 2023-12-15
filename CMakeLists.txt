@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.28)
 set (CMAKE_CXX_STANDARD 17)
 project(pass-cpp VERSION 0.1.0)
 
@@ -8,7 +8,7 @@ enable_testing()
 
 if(UNIX)
     # LibGpgError bug must include_directories on root, but can be linked in subdirectory
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/libpgpfactory/cMake)
     find_package(LibGpgError REQUIRED)
     include_directories(${LibGpgError_INCLUDE_DIRS})
     # End LibGpgError 
