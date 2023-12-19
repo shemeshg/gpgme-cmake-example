@@ -38,7 +38,9 @@ public:
                     std::string path{entry.path().u8string()};
                     std::string relativePath{
                         std::filesystem::relative(entry.path(), FolderToSearch).generic_string()};
-                    if (std::regex_match(relativePath, fileRegEx) && contentSearch(entry.path().u8string())) {
+                    std::string relativePathNoExtention {
+                                                        std::filesystem::relative(entry.path(), FolderToSearch).replace_extension().generic_string()};
+                    if (std::regex_match(relativePathNoExtention, fileRegEx) && contentSearch(entry.path().u8string())) {
                         try {
                             callback(entry.path().u8string());
                         } catch (const std::exception &e) {
