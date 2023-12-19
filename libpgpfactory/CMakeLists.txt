@@ -33,11 +33,11 @@ endif()
 
 
 set(libpgpfactory_SRCS    
-    InterfacePassHelper.h
+    export/InterfacePassHelper.h
     InterfacePassHelper.cpp
-    InterfacePassFile.h
+    export/InterfacePassFile.h
     InterfacePassFile.cpp
-    GpgKeys.h
+    export/GpgKeys.h
     libpgpfactory.h
     libpgpfactory.cpp
     libpasshelper.h
@@ -45,16 +45,16 @@ set(libpgpfactory_SRCS
     FileSearch.cpp
     FileSearch.h
     GpgIdManage.cpp
-    GpgIdManage.h
+    export/GpgIdManage.h
     RunShellCmd.cpp
-    RunShellCmd.h
+    export/RunShellCmd.h
     uuid.cpp
-    uuid.h
+    export/uuid.h
     PassFile.h
     PassFile.cpp
-    WatchWaitAndNoneWaitRunCmdItem.h 
+    export/WatchWaitAndNoneWaitRunCmdItem.h 
     WatchWaitAndNoneWaitRunCmdItem.cpp
-    WatchWaitAndNoneWaitRunCmd.h 
+    export/WatchWaitAndNoneWaitRunCmd.h 
     WatchWaitAndNoneWaitRunCmd.cpp
     # hygen srcs 
 )
@@ -110,7 +110,7 @@ endif()
 # Specify here the include directories exported
 # by this library
 target_include_directories(libpgpfactory PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/export
 )
 
 
