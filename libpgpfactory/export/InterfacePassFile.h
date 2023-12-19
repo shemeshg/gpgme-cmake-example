@@ -3,7 +3,7 @@
 #include <string>
 #include <thread>
 #include <vector>
-#include "WatchWaitAndNoneWaitRunCmd.h"
+#include "InterfaceWatchWaitAndNoneWaitRunCmd.h"
 
 class InterfacePassFile{
     public:
@@ -23,22 +23,22 @@ class InterfacePassFile{
     virtual void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign)=0;
 
     virtual void openExternalEncryptWait(std::vector<std::string> encryptTo,
-                                 WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+                                 InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                  std::string tmpFolder,
                                  std::string vscodePath,
                                  bool doSign) = 0;
     virtual void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo,
-                                      WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+                                      InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                       std::string tmpFolder,
                                       std::string vscodePath,
                                       bool doSign,
                                       std::string signerStr)=0;
 
-    virtual std::string openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+    virtual std::string openExternalEncryptNoWait(InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                           std::string tmpFolder,
                                           std::string vscodePath) = 0;
     virtual void closeExternalEncryptNoWait(std::vector<std::string> encryptTo,
-                                    WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+                                    InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                     bool doSign) = 0;
 
     virtual void encryptStringToFile(std::string s,

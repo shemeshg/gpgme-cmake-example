@@ -2,8 +2,9 @@
 #include <string>
 #include <filesystem>
 #include "RunShellCmd.h"
+#include "InterfaceWatchWaitAndNoneWaitRunCmdItem.h"
 
-class WatchWaitAndNoneWaitRunCmdItem
+class WatchWaitAndNoneWaitRunCmdItem: public InterfaceWatchWaitAndNoneWaitRunCmdItem
 {
 public:
   WatchWaitAndNoneWaitRunCmdItem(std::string uniqueId, 
@@ -21,11 +22,15 @@ public:
 
   std::string uniqueId, fileName, tmpFolder, vscodePath;
 
-  void init(){
+   const std::string getUniqueId() const override {
+    return uniqueId;
+   }
+
+  void init() override{
     tfe.init(fileName, tmpFolder);
   }
 
-  void runWithWait()
+  void runWithWait() override
   {    
     auto a = rsc.runCmd({vscodePath, "--wait", tfe.getFullFilePath().u8string()});
   }
@@ -36,12 +41,12 @@ public:
   }
   
 
-  std::filesystem::path getFullFilePath()
+  std::filesystem::path getFullFilePath() override
   {
     return tfe.getFullFilePath();
   }
 
-  std::filesystem::path getSubfolderPath()
+  std::filesystem::path getSubfolderPath() override
   {
     return tfe.getSubfolderPath();
   }

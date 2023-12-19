@@ -79,7 +79,8 @@ void PassFile::dectyptFileNameToFileName(std::string fromPath, std::string toPat
 }
 
 
-void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, 
+                            InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                        std::string tmpFolder,std::string  vscodePath,
                                     bool doSign)
 {
@@ -87,7 +88,7 @@ void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, Watch
     {
         std::filesystem::path p = fullPath;
         p = p.replace_extension();
-        WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath, p.filename().u8string(), tmpFolder, vscodePath);
+        InterfaceWatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath, p.filename().u8string(), tmpFolder, vscodePath);
 
         wi->init();
         dectyptFileNameToFileName(fullPath, wi->getFullFilePath().u8string());
@@ -106,7 +107,8 @@ void PassFile::openExternalEncryptWait(std::vector<std::string> encryptTo, Watch
     }
 }
 
-void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, 
+                                        InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                             std::string tmpFolder,
                                             std::string  vscodePath,
                                             bool doSign,
@@ -130,7 +132,7 @@ void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, 
         .detach();
 }
 
-std::string PassFile::openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder, std::string  vscodePath)
+std::string PassFile::openExternalEncryptNoWait(InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd, std::string tmpFolder, std::string  vscodePath)
 {
     if (!std::filesystem::exists(tmpFolder))
     {
@@ -140,7 +142,7 @@ std::string PassFile::openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watc
     {
         std::filesystem::path p = fullPath;
         p = p.replace_extension();
-        WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithOutWait(fullPath, p.filename().u8string(), tmpFolder, vscodePath);
+        InterfaceWatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->addWithOutWait(fullPath, p.filename().u8string(), tmpFolder, vscodePath);
         wi->init();
         PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{wi->getFullFilePath().u8string(), TO_FILENAME};
 
@@ -156,9 +158,9 @@ std::string PassFile::openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watc
 }
 
 void PassFile::closeExternalEncryptNoWait(std::vector<std::string> encryptTo,
-                                          WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,bool doSign)
+                                          InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,bool doSign)
 {
-    WatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->getNoneWaitItemsBuUiniqueId(fullPath);
+    InterfaceWatchWaitAndNoneWaitRunCmdItem *wi = watchWaitAndNoneWaitRunCmd->getNoneWaitItemsBuUiniqueId(fullPath);
 
     PgpmeDataRII ein{wi->getFullFilePath().u8string(), FROM_FILENAME};
     PgpmeDataRII eout{fullPath, TO_FILENAME};

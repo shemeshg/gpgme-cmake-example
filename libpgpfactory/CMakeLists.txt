@@ -38,6 +38,10 @@ set(libpgpfactory_SRCS
     export/InterfacePassFile.h
     InterfacePassFile.cpp
     export/GpgKeys.h
+    export/InterfaceWatchWaitAndNoneWaitRunCmd.h    
+    InterfaceWatchWaitAndNoneWaitRunCmd.cpp
+    export/InterfaceWatchWaitAndNoneWaitRunCmdItem.h
+    InterfaceWatchWaitAndNoneWaitRunCmdItem.cpp
     libpgpfactory.h
     libpgpfactory.cpp
     libpasshelper.h
@@ -52,9 +56,9 @@ set(libpgpfactory_SRCS
     export/uuid.h
     PassFile.h
     PassFile.cpp
-    export/WatchWaitAndNoneWaitRunCmdItem.h 
+    WatchWaitAndNoneWaitRunCmdItem.h 
     WatchWaitAndNoneWaitRunCmdItem.cpp
-    export/WatchWaitAndNoneWaitRunCmd.h 
+    WatchWaitAndNoneWaitRunCmd.h 
     WatchWaitAndNoneWaitRunCmd.cpp
     # hygen srcs 
 )

@@ -1,5 +1,5 @@
 #pragma once
-#include "WatchWaitAndNoneWaitRunCmd.h"
+#include "InterfaceWatchWaitAndNoneWaitRunCmd.h"
 #include "libpgpfactory.h"
 #include <numeric>
 #include <string>
@@ -34,22 +34,22 @@ public:
     void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign);
 
     void openExternalEncryptWait(std::vector<std::string> encryptTo,
-                                 WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+                                 InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                  std::string tmpFolder,
                                  std::string vscodePath,
                                  bool doSign);
     void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo,
-                                      WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+                                      InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                       std::string tmpFolder,
                                       std::string vscodePath,
                                       bool doSign,
                                       std::string signerStr);
 
-    std::string openExternalEncryptNoWait(WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+    std::string openExternalEncryptNoWait(InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                           std::string tmpFolder,
                                           std::string vscodePath);
     void closeExternalEncryptNoWait(std::vector<std::string> encryptTo,
-                                    WatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+                                    InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                     bool doSign);
 
     void encryptStringToFile(std::string s,
