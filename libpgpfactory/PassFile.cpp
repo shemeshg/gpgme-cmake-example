@@ -123,7 +123,7 @@ void PassFile::openExternalEncryptWaitAsync(std::vector<std::string> encryptTo, 
         if (!signerStr.empty()) {
             phLocal->setCtxSigners({signerStr});
         }
-        std::unique_ptr<PassFile> pfLocal = phLocal->getPassFile(fullPath);
+        std::unique_ptr<InterfacePassFile> pfLocal = phLocal->getPassFile(fullPath);
 
 
         return pfLocal->openExternalEncryptWait(encryptTo, watchWaitAndNoneWaitRunCmd,tmpFolder, vscodePath, doSign); })

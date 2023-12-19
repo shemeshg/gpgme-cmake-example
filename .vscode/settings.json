@@ -1,6 +1,8 @@
 {
   "cSpell.enabled": false,
   "files.associations": {
+    "*.cpp2": "cpp",
+    "*.h2": "cpp",
     "__bit_reference": "cpp",
     "__bits": "cpp",
     "__config": "cpp",
@@ -93,7 +95,9 @@
     "future": "cpp",
     "regex": "cpp",
     "forward_list": "cpp",
-    "typeindex": "cpp"
+    "typeindex": "cpp",
+    "__verbose_abort": "cpp",
+    "charconv": "cpp"
   },
   "cmake.configureOnOpen": true
 }

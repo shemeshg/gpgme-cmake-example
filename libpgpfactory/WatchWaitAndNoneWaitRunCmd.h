@@ -1,3 +1,4 @@
+#pragma once
 #include "WatchWaitAndNoneWaitRunCmdItem.h"
 #include <algorithm>
 

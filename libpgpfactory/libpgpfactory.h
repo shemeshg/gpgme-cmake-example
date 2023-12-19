@@ -7,6 +7,8 @@
 #include <fstream>
 #include <memory>
 #include <functional>
+#include "InterfacePassHelper.h"
+#include "GpgKeys.h"
 
 void failIfErr(gpgme_error_t &err);
 
@@ -67,14 +69,7 @@ public:
   ~GpgMeKeys();
 };
 
-class GpgKeys
-{
-public:
-  bool can_encrypt = false, invalid = false;
-  std::string keyid, name, email, foundUsingPattern;
-  int validity;
-  std::string getKeyStr();
-};
+
 
 class GpgFactory
 {

@@ -32,7 +32,12 @@ endif()
 
 
 
-set(libpgpfactory_SRCS
+set(libpgpfactory_SRCS    
+    InterfacePassHelper.h
+    InterfacePassHelper.cpp
+    InterfacePassFile.h
+    InterfacePassFile.cpp
+    GpgKeys.h
     libpgpfactory.h
     libpgpfactory.cpp
     libpasshelper.h

@@ -1,5 +1,6 @@
 #pragma once
-#include "libpasshelper.h"
+#include "InterfacePassHelper.h"
+
 
 class GpgIdManage
 {
@@ -59,7 +60,7 @@ private:
   std::string  split(std::string s);
 
 
-  std::unique_ptr<PassHelper> ph=std::make_unique<PassHelper>();
+  std::unique_ptr<InterfaceLibgpgfactory> ph=getInterfacePassHelper();
 
   // trim from start (in place)
   static inline void ltrim(std::string &s) {

@@ -5,8 +5,9 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include "InterfacePassFile.h"
 
-class PassFile
+class PassFile:public InterfacePassFile
 {
 public:
     PassFile(std::string fullPath, GpgFactory *g);

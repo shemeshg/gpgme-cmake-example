@@ -1,9 +1,10 @@
 #include "GpgIdManage.h"
-#include <iterator>
+#include <fstream>
+
 
 void GpgIdManage::init(std::string _currentPath, std::string _stopPath)
 {
-    ph=std::make_unique<PassHelper>();
+    ph=getInterfacePassHelper();
 
     currentPath = _currentPath;
     stopPath = _stopPath;
