@@ -26,12 +26,11 @@ public:
 
     virtual void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign) = 0;
 
-    virtual void openExternalEncryptWait(
-        std::vector<std::string> encryptTo,
-        InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
-        std::string tmpFolder,
-        std::string vscodePath,
-        bool doSign);
+    void openExternalEncryptWait(std::vector<std::string> encryptTo,
+                                 InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
+                                 std::string tmpFolder,
+                                 std::string vscodePath,
+                                 bool doSign);
 
     void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo,
                                       InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
