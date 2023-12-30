@@ -97,7 +97,9 @@
     "forward_list": "cpp",
     "typeindex": "cpp",
     "__verbose_abort": "cpp",
-    "charconv": "cpp"
+    "charconv": "cpp",
+    "csignal": "cpp",
+    "valarray": "cpp"
   },
   "cmake.configureOnOpen": true
 }

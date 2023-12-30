@@ -1,77 +1,37 @@
 #pragma once
+#include "InterfacePassFile.h"
 #include "InterfaceWatchWaitAndNoneWaitRunCmd.h"
 #include "libpgpfactory.h"
 #include <numeric>
 #include <string>
 #include <thread>
 #include <vector>
-#include "InterfacePassFile.h"
 
-class PassFile:public InterfacePassFile
+class PassFile : public InterfacePassFile
 {
 public:
     PassFile(std::string fullPath, GpgFactory *g);
 
-    bool isGpgFile();
+    void decrypt() override;
 
-    void decrypt();
-
-    std::string &getDecrypted();
-
-    std::string const &getFullPath() { return fullPath; }
-
-    std::string const getFullPathFolder()
-    {
-        if (std::filesystem::is_directory(fullPath)) {
-            return fullPath;
-        }
-        std::filesystem::path f{fullPath};
-        return f.parent_path().u8string();
-    }
-
-    std::string getDecryptedSignedBy();
-
-    void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign);
-
-    void openExternalEncryptWait(std::vector<std::string> encryptTo,
-                                 InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
-                                 std::string tmpFolder,
-                                 std::string vscodePath,
-                                 bool doSign);
-    void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo,
-                                      InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
-                                      std::string tmpFolder,
-                                      std::string vscodePath,
-                                      bool doSign,
-                                      std::string signerStr);
-
-    std::string openExternalEncryptNoWait(InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
-                                          std::string tmpFolder,
-                                          std::string vscodePath);
-    void closeExternalEncryptNoWait(std::vector<std::string> encryptTo,
-                                    InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
-                                    bool doSign);
+    void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign) override;
 
     void encryptStringToFile(std::string s,
                              std::string toFileName,
                              std::vector<std::string> encryptTo,
-                             bool doSign);
+                             bool doSign) override;
     void encryptFileToFile(std::string fromFileName,
                            std::string toFileName,
                            std::vector<std::string> encryptTo,
-                           bool doSign);
-    void decryptToFile(std::string toFileName);
+                           bool doSign) override;
+    void decryptToFile(std::string toFileName) override;
 
-    void dectyptFileNameToFileName(std::string fromPath, std::string toPath);
-
-    void setFullPath(std::string s) { fullPath = s; decryptedSignedBy = {};}
+    void dectyptFileNameToFileName(std::string fromPath, std::string toPath) override;
 
 private:
-    std::string fullPath, decrypted;
-    std::vector<std::string> decryptedSignedBy = {};
     GpgFactory *g;
 
-    std::vector<std::string> getPubIdDecryptedSignedBy()
+    std::vector<std::string> getPubIdDecryptedSignedBy() override
     {
         std::vector<std::string> ret;
         for (const auto &row : decryptedSignedBy) {
