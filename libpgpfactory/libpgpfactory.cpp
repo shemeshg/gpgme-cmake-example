@@ -1,4 +1,6 @@
 #include "libpgpfactory.h"
+#include <fstream>
+#include <sstream>
 
 void failIfErr(gpgme_error_t &err)
 {
@@ -357,7 +359,6 @@ std::vector<GpgKeys> GpgFactory::listKeys(const std::string pattern, bool secret
 
     if (gpg_err_code(err) != GPG_ERR_EOF)
     {
-        std::cout << "In ERROR\n";
         std::throw_with_nested(std::runtime_error(gpgme_strerror(err)));
     }
     return retKeys;

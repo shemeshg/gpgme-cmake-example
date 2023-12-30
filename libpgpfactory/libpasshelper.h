@@ -1,16 +1,14 @@
 #pragma once
-#include <ostream>
 #include <vector>
-#include <numeric>
 #include <string>
 #include <functional>
-#include <filesystem>
 
 #include "libpgpfactory.h"
 #include "FileSearch.h"
 #include "InterfacePassFile.h"
 #include <map>
 
+#include "InterfacePassHelper.h"
 
 class PassHelper:  public InterfaceLibgpgfactory
 {

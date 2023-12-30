@@ -62,6 +62,10 @@ public:
 
     virtual void dectyptFileNameToFileName(std::string fromPath, std::string toPath) = 0;
 
+    virtual void reEncryptFile(std::string pathFileToReEncrypt,
+                               std::vector<std::string> encryptTo,
+                               bool doSign) = 0;
+
     void setFullPath(std::string s);
 
     std::string getDecryptedSignedBy();

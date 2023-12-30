@@ -3,6 +3,7 @@
 #include <filesystem>
 #include "RunShellCmd.h"
 #include "InterfaceWatchWaitAndNoneWaitRunCmdItem.h"
+#include "TmpFileWacher.h"
 
 class WatchWaitAndNoneWaitRunCmdItem: public InterfaceWatchWaitAndNoneWaitRunCmdItem
 {

@@ -2,12 +2,8 @@
 
 #include <vector>
 #include <gpgme.h>
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <memory>
 #include <functional>
-#include "InterfacePassHelper.h"
 #include "GpgKeys.h"
 
 void failIfErr(gpgme_error_t &err);

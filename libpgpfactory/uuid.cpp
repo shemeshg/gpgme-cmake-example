@@ -1,4 +1,5 @@
 #include "uuid.h"
+#include <sstream>
 
 std::string uuid::generate_uuid_v4()
 {

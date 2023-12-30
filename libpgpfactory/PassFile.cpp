@@ -1,6 +1,5 @@
 #include "PassFile.h"
-#include "WatchWaitAndNoneWaitRunCmdItem.h"
-#include "libpasshelper.h"
+#include "uuid.h"
 
 PassFile::PassFile(std::string _fullPath, GpgFactory *g)
     : g{g}
@@ -59,4 +58,34 @@ void PassFile::dectyptFileNameToFileName(std::string fromPath, std::string toPat
     g->decryptValidate(din, dout, false);
 }
 
+std::vector<std::string> PassFile::getPubIdDecryptedSignedBy()
+{
+    std::vector<std::string> ret;
+    for (const auto &row : decryptedSignedBy) {
+        auto svec = g->listKeys(row);
+        if (svec.size() == 1) {
+            ret.push_back(svec[0].getKeyStr());
+        } else {
+            ret.push_back(row);
+        }
+    }
+    return ret;
+}
 
+void PassFile::reEncryptFile(std::string pathFileToReEncrypt,
+                             std::vector<std::string> encryptTo,
+                             bool doSign)
+{
+    try {
+        std::string backupFile = pathFileToReEncrypt + "backup";
+        std::filesystem::rename(pathFileToReEncrypt, backupFile);
+        PgpmeDataRII ein{backupFile, FROM_FILENAME}, emem{}, eout{pathFileToReEncrypt, TO_FILENAME};
+        g->decryptValidate(ein, emem, false);
+        emem.getString(); //get fseek to end of buffer
+        g->encryptSign(emem, eout, encryptTo, doSign);
+        std::filesystem::remove(backupFile);
+    } catch (...) {
+        std::filesystem::rename(pathFileToReEncrypt + "backup", pathFileToReEncrypt);
+        throw;
+    }    
+}
