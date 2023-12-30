@@ -13,6 +13,8 @@ if(WIN32 OR MSVC OR MSYS OR MINGW)
     set(WINDOWS TRUE)
 endif()
 
+add_subdirectory(RnpCore)
+
 if(UNIX)
     # LibGpgError bug must include_directories on root, but can be linked in subdirectory
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -70,11 +72,14 @@ add_library(libpgpfactory STATIC
 
 
 
+set (target_link_list RnpCore)
+
 if(UNIX)
-    target_link_libraries(libpgpfactory  Gpgmepp  ${LibGpgError_LIBRARIES})
+    set (target_link_list ${target_link_list} Gpgmepp  ${LibGpgError_LIBRARIES} )    
 endif()
 
-if (WINDOWS)
+SET(USE_GNUPG_ON_WINDOWS OFF)
+if (WINDOWS AND USE_GNUPG_ON_WINDOWS)
     # Create an IMPORTED target for the libgpgmepp6-6 DLL
     add_library(libgpgmepp6-6 SHARED IMPORTED)
     # Set the location of the DLL file
@@ -106,10 +111,10 @@ if (WINDOWS)
     )
 
     # Link your executable target against the IMPORTED targets
-    target_link_libraries(libpgpfactory libgpgmepp6-6 libgpg-error6-0)
+    set (target_link_list ${target_link_list} libgpgmepp6-6 libgpg-error6-0)   
 endif()
 
-
+target_link_libraries(libpgpfactory ${target_link_list})
 
 # Specify here the include directories exported
 # by this library
