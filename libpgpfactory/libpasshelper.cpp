@@ -3,31 +3,31 @@
 #include "PassFile.h"
 
 std::vector<GpgKeys> PassHelper::listKeys(const std::string pattern, bool secret_only) {
-    return GpgFactory::listKeys(pattern,secret_only);
+    return gpgFactory->listKeys(pattern,secret_only);
 }
 
 void PassHelper::setCtxSigners(std::vector<std::string> signedBy) {
-    return GpgFactory::setCtxSigners(signedBy);
+    return gpgFactory->setCtxSigners(signedBy);
 }
 
 void PassHelper::exportPublicKey(const std::string &keyId, const std::string &filePath)
 {
-    return GpgFactory::exportPublicKey(keyId, filePath);
+    return gpgFactory->exportPublicKey(keyId, filePath);
 }
 
 void PassHelper::importPublicKey(const std::string &filePath, bool doTrust)
 {
-    return GpgFactory::importPublicKey(filePath,doTrust);
+    return gpgFactory->importPublicKey(filePath,doTrust);
 }
 
 void PassHelper::trustPublicKey(const std::string &keyId)
 {
-    return GpgFactory::trustPublicKey(keyId);
+    return gpgFactory->trustPublicKey(keyId);
 }
 
 std::unique_ptr<InterfacePassFile> PassHelper::getPassFile(std::string fullPath)
 {
-    return std::make_unique<PassFile>(fullPath, this);
+    return std::make_unique<PassFile>(fullPath, gpgFactory.get());
 }
 
 bool PassHelper::isGpgFile(std::string pathToFile){
@@ -106,9 +106,9 @@ void PassHelper::reEncryptFile(std::string pathFileToReEncrypt, std::vector<std:
         PgpmeDataRII ein{backupFile, FROM_FILENAME},
             emem{},
             eout{pathFileToReEncrypt, TO_FILENAME};
-        decryptValidate(ein, emem, false);
+        gpgFactory->decryptValidate(ein, emem, false);
         emem.getString(); //get fseek to end of buffer
-        encryptSign(emem, eout, encryptTo, doSign);
+        gpgFactory->encryptSign(emem, eout, encryptTo, doSign);
         std::filesystem::remove(backupFile);
     }
     catch (...){

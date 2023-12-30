@@ -12,12 +12,12 @@
 #include <map>
 
 
-class PassHelper: public GpgFactory, public InterfaceLibgpgfactory
+class PassHelper:  public InterfaceLibgpgfactory
 {
 public:
   PassHelper()
   {
-    initPgpFactory();
+    gpgFactory->initPgpFactory();
   };
 
   std::vector<GpgKeys> listKeys(const std::string pattern = "",bool secret_only=false) override;
@@ -58,6 +58,7 @@ public:
 
 private:
   FileSearch fileSearch{};
+  std::unique_ptr<GpgFactory> gpgFactory = std::make_unique<GpgFactory>();
 
 
 };
