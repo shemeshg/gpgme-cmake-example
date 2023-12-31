@@ -1,28 +1,27 @@
 #pragma once
 
-
+#include "RnpCoreInterface.h"
 #include "RnpCoreParams.h"
 #include "RnpKeys.h"
-#include "RnpCoreInterface.h"
 #include "rnpcpp.hpp"
+#include "RnpLoginRequestException.h"
 
 #include <rnp/rnp.h>
 #include <rnp/rnp_err.h>
 
 #include <functional>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
-
-class RnpCoreBal: public RnpCoreInterface 
+class RnpCoreBal : public RnpCoreInterface
 {
 public:
     ~RnpCoreBal();
 
     RnpCoreBal();
 
-    void initPgpFactory() override; 
+    void initPgpFactory() override;
 
     void decryptFileToString(const std::string &filePath,
                              std::string &decrypted,
@@ -64,14 +63,13 @@ public:
 
     std::string getRnpVersionString() override;
 
-    std::string runPasswordCallback(std::string s) override {
-        return passwordCallback(s);
-    }
+    std::string runPasswordCallback(std::string s) override { return passwordCallback(s); }
 
-    void setPasswordCallback(std::function<std::string(std::string s)> func) override {
+    void setPasswordCallback(std::function<std::string(std::string s)> func) override
+    {
         passwordCallback = func;
     }
-    
+
 private:
     RnpCoreParams cfg{};
     rnp_ffi_t ffi = NULL;
@@ -90,9 +88,6 @@ private:
 
     static bool import_keys(rnp_ffi_t ffi, const uint8_t *data, size_t len, uint32_t flags);
 
-
-
-
     static bool add_key_to_array(rnp_ffi_t ffi,
                                  std::vector<rnp_key_handle_t> &keys,
                                  rnp_key_handle_t key,
@@ -103,7 +98,7 @@ private:
     static bool key_matches_flags(rnpffi::Key &key, int flags);
 
     bool keys_matching(std::vector<rnp_key_handle_t> &keys, const std::string &str, int flags);
-    bool keys_matching(std::vector<rnp_key_handle_t> &keys,int flags);
+    bool keys_matching(std::vector<rnp_key_handle_t> &keys, int flags);
 
     bool rnp_cfg_set_ks_info();
 
@@ -111,12 +106,29 @@ private:
 
     bool load_keyrings(bool loadsecret);
 
-    std::function<std::string(std::string s)> passwordCallback = [&](std::string keyid)
-    {
-        std::cout << "******** " << keyid <<" PASSWORD **********\n";
+    std::function<std::string(std::string s)> passwordCallback = [&](std::string keyid) {
+        std::cout << "******** " << keyid << " PASSWORD **********\n";
         std::string pass;
-        std::cin>>pass;
+        std::cin >> pass;
         return pass;
-    };    
-    
+    };
+
+    void r(std::function<int()> f)
+    {
+        int retVal = f();
+
+        if (retVal != RNP_SUCCESS) {
+            throw std::runtime_error(rnp_result_to_string(retVal));
+        }
+    }
+    void r_pass(std::function<int()> f, const RnpLoginRequestException & rre)
+    {
+        int retVal = f();
+         if (retVal == RNP_ERROR_BAD_PASSWORD) {
+            throw rre;
+         }
+        if (retVal != RNP_SUCCESS) {
+            throw std::runtime_error(rnp_result_to_string(retVal));
+        }
+    }
 };

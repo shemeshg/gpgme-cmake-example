@@ -3,7 +3,7 @@
 #include <map>
 
 #include "RnpCoreBal.h"
-#include "RnpLoginRequestException.h"
+
 
 RnpCoreBal::~RnpCoreBal()
 {
@@ -51,10 +51,10 @@ void RnpCoreBal::decryptFileToString(const std::string &filePath,
     int retVal = rnp_op_verify_execute(verify);
     if (retVal == RNP_ERROR_BAD_PASSWORD) {
         throw RnpLoginRequestException(1001,
-                                "Rnp Login Request",
-                                "decryptFileToString",
-                                lastKeyIdRequested,
-                                filePath);
+                                       "Rnp Login Request",
+                                       "decryptFileToString",
+                                       lastKeyIdRequested,
+                                       filePath);
     }
 
     size_t sigcount = 0;
@@ -101,25 +101,15 @@ void RnpCoreBal::decryptFileToFile(const std::string &fromFilePath, const std::s
     rnp_output_t output = NULL;
     uint8_t *buf = NULL;
     size_t buf_len = 0;
-    if (rnp_input_from_path(&input, fromFilePath.c_str()) != RNP_SUCCESS) {
-        throw std::runtime_error("failed to create input object\n");
-    }
+    r([&]() { return rnp_input_from_path(&input, fromFilePath.c_str()); });
+    r([&]() { return rnp_output_to_path(&output, toFilePath.c_str()); });
 
-    if (rnp_output_to_path(&output, toFilePath.c_str()) != RNP_SUCCESS) {
-        throw std::runtime_error("failed to create output object\n");
-    }
-
-    int retVal = rnp_decrypt(ffi, input, output);
-    if (retVal == RNP_ERROR_BAD_PASSWORD) {
-        throw RnpLoginRequestException(1002,
-                                "Rnp Login Request",
-                                "decryptFileToFile",
-                                lastKeyIdRequested,
-                                fromFilePath);
-    }
-    if (retVal != RNP_SUCCESS) {
-        throw std::runtime_error("could not rnp_decrypt");
-    }
+    r_pass([&]() { return rnp_decrypt(ffi, input, output); },
+           RnpLoginRequestException(1002,
+                                    "Rnp Login Request",
+                                    "decryptFileToFile",
+                                    lastKeyIdRequested,
+                                    fromFilePath));
 
     rnp_input_destroy(input);
     rnp_output_destroy(output);
