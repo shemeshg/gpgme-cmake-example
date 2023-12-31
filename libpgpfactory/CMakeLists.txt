@@ -66,6 +66,8 @@ set(libpgpfactory_SRCS
     WatchWaitAndNoneWaitRunCmd.cpp
     TmpFileWacher.h 
     TmpFileWacher.cpp 
+    RnpHelper.h 
+    RnpHelper.cpp
     # hygen srcs 
 )
 
