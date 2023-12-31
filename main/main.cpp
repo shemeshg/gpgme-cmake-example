@@ -29,7 +29,7 @@ int main(int, char **)
     p.listKeys();
     std::cout << "** from RnPgp \n";
 
-    auto rbl = getRnpCoreInterface();
+    std::unique_ptr<RnpCoreInterface> rbl = getRnpCoreInterface();
 
     rbl->setPasswordCallback([&](std::string keyid) {
         std::cout << "******** " << keyid << " pass **********\n";

@@ -3,6 +3,8 @@ include(FeatureSummary)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+cmake_policy(SET CMP0003 NEW)
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(MACOSX TRUE)
 endif()
@@ -49,7 +51,7 @@ set(libpgpfactory_SRCS
     libpasshelper.h
     libpasshelper.cpp   
     FileSearch.cpp
-    FileSearch.h
+    export/FileSearch.h
     GpgIdManage.cpp
     export/GpgIdManage.h
     RunShellCmd.cpp
