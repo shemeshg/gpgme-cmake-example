@@ -7,18 +7,21 @@ struct RnpLoginRequestException : public std::exception
     std::string message = "";
     std::string functionName;
     std::string lastKeyIdRequested;
-    std::string filePath;
+    std::string fromFilePath;
+    std::string toFilePath;
 
     RnpLoginRequestException(int code,
                              std::string message,
                              std::string functionName,
                              std::string lastKeyIdRequested,
-                             std::string filePath)
+                             std::string fromFilePath,
+                             std::string toFilePath)
         : code(code)
         , message(message)
         , functionName(functionName)
         , lastKeyIdRequested{lastKeyIdRequested}
-        , filePath{filePath}
+        , fromFilePath{fromFilePath}
+        , toFilePath{toFilePath}
     {}
 
     const char *what() const noexcept override { return message.c_str(); }

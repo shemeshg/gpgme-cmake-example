@@ -121,10 +121,11 @@ private:
             throw std::runtime_error(rnp_result_to_string(retVal));
         }
     }
-    void r_pass(std::function<int()> f, const RnpLoginRequestException & rre)
+    void r_pass(std::function<int()> f,  RnpLoginRequestException  rre)
     {
         int retVal = f();
          if (retVal == RNP_ERROR_BAD_PASSWORD) {
+            rre.lastKeyIdRequested = lastKeyIdRequested;
             throw rre;
          }
         if (retVal != RNP_SUCCESS) {

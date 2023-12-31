@@ -42,12 +42,13 @@ void RnpCoreBal::decryptFileToString(const std::string &filePath,
 
     r([&]() { return rnp_op_verify_create(&verify, ffi, input, output); });
 
+    lastKeyIdRequested = "klkl";
     r_pass([&]() { return rnp_op_verify_execute(verify); },
            RnpLoginRequestException(1002,
                                     "Rnp Login Request",
                                     "decryptFileToString",
                                     lastKeyIdRequested,
-                                    filePath));
+                                    filePath,""));
 
     size_t sigcount = 0;
 
@@ -100,7 +101,8 @@ void RnpCoreBal::decryptFileToFile(const std::string &fromFilePath, const std::s
                                     "Rnp Login Request",
                                     "decryptFileToFile",
                                     lastKeyIdRequested,
-                                    fromFilePath));
+                                    fromFilePath,
+                                    toFilePath));
 
     rnp_input_destroy(input);
     rnp_output_destroy(output);
@@ -425,9 +427,10 @@ bool RnpCoreBal::example_pass_provider(rnp_ffi_t ffi,
     rnp_key_get_keyid(key, &keyid);
     std::string keyidStr{keyid};
     keyidStr = libGpgFactoryRnp->getPrimaryKey(keyidStr);
+    libGpgFactoryRnp->lastKeyIdRequested = keyidStr;
 
     std::string pass = libGpgFactoryRnp->runPasswordCallback(keyidStr);
-    libGpgFactoryRnp->lastKeyIdRequested = keyidStr;
+    
 
     rnp_buffer_destroy(keyid);
 

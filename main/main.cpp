@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 
 //#include "libpasshelper.h"
 //#include "GpgIdManage.h"
@@ -14,9 +15,42 @@
 class PassSimpleBal
 {
 public:
-    PassSimpleBal(InterfaceLibgpgfactory *ph)
-        : ph{ph}
-    {}
+    PassSimpleBal(bool isRnPgp)
+    {
+        if (isRnPgp) {
+            ph = getInterfacePassHelper(true);
+            ph->setPasswordCallback([&](std::string keyid) { return getPasswordFromMap(keyid); });
+        } else {
+            ph = getInterfacePassHelper(false);
+        }
+    }
+
+    
+    std::string promptForPasswordAndRetry(RnpLoginRequestException &e)
+    {      
+        std::cout << "******** " << e.lastKeyIdRequested << " pass **********\n";
+        std::string pass;
+        SetStdinEcho(false);
+        std::cin >> pass;
+        SetStdinEcho(true);
+        loginAndPasswordMap[e.lastKeyIdRequested] = pass;
+
+        if (e.functionName == "decryptFileToString") {
+            return decryptTestFile(e.fromFilePath);
+        } else if ( e.functionName == "decryptFileToFile"){
+            decryptFileToFile(e.fromFilePath,e.toFilePath);
+            return "";
+        }
+    }
+
+    std::string getPasswordFromMap(std::string keyid)
+    {
+        std::string pass = "";
+        if (loginAndPasswordMap.count(keyid)) {
+            pass = loginAndPasswordMap.at(keyid);
+        }
+        return pass;
+    }
 
     void listKeys(std::string pattern = "", bool secret_only = false)
     {
@@ -27,64 +61,49 @@ public:
 
     std::string decryptTestFile(std::string testFile)
     {
-        auto pf = ph->getPassFile(testFile);
-        pf->decrypt();
-        return pf->getDecrypted();
+        try {
+            auto pf = ph->getPassFile(testFile);
+            pf->decrypt();
+            return pf->getDecrypted();
+        } catch (RnpLoginRequestException &rlre) {
+            return promptForPasswordAndRetry(rlre);
+        } catch (...) {
+            throw;
+        }
     }
 
     void decryptFileToFile(std::string testFile, std::string to)
     {
-        auto pf = ph->getPassFile(testFile);
-        pf->decryptToFile(to);
+        try {
+            auto pf = ph->getPassFile(testFile);
+            pf->decryptToFile(to);
+        } catch (RnpLoginRequestException &rlre) {
+            promptForPasswordAndRetry(rlre);
+        } catch (...) {
+            throw;
+        }
     }
 
 private:
-    InterfaceLibgpgfactory *ph;
+    std::unique_ptr<InterfaceLibgpgfactory> ph;
+    std::map<std::string, std::string> loginAndPasswordMap{};
 };
 
 int main(int, char **)
 {
-    std::unique_ptr<InterfaceLibgpgfactory> rnpPh = getInterfacePassHelper(true);
-
-    std::unique_ptr<InterfaceLibgpgfactory> gnuPgPh = getInterfacePassHelper(false);
     std::string testFile = "/Volumes/RAM_Disk_4G/tmp/file.gpg";
 
-    rnpPh->setPasswordCallback([&](std::string keyid) {
-        std::cout << "******** " << keyid << " pass **********\n";
-        std::string pass;
-        SetStdinEcho(false);
-        std::cin >> pass;
-        SetStdinEcho(true);
-        return pass;
-    });
-
-    PassSimpleBal gnuBal{gnuPgPh.get()};
-    PassSimpleBal rnpBal{rnpPh.get()};
+    PassSimpleBal gnuBal{false};
+    PassSimpleBal rnpBal{true};
     //std::cout << "** from GnuPg \n";
     //gnuBal.listKeys();
     //std::cout<<gnuBal.decryptTestFile(testFile)<<"\n";
     std::cout << "** from RnPgp \n";
     rnpBal.listKeys();
     //RnpLoginRequestException
-    try {
-        std::cout << rnpBal.decryptTestFile(testFile) << "\n";
-        rnpBal.decryptFileToFile(testFile, testFile + ".txt");
-    } catch (RnpLoginRequestException &rlre) {
-        // Catch the custom exception and print its properties
-        std::cout << "Caught RnpLoginRequestException" << std::endl;
-        std::cout << "functionName: " << rlre.functionName << std::endl;
-        std::cout << "lastKeyIdRequested: " << rlre.lastKeyIdRequested << std::endl;
-        std::cout << "filePath: " << rlre.filePath << std::endl;
-        throw;
-    } catch (std::runtime_error &re) {
-        // Catch a std::runtime_error and print its message
-        std::cout << "Caught std::runtime_error" << std::endl;
-        std::cout << "Message: " << re.what() << std::endl;
-        throw;
-    } catch (...) {
-        // Catch any other exception and print a generic message
-        std::cout << "Caught an unknown exception" << std::endl;
-        throw;
-    }
+
+    //std::cout << rnpBal.decryptTestFile(testFile) << "\n";
+    rnpBal.decryptFileToFile(testFile, testFile + ".txt");
+
     return 0;
 }
