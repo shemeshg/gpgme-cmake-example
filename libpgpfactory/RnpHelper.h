@@ -44,6 +44,9 @@ public:
         return std::make_unique<PassFileRnp>(fullPath, rblFactory.get());
     }
 
+    void setPasswordCallback(std::function<std::string(std::string s)> func) override {
+        rblFactory->setPasswordCallback(func);
+    }
 private:
     std::unique_ptr<RnpCoreInterface> rblFactory = getRnpCoreInterface();
 };

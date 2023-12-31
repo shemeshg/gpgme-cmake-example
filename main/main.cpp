@@ -41,7 +41,14 @@ int main(int, char **)
     std::unique_ptr<InterfaceLibgpgfactory> rnpPh = getInterfacePassHelper(true);
     std::string testFile = "/Volumes/RAM_Disk_4G/tmp/file.gpg";
 
-
+    rnpPh->setPasswordCallback([&](std::string keyid) {
+        std::cout << "******** " << keyid << " pass **********\n";
+        std::string pass;
+        SetStdinEcho(false);
+        std::cin >> pass;
+        SetStdinEcho(true);
+        return pass;
+    });
 
     PassSimpleBal gnuBal{gnuPgPh.get()};
     PassSimpleBal rnpBal{rnpPh.get()};
@@ -52,24 +59,5 @@ int main(int, char **)
     //rnpBal.listKeys();
      std::cout<<rnpBal.decryptTestFile(testFile)<<"\n";
 
-    /*
-    std::unique_ptr<RnpCoreInterface> rbl = getRnpCoreInterface();
-
-    rbl->setPasswordCallback([&](std::string keyid) {
-        std::cout << "******** " << keyid << " pass **********\n";
-        std::string pass;
-        SetStdinEcho(false);
-        std::cin >> pass;
-        SetStdinEcho(true);
-        return pass;
-    });
-
-
-    std::cout << "RNP version: " << rbl->getRnpVersionString() << "\n";
-
-    for (auto &k : rbl->listKeys("", false)) {
-        std::cout << k.getKeyStr() << "\n";
-    }
-    */
     return 0;
 }

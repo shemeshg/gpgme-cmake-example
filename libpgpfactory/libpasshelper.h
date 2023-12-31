@@ -22,6 +22,8 @@ public:
 
     std::unique_ptr<InterfacePassFile> getPassFile(std::string fullPath) override;
 
+    void setPasswordCallback(std::function<std::string(std::string s)> func) override {}
+
 private:
     std::unique_ptr<GpgFactory> gpgFactory = std::make_unique<GpgFactory>();
 };

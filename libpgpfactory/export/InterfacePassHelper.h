@@ -14,7 +14,7 @@ public:
     virtual void exportPublicKey(std::string const &keyId, std::string const &filePath) = 0;
     virtual void importPublicKey(std::string const &filePath, bool doTrust) = 0;
     virtual void trustPublicKey(std::string const &keyId) = 0;
-
+    virtual void setPasswordCallback(std::function<std::string(std::string s)> func) = 0;
     virtual ~InterfaceLibgpgfactory() {}
 
     virtual std::unique_ptr<InterfacePassFile> getPassFile(std::string fullPath) = 0;
