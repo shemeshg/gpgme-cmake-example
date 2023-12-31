@@ -17,6 +17,7 @@ public:
                              std::string toFileName,
                              std::vector<std::string> encryptTo,
                              bool doSign) override;
+                             
     void encryptFileToFile(std::string fromFileName,
                            std::string toFileName,
                            std::vector<std::string> encryptTo,
@@ -29,9 +30,12 @@ public:
                                std::vector<std::string> encryptTo,
                                bool doSign) override;
 
+    std::vector<GpgKeys> listKeys(const std::string pattern = "", bool secret_only = false) override {
+        return g->listKeys(pattern, secret_only);
+    }
+
 private:
     GpgFactory *g;
 
-    std::vector<std::string> getPubIdDecryptedSignedBy() override;
-    ;
+   
 };

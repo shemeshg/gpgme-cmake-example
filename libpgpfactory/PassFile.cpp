@@ -1,5 +1,4 @@
 #include "PassFile.h"
-#include "uuid.h"
 
 PassFile::PassFile(std::string _fullPath, GpgFactory *g)
     : g{g}
@@ -42,20 +41,6 @@ void PassFile::dectyptFileNameToFileName(std::string fromPath, std::string toPat
     PgpmeDataRII din{fromPath, FROM_FILENAME}, dout{toPath, TO_FILENAME};
 
     g->decryptValidate(din, dout, false);
-}
-
-std::vector<std::string> PassFile::getPubIdDecryptedSignedBy()
-{
-    std::vector<std::string> ret;
-    for (const auto &row : decryptedSignedBy) {
-        auto svec = g->listKeys(row);
-        if (svec.size() == 1) {
-            ret.push_back(svec[0].getKeyStr());
-        } else {
-            ret.push_back(row);
-        }
-    }
-    return ret;
 }
 
 void PassFile::reEncryptFile(std::string pathFileToReEncrypt,

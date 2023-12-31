@@ -5,7 +5,6 @@
 
 #include "InterfacePassFile.h"
 #include "libpgpfactory.h"
-#include <map>
 
 #include "InterfacePassHelper.h"
 

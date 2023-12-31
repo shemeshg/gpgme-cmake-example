@@ -53,11 +53,11 @@ int main(int, char **)
     PassSimpleBal gnuBal{gnuPgPh.get()};
     PassSimpleBal rnpBal{rnpPh.get()};
     std::cout << "** from GnuPg \n";
-    //gnuBal.listKeys();
-    std::cout<<gnuBal.decryptTestFile(testFile)<<"\n";
+    gnuBal.listKeys();
+    //std::cout<<gnuBal.decryptTestFile(testFile)<<"\n";
     std::cout << "** from RnPgp \n";
-    //rnpBal.listKeys();
-     std::cout<<rnpBal.decryptTestFile(testFile)<<"\n";
+    rnpBal.listKeys();
+    //std::cout<<rnpBal.decryptTestFile(testFile)<<"\n";
 
     return 0;
 }

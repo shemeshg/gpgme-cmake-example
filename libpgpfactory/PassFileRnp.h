@@ -7,29 +7,35 @@
 class PassFileRnp : public InterfacePassFile
 {
 public:
-    PassFileRnp(std::string _fullPath, RnpCoreInterface *rbl)
-        : rbl{rbl}
-    {
-        fullPath = _fullPath;
-    }
+    PassFileRnp(std::string _fullPath, RnpCoreInterface *rbl);
 
-    void decrypt() override { rbl->decryptFileToString(fullPath, decrypted, decryptedSignedBy); }
+    void decrypt() override;
+
+    std::vector<GpgKeys> listKeys(const std::string pattern = "", bool secret_only = false) override{
+        std::vector<GpgKeys> v;
+        for (const auto &k : rbl->listKeys(pattern, secret_only)) {
+            GpgKeys gk;
+            gk.can_encrypt = k.can_encrypt;
+            gk.invalid = k.invalid;
+            gk.keyid = k.keyid;
+            gk.name = k.name;
+            gk.email = k.email;
+            gk.foundUsingPattern = k.foundUsingPattern;
+            gk.validity = k.validity;
+            v.push_back(gk);
+        }
+        return v;
+    }
 
     void encryptStringToFile(std::string s,
                              std::string toFileName,
                              std::vector<std::string> encryptTo,
-                             bool doSign) override
-    {
-        rbl->encryptSignStringToFile(s, toFileName, encryptTo, doSign);
-    }
+                             bool doSign) override;
 
     void encryptFileToFile(std::string fromFileName,
                            std::string toFileName,
                            std::vector<std::string> encryptTo,
-                           bool doSign) override
-    {
-        rbl->encryptSignFileToFile(fromFileName, toFileName, encryptTo, doSign);
-    }
+                           bool doSign) override;
 
     void dectyptFileNameToFileName(std::string fromPath, std::string toPath) override {
         rbl->decryptFileToFile(fromPath, toPath);
@@ -37,13 +43,8 @@ public:
 
     void reEncryptFile(std::string pathFileToReEncrypt,
                        std::vector<std::string> encryptTo,
-                       bool doSign) override
-    {
-       rbl->reEncryptFile(pathFileToReEncrypt, encryptTo, doSign); 
-    }
+                       bool doSign) override;
 
 private:
     RnpCoreInterface *rbl;
-
-    std::vector<std::string> getPubIdDecryptedSignedBy() override { return {}; }
 };

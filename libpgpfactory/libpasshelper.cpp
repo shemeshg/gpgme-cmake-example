@@ -1,6 +1,5 @@
 #include "libpasshelper.h"
 #include "PassFile.h"
-#include <filesystem>
 
 std::vector<GpgKeys> PassHelper::listKeys(const std::string pattern, bool secret_only)
 {

@@ -1,5 +1,6 @@
 #include "InterfacePassFile.h"
 #include "libpasshelper.h"
+#include "uuid.h"
 
 #include <numeric>
 #include <sstream>
@@ -9,6 +10,24 @@ bool InterfacePassFile::isGpgFile()
 {
     std::filesystem::path path(fullPath);
     return (!std::filesystem::is_directory(path) && path.extension().string() == ".gpg");
+}
+
+const std::string InterfacePassFile::getFullPathFolder()
+{
+    if (std::filesystem::is_directory(fullPath)) {
+        return fullPath;
+    }
+    std::filesystem::path f{fullPath};
+    return f.parent_path().u8string();
+}
+
+void InterfacePassFile::encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign)
+{
+    std::string tmpName = fullPath + uuid::generate_uuid_v4();
+
+    decrypted = s;
+    encryptStringToFile(s, tmpName, encryptTo, doSign);
+    std::filesystem::rename(tmpName, fullPath);
 }
 
 void InterfacePassFile::openExternalEncryptWait(

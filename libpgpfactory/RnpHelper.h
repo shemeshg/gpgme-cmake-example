@@ -12,19 +12,8 @@ public:
 
     std::vector<GpgKeys> listKeys(const std::string pattern = "", bool secret_only = false) override
     {
-        std::vector<GpgKeys> v;
-        for (const auto &k : rblFactory->listKeys(pattern, secret_only)) {
-            GpgKeys gk;
-            gk.can_encrypt = k.can_encrypt;
-            gk.invalid = k.invalid;
-            gk.keyid = k.keyid;
-            gk.name = k.name;
-            gk.email = k.email;
-            gk.foundUsingPattern = k.foundUsingPattern;
-            gk.validity = k.validity;
-            v.push_back(gk);
-        }
-        return v;
+        auto pf = getPassFile("");
+        return pf->listKeys(pattern, secret_only);
     }
     void setCtxSigners(std::vector<std::string> signedBy) override {
         rblFactory->setCtxSigners(signedBy);

@@ -1,8 +1,8 @@
 #pragma once
 #include "InterfaceWatchWaitAndNoneWaitRunCmd.h"
+#include "GpgKeys.h"
 #include <string>
 #include <vector>
-#include "uuid.h"
 
 class InterfacePassFile
 {
@@ -16,23 +16,9 @@ public:
 
     std::string const &getFullPath() { return fullPath; }
 
-    std::string const getFullPathFolder()
-    {
-        if (std::filesystem::is_directory(fullPath)) {
-            return fullPath;
-        }
-        std::filesystem::path f{fullPath};
-        return f.parent_path().u8string();
-    }
+    std::string const getFullPathFolder();
 
-    void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign)
-    {
-        std::string tmpName = fullPath + uuid::generate_uuid_v4();
-
-        decrypted = s;
-        encryptStringToFile(s, tmpName, encryptTo, doSign);
-        std::filesystem::rename(tmpName, fullPath);
-    }
+    void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign);
 
     void openExternalEncryptWait(std::vector<std::string> encryptTo,
                                  InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
@@ -66,15 +52,16 @@ public:
                                    std::vector<std::string> encryptTo,
                                    bool doSign)
         = 0;
-    void decryptToFile(std::string toFileName){
-        dectyptFileNameToFileName(fullPath, toFileName);
-    }
+    void decryptToFile(std::string toFileName) { dectyptFileNameToFileName(fullPath, toFileName); }
 
     virtual void dectyptFileNameToFileName(std::string fromPath, std::string toPath) = 0;
 
     virtual void reEncryptFile(std::string pathFileToReEncrypt,
                                std::vector<std::string> encryptTo,
                                bool doSign)
+        = 0;
+
+    virtual std::vector<GpgKeys> listKeys(const std::string pattern = "", bool secret_only = false)
         = 0;
 
     void setFullPath(std::string s);
@@ -85,6 +72,17 @@ protected:
     std::string fullPath, decrypted;
     std::vector<std::string> decryptedSignedBy = {};
 
-private:
-    virtual std::vector<std::string> getPubIdDecryptedSignedBy() = 0;
+    std::vector<std::string> getPubIdDecryptedSignedBy()
+    {
+        std::vector<std::string> ret;
+        for (const auto &row : decryptedSignedBy) {
+            auto svec = listKeys(row);
+            if (svec.size() == 1) {
+                ret.push_back(svec[0].getKeyStr());
+            } else {
+                ret.push_back(row);
+            }
+        }
+        return ret;
+    }
 };
