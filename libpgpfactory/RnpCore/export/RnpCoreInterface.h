@@ -50,6 +50,8 @@ public:
     virtual std::string getPrimaryKey(std::string key){
         return {};
     };
+
+    std::string lastKeyIdRequested;
 };
 
 std::unique_ptr<RnpCoreInterface> getRnpCoreInterface();

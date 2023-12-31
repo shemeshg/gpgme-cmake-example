@@ -71,7 +71,7 @@ public:
     void setPasswordCallback(std::function<std::string(std::string s)> func) override {
         passwordCallback = func;
     }
-
+    
 private:
     RnpCoreParams cfg{};
     rnp_ffi_t ffi = NULL;
@@ -118,4 +118,5 @@ private:
         std::cin>>pass;
         return pass;
     };    
+    
 };

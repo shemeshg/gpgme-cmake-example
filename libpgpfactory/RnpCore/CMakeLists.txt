@@ -38,6 +38,7 @@ RnpCoreBal.h
 RnpCoreBal.cpp 
 export/RnpCoreInterface.h
 export/RnpKeys.h
+export/RnpLoginRequestException.h
 RnpCoreInterface.cpp
 )
 

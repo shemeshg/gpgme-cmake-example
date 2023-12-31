@@ -99,7 +99,8 @@
     "__verbose_abort": "cpp",
     "charconv": "cpp",
     "csignal": "cpp",
-    "valarray": "cpp"
+    "valarray": "cpp",
+    "__memory": "cpp"
   },
   "cmake.configureOnOpen": true
 }
