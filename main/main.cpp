@@ -31,6 +31,11 @@ public:
         return pf->getDecrypted();
     }
 
+    void decryptFileToFile(std::string testFile, std::string to){
+        auto pf = ph->getPassFile(testFile);
+        pf->decryptToFile(to);
+    }
+
 private:
     InterfaceLibgpgfactory *ph;
 };
@@ -56,12 +61,13 @@ int main(int, char **)
 
     PassSimpleBal gnuBal{gnuPgPh.get()};
     PassSimpleBal rnpBal{rnpPh.get()};
-    std::cout << "** from GnuPg \n";
-    gnuBal.listKeys();
+    //std::cout << "** from GnuPg \n";
+    //gnuBal.listKeys();
     //std::cout<<gnuBal.decryptTestFile(testFile)<<"\n";
     std::cout << "** from RnPgp \n";
     rnpBal.listKeys();
-    //std::cout<<rnpBal.decryptTestFile(testFile)<<"\n";
+    std::cout<<rnpBal.decryptTestFile(testFile)<<"\n";
+    rnpBal.decryptFileToFile(testFile, testFile + ".txt");
 
     return 0;
 }

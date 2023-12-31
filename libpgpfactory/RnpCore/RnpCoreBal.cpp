@@ -52,7 +52,11 @@ void RnpCoreBal::decryptFileToString(const std::string &filePath,
     {
         throw std::runtime_error("failed to create verification context\n");
     }
-    rnp_op_verify_execute(verify);
+
+    int retVal=rnp_op_verify_execute(verify);
+    if (retVal == RNP_ERROR_BAD_PASSWORD){
+        throw std::runtime_error("LoginReq:");
+    }    
 
     size_t sigcount = 0;
     if (rnp_op_verify_get_signature_count(verify, &sigcount) != RNP_SUCCESS)
@@ -62,7 +66,7 @@ void RnpCoreBal::decryptFileToString(const std::string &filePath,
     // get the decrypted message from the output structure
     if (rnp_output_memory_get_buf(output, &buf, &buf_len, false) != RNP_SUCCESS)
     {
-        throw std::runtime_error("LoginReq:");
+        throw std::runtime_error("rnp_output_memory_get_buf");
     }
     decrypted = std::string(buf, buf + buf_len);
     for (size_t i = 0; i < sigcount; i++)
@@ -114,9 +118,13 @@ void RnpCoreBal::decryptFileToFile(const std::string &fromFilePath, const std::s
         throw std::runtime_error("failed to create output object\n");
     }
 
-    if (rnp_decrypt(ffi, input, output) != RNP_SUCCESS)
-    {
+    int retVal=rnp_decrypt(ffi, input, output);
+    if (retVal == RNP_ERROR_BAD_PASSWORD){
         throw std::runtime_error("LoginReq:");
+    }
+    if (retVal != RNP_SUCCESS)
+    {
+        throw std::runtime_error("could not rnp_decrypt");
     }
 
     rnp_input_destroy(input);
