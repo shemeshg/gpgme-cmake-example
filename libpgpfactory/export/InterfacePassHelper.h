@@ -54,4 +54,4 @@ private:
     FileSearch fileSearch{};
 };
 
-std::unique_ptr<InterfaceLibgpgfactory> getInterfacePassHelper();
+std::unique_ptr<InterfaceLibgpgfactory> getInterfacePassHelper(bool isRnPgp);

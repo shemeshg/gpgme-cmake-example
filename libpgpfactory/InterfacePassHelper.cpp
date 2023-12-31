@@ -3,11 +3,13 @@
 #include "libpasshelper.h"
 #include <regex>
 
-std::unique_ptr<InterfaceLibgpgfactory> getInterfacePassHelper()
+std::unique_ptr<InterfaceLibgpgfactory> getInterfacePassHelper(bool isRnPgp)
 {
+    if (isRnPgp) {
+        std::unique_ptr<InterfaceLibgpgfactory> rnpHelper = std::make_unique<RnpHelper>();
+        return rnpHelper;
+    }
     std::unique_ptr<InterfaceLibgpgfactory> passHelper = std::make_unique<PassHelper>();
-    std::unique_ptr<InterfaceLibgpgfactory> rnpHelper = std::make_unique<RnpHelper>();
-
     return passHelper;
 }
 bool InterfaceLibgpgfactory::isGpgFile(std::string pathToFile)

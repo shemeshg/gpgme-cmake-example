@@ -1,86 +1,89 @@
 #pragma once
 #include "InterfacePassHelper.h"
 
-
 class GpgIdManage
 {
 public:
-  GpgIdManage(std::string _currentPath, std::string _stopPath) {
-      init(_currentPath,_stopPath);      
-  }
+    GpgIdManage(std::string _currentPath, std::string _stopPath, bool _isRnPgp) { 
+        init(_currentPath, _stopPath, _isRnPgp); 
+    }
 
-  GpgIdManage(GpgIdManage const &) = delete;
-  GpgIdManage &operator=(GpgIdManage const &) = delete;
-  GpgIdManage(GpgIdManage &&) = delete;
-  GpgIdManage &operator=(GpgIdManage &&) = delete;
+    GpgIdManage(GpgIdManage const &) = delete;
+    GpgIdManage &operator=(GpgIdManage const &) = delete;
+    GpgIdManage(GpgIdManage &&) = delete;
+    GpgIdManage &operator=(GpgIdManage &&) = delete;
 
-  ~GpgIdManage(){};
+    ~GpgIdManage(){};
 
-  std::string currentPath, stopPath, nearestGpgIdFolder,
-      gpgPubKeysFolder, nearestGpgIdFile;
-  bool gpgPubKeysFolderExists = false;
-  bool classInitialized = false;
+    std::string currentPath, stopPath, nearestGpgIdFolder, gpgPubKeysFolder, nearestGpgIdFile;
+    bool isRnPgp;
+    bool gpgPubKeysFolderExists = false;
+    bool classInitialized = false;
 
-  std::vector<std::string> keysNotFoundInGpgIdFile{};
-  std::vector<GpgKeys> keysFoundInGpgIdFile{};
-  std::vector<GpgKeys> allKeys;
-  std::vector<GpgKeys> allPrivateKeys;
-  std::vector<std::string> encryptTo{};
+    std::vector<std::string> keysNotFoundInGpgIdFile{};
+    std::vector<GpgKeys> keysFoundInGpgIdFile{};
+    std::vector<GpgKeys> allKeys;
+    std::vector<GpgKeys> allPrivateKeys;
+    std::vector<std::string> encryptTo{};
 
-  void importPublicKeyAndTrust(const std::string &filePath);
+    void importPublicKeyAndTrust(const std::string &filePath);
 
-  void ensureValidGpgIdFile();
+    void ensureValidGpgIdFile();
 
-  void saveBackGpgIdFile();
+    void saveBackGpgIdFile();
 
-  void exportGpgIdToGpgPubKeysFolder();
+    void exportGpgIdToGpgPubKeysFolder();
 
-  void importAllGpgPubKeysFolder();
+    void importAllGpgPubKeysFolder();
 
-  void reEncryptFile(std::string pathFileToReEncrypt, bool doSign);
+    void reEncryptFile(std::string pathFileToReEncrypt, bool doSign);
 
-  void reEncryptStoreFolder(std::function<void(std::string)> func, bool doSign);
+    void reEncryptStoreFolder(std::function<void(std::string)> func, bool doSign);
 
-  void populateKeyFromString(const std::string &line);
+    void populateKeyFromString(const std::string &line);
 
-  // hygen public
+    // hygen public
 
-  void setSigner(std::string signerStr){
-      if (!signerStr.empty()) {
-          ph->setCtxSigners({signerStr});
-      }
-  }
+    void setSigner(std::string signerStr)
+    {
+        if (!signerStr.empty()) {
+            ph->setCtxSigners({signerStr});
+        }
+    }
 
 private:
+    void init(std::string _currentPath, std::string _stopPath, bool _isRnPgp);
 
-  void init(std::string _currentPath, std::string _stopPath);
+    void populateKeysParsedInGpgIdFile();
 
-  void populateKeysParsedInGpgIdFile();
+    std::string split(std::string s);
 
-  std::string  split(std::string s);
+    std::unique_ptr<InterfaceLibgpgfactory> ph = nullptr;
 
+    // trim from start (in place)
+    static inline void ltrim(std::string &s)
+    {
+        s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+                    return !std::isspace(ch);
+                }));
+    }
 
-  std::unique_ptr<InterfaceLibgpgfactory> ph=getInterfacePassHelper();
+    // trim from end (in place)
+    static inline void rtrim(std::string &s)
+    {
+        s.erase(std::find_if(s.rbegin(),
+                             s.rend(),
+                             [](unsigned char ch) { return !std::isspace(ch); })
+                    .base(),
+                s.end());
+    }
 
-  // trim from start (in place)
-  static inline void ltrim(std::string &s) {
-      s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-                  return !std::isspace(ch);
-              }));
-  }
+    // trim from both ends (in place)
+    static inline void trim(std::string &s)
+    {
+        rtrim(s);
+        ltrim(s);
+    }
 
-  // trim from end (in place)
-  static inline void rtrim(std::string &s) {
-      s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
-                  return !std::isspace(ch);
-              }).base(), s.end());
-  }
-
-  // trim from both ends (in place)
-  static inline void trim(std::string &s) {
-      rtrim(s);
-      ltrim(s);
-  }
-
-  // hygen private
+    // hygen private
 };
