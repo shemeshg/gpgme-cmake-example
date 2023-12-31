@@ -85,7 +85,7 @@ public:
     }
 
 private:
-    std::unique_ptr<InterfaceLibgpgfactory> ph;
+    InterfaceLibgpgfactory *ph;
     std::map<std::string, std::string> loginAndPasswordMap{};
 };
 
@@ -93,8 +93,8 @@ int main(int, char **)
 {
     std::string testFile = "/Volumes/RAM_Disk_4G/tmp/file.gpg";
 
-    PassSimpleBal gnuBal{false};
-    PassSimpleBal rnpBal{true};
+    //PassSimpleBal gnuBal{false};
+    PassSimpleBal rnpBal{false};
     //std::cout << "** from GnuPg \n";
     //gnuBal.listKeys();
     //std::cout<<gnuBal.decryptTestFile(testFile)<<"\n";
@@ -102,8 +102,8 @@ int main(int, char **)
     rnpBal.listKeys();
     //RnpLoginRequestException
 
-    //std::cout << rnpBal.decryptTestFile(testFile) << "\n";
-    rnpBal.decryptFileToFile(testFile, testFile + ".txt");
+    std::cout << rnpBal.decryptTestFile(testFile) << "\n";
+    //rnpBal.decryptFileToFile(testFile, testFile + ".txt");
 
     return 0;
 }

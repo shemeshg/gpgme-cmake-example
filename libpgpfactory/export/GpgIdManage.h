@@ -58,7 +58,7 @@ private:
 
     std::string split(std::string s);
 
-    std::unique_ptr<InterfaceLibgpgfactory> ph = nullptr;
+    InterfaceLibgpgfactory *ph = nullptr;
 
     // trim from start (in place)
     static inline void ltrim(std::string &s)

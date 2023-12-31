@@ -1,24 +1,54 @@
 #include "InterfacePassHelper.h"
 #include "RnpHelper.h"
-#ifdef UNIX
+#if defined(__APPLE__) || defined(__linux__)
 #include "libpasshelper.h"
 #endif
 #include <regex>
 
-std::unique_ptr<InterfaceLibgpgfactory> getInterfacePassHelper(bool isRnPgp)
+class Singleton
 {
-#ifdef UNIX
-    if (isRnPgp) {
-        std::unique_ptr<InterfaceLibgpgfactory> rnpHelper = std::make_unique<RnpHelper>();
-        return rnpHelper;
+public:
+    Singleton(const Singleton &) = delete;
+    Singleton &operator=(const Singleton &) = delete;
+    static Singleton &getInstance()
+    {
+        // Static local variable that holds the singleton object
+        static Singleton instance;
+        return instance;
     }
-    std::unique_ptr<InterfaceLibgpgfactory> passHelper = std::make_unique<PassHelper>();
-    return passHelper;
+
+    InterfaceLibgpgfactory *getHelper(bool isRnPgp)
+    {
+        if (helper == nullptr) {
+#if defined(__APPLE__) || defined(__linux__)
+            if ( isRnPgp) {
+                helper = std::make_unique<RnpHelper>();
+            } else {
+                helper = std::make_unique<PassHelper>();
+            }
 #else
-    std::unique_ptr<InterfaceLibgpgfactory> rnpHelper = std::make_unique<RnpHelper>();
-    return rnpHelper;
+            helper = std::make_unique<PassHelper>();
 #endif
+        }
+        return helper.get();
+    }
+
+private:
+    // Private constructor
+    std::unique_ptr<InterfaceLibgpgfactory> helper = nullptr;
+    Singleton() {}
+
+    // Private destructor
+    ~Singleton() {}
+};
+
+InterfaceLibgpgfactory *getInterfacePassHelper(bool isRnPgp)
+{   
+    Singleton& s = Singleton::getInstance();
+    return s.getHelper(isRnPgp);
+    
 }
+
 bool InterfaceLibgpgfactory::isGpgFile(std::string pathToFile)
 {
     std::unique_ptr<InterfacePassFile> pf = getPassFile(pathToFile);
