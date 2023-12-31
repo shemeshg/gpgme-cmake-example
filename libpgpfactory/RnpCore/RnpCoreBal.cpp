@@ -4,7 +4,6 @@
 
 #include "RnpCoreBal.h"
 
-
 RnpCoreBal::~RnpCoreBal()
 {
     rnp_ffi_destroy(ffi);
@@ -34,37 +33,29 @@ void RnpCoreBal::decryptFileToString(const std::string &filePath,
     rnp_output_t output = NULL;
     uint8_t *buf = NULL;
     size_t buf_len = 0;
-    if (rnp_input_from_path(&input, filePath.c_str()) != RNP_SUCCESS) {
-        throw std::runtime_error("failed to create input object\n");
-    }
 
-    if (rnp_output_to_memory(&output, 0) != RNP_SUCCESS) {
-        throw std::runtime_error("failed to create output object\n");
-    }
+    r([&]() { return rnp_input_from_path(&input, filePath.c_str()); });
+
+    r([&]() { return rnp_output_to_memory(&output, 0); });
 
     rnp_op_verify_t verify = NULL;
 
-    if (rnp_op_verify_create(&verify, ffi, input, output) != RNP_SUCCESS) {
-        throw std::runtime_error("failed to create verification context\n");
-    }
+    r([&]() { return rnp_op_verify_create(&verify, ffi, input, output); });
 
-    int retVal = rnp_op_verify_execute(verify);
-    if (retVal == RNP_ERROR_BAD_PASSWORD) {
-        throw RnpLoginRequestException(1001,
-                                       "Rnp Login Request",
-                                       "decryptFileToString",
-                                       lastKeyIdRequested,
-                                       filePath);
-    }
+    r_pass([&]() { return rnp_op_verify_execute(verify); },
+           RnpLoginRequestException(1002,
+                                    "Rnp Login Request",
+                                    "decryptFileToString",
+                                    lastKeyIdRequested,
+                                    filePath));
 
     size_t sigcount = 0;
-    if (rnp_op_verify_get_signature_count(verify, &sigcount) != RNP_SUCCESS) {
-        throw std::runtime_error("failed to get signature count\n");
-    }
+
+    r([&]() { return rnp_op_verify_get_signature_count(verify, &sigcount); });
+
     // get the decrypted message from the output structure
-    if (rnp_output_memory_get_buf(output, &buf, &buf_len, false) != RNP_SUCCESS) {
-        throw std::runtime_error("rnp_output_memory_get_buf");
-    }
+    r([&]() { return rnp_output_memory_get_buf(output, &buf, &buf_len, false); });
+
     decrypted = std::string(buf, buf + buf_len);
     for (size_t i = 0; i < sigcount; i++) {
         rnp_op_verify_signature_t sig = NULL;
