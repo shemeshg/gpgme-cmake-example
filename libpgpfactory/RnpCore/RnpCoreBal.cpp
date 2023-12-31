@@ -11,6 +11,10 @@ RnpCoreBal::~RnpCoreBal()
 
 RnpCoreBal::RnpCoreBal()
 {
+
+}
+
+void RnpCoreBal::initPgpFactory(){
     if (!rnp_cfg_set_ks_info())
     {
         return;

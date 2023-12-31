@@ -15,16 +15,6 @@ void PassFile::decrypt()
     decryptedSignedBy = dout.decryptedSignedBy;
 }
 
-void PassFile::encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign)
-{
-    std::string tmpName = fullPath + uuid::generate_uuid_v4();
-
-    decrypted = s;
-    PgpmeDataRII din{s, FROM_STRING}, dout{tmpName, TO_FILENAME};
-    g->encryptSign(din, dout, encryptTo, doSign);
-
-    std::filesystem::rename(tmpName, fullPath);
-}
 
 void PassFile::encryptStringToFile(std::string s,
                                    std::string toFileName,
@@ -45,11 +35,7 @@ void PassFile::encryptFileToFile(std::string fromFileName,
     g->encryptSign(din, dout, encryptTo, doSign);
 }
 
-void PassFile::decryptToFile(std::string toFileName)
-{
-    PgpmeDataRII din{fullPath, FROM_FILENAME}, dout{toFileName, TO_FILENAME};
-    g->decryptValidate(din, dout, false);
-}
+
 
 void PassFile::dectyptFileNameToFileName(std::string fromPath, std::string toPath)
 {

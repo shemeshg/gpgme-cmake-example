@@ -11,7 +11,7 @@ public:
 
     void decrypt() override;
 
-    void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign) override;
+
 
     void encryptStringToFile(std::string s,
                              std::string toFileName,
@@ -21,7 +21,7 @@ public:
                            std::string toFileName,
                            std::vector<std::string> encryptTo,
                            bool doSign) override;
-    void decryptToFile(std::string toFileName) override;
+
 
     void dectyptFileNameToFileName(std::string fromPath, std::string toPath) override;
 

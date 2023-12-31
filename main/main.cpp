@@ -24,6 +24,13 @@ public:
         }
     }
 
+    std::string decryptTestFile(std::string testFile)
+    {
+        auto pf = ph->getPassFile(testFile);
+        pf->decrypt();
+        return pf->getDecrypted();
+    }
+
 private:
     InterfaceLibgpgfactory *ph;
 };
@@ -32,12 +39,19 @@ int main(int, char **)
 {
     std::unique_ptr<InterfaceLibgpgfactory> gnuPgPh = getInterfacePassHelper(false);
     std::unique_ptr<InterfaceLibgpgfactory> rnpPh = getInterfacePassHelper(true);
-    std::cout << "** from GnuPg \n";
+    std::string testFile = "/Volumes/RAM_Disk_4G/tmp/file.gpg";
+
+
+
     PassSimpleBal gnuBal{gnuPgPh.get()};
     PassSimpleBal rnpBal{rnpPh.get()};
-    gnuBal.listKeys();
+    std::cout << "** from GnuPg \n";
+    //gnuBal.listKeys();
+    std::cout<<gnuBal.decryptTestFile(testFile)<<"\n";
     std::cout << "** from RnPgp \n";
-    rnpBal.listKeys();
+    //rnpBal.listKeys();
+     std::cout<<rnpBal.decryptTestFile(testFile)<<"\n";
+
     /*
     std::unique_ptr<RnpCoreInterface> rbl = getRnpCoreInterface();
 

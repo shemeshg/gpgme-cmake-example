@@ -2,6 +2,7 @@
 #include "InterfaceWatchWaitAndNoneWaitRunCmd.h"
 #include <string>
 #include <vector>
+#include "uuid.h"
 
 class InterfacePassFile
 {
@@ -24,7 +25,14 @@ public:
         return f.parent_path().u8string();
     }
 
-    virtual void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign) = 0;
+    void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign)
+    {
+        std::string tmpName = fullPath + uuid::generate_uuid_v4();
+
+        decrypted = s;
+        encryptStringToFile(s, tmpName, encryptTo, doSign);
+        std::filesystem::rename(tmpName, fullPath);
+    }
 
     void openExternalEncryptWait(std::vector<std::string> encryptTo,
                                  InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
@@ -58,13 +66,16 @@ public:
                                    std::vector<std::string> encryptTo,
                                    bool doSign)
         = 0;
-    virtual void decryptToFile(std::string toFileName) = 0;
+    void decryptToFile(std::string toFileName){
+        dectyptFileNameToFileName(fullPath, toFileName);
+    }
 
     virtual void dectyptFileNameToFileName(std::string fromPath, std::string toPath) = 0;
 
     virtual void reEncryptFile(std::string pathFileToReEncrypt,
                                std::vector<std::string> encryptTo,
-                               bool doSign) = 0;
+                               bool doSign)
+        = 0;
 
     void setFullPath(std::string s);
 

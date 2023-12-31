@@ -22,7 +22,7 @@ public:
 
     RnpCoreBal();
 
-    void initPgpFactory() override {} 
+    void initPgpFactory() override; 
 
     void decryptFileToString(const std::string &filePath,
                              std::string &decrypted,
