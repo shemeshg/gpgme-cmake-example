@@ -23,6 +23,5 @@ public:
     std::unique_ptr<InterfacePassFile> getPassFile(std::string fullPath) override;
 
 private:
-    //FileSearch fileSearch{};
     std::unique_ptr<GpgFactory> gpgFactory = std::make_unique<GpgFactory>();
 };

@@ -68,6 +68,8 @@ set(libpgpfactory_SRCS
     TmpFileWacher.cpp 
     RnpHelper.h 
     RnpHelper.cpp
+    PassFileRnp.h 
+    PassFileRnp.cpp 
     # hygen srcs 
 )
 

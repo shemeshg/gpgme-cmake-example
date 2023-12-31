@@ -1,12 +1,13 @@
 #pragma once
 #include "GpgKeys.h"
-#include "PassFile.h"
+#include "PassFileRnp.h"
 #include "InterfacePassHelper.h"
+#include "RnpCoreInterface.h"
 
 class RnpHelper : public InterfaceLibgpgfactory
 {
 public:
-    RnpHelper() { gpgFactory->initPgpFactory(); }
+    RnpHelper() { rblFactory->initPgpFactory(); }
     ~RnpHelper() {}
 
     std::vector<GpgKeys> listKeys(const std::string pattern = "", bool secret_only = false)
@@ -21,10 +22,9 @@ public:
 
     std::unique_ptr<InterfacePassFile> getPassFile(std::string fullPath)
     {
-        return std::make_unique<PassFile>(fullPath, gpgFactory.get());
+        return std::make_unique<PassFileRnp>(fullPath, rblFactory.get());
     }
     
 private:
-    //std::unique_ptr<RnpCoreInterface> rbl = getRnpCoreInterface();
-    std::unique_ptr<GpgFactory> gpgFactory = std::make_unique<GpgFactory>();
+    std::unique_ptr<RnpCoreInterface> rblFactory = getRnpCoreInterface();
 };
