@@ -1,5 +1,5 @@
 #include "InterfacePassFile.h"
-#include "libpasshelper.h"
+#include "InterfacePassHelper.h"
 #include "uuid.h"
 
 #include <numeric>
@@ -70,7 +70,7 @@ void InterfacePassFile::openExternalEncryptWaitAsync(
         std::throw_with_nested(std::runtime_error("tmp folder not found"));
     }
     std::thread([=]() {
-        std::unique_ptr<PassHelper> phLocal = std::make_unique<PassHelper>();
+        std::unique_ptr<InterfaceLibgpgfactory> phLocal = getInterfacePassHelper(getIsRnPgp());
         
         if (!signerStr.empty()) {
             phLocal->setCtxSigners({signerStr});

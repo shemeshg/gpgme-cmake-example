@@ -36,9 +36,13 @@ private:
 };
 
 int main(int, char **)
-{
-    std::unique_ptr<InterfaceLibgpgfactory> gnuPgPh = getInterfacePassHelper(false);
+{    
+    
     std::unique_ptr<InterfaceLibgpgfactory> rnpPh = getInterfacePassHelper(true);
+
+
+    
+    std::unique_ptr<InterfaceLibgpgfactory> gnuPgPh = getInterfacePassHelper(false);
     std::string testFile = "/Volumes/RAM_Disk_4G/tmp/file.gpg";
 
     rnpPh->setPasswordCallback([&](std::string keyid) {

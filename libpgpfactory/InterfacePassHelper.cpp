@@ -1,16 +1,23 @@
 #include "InterfacePassHelper.h"
 #include "RnpHelper.h"
+#ifdef UNIX
 #include "libpasshelper.h"
+#endif
 #include <regex>
 
 std::unique_ptr<InterfaceLibgpgfactory> getInterfacePassHelper(bool isRnPgp)
 {
+#ifdef UNIX
     if (isRnPgp) {
         std::unique_ptr<InterfaceLibgpgfactory> rnpHelper = std::make_unique<RnpHelper>();
         return rnpHelper;
     }
     std::unique_ptr<InterfaceLibgpgfactory> passHelper = std::make_unique<PassHelper>();
     return passHelper;
+#else
+    std::unique_ptr<InterfaceLibgpgfactory> rnpHelper = std::make_unique<RnpHelper>();
+    return rnpHelper;
+#endif
 }
 bool InterfaceLibgpgfactory::isGpgFile(std::string pathToFile)
 {

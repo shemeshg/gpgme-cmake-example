@@ -1,5 +1,5 @@
 #include "RunShellCmd.h"
-
+#include <array>
 std::future<std::string> RunShellCmd::runCmdAsync(std::vector<std::string> cmd)
 {
     std::future<std::string> result = std::async([=]() { return runCmd(cmd); });

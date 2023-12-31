@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.15)
 set (CMAKE_CXX_STANDARD 17)
 project(pass-cpp VERSION 0.1.0)
 
+include( "D:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 include(CTest)
 enable_testing()
@@ -17,7 +18,7 @@ endif()
 add_subdirectory(libpgpfactory)
 add_subdirectory(main)
 
-
+include( "D:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

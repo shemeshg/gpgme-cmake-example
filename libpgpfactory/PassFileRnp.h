@@ -11,7 +11,8 @@ public:
 
     void decrypt() override;
 
-    std::vector<GpgKeys> listKeys(const std::string pattern = "", bool secret_only = false) override{
+    std::vector<GpgKeys> listKeys(const std::string pattern = "", bool secret_only = false) override
+    {
         std::vector<GpgKeys> v;
         for (const auto &k : rbl->listKeys(pattern, secret_only)) {
             GpgKeys gk;
@@ -37,13 +38,16 @@ public:
                            std::vector<std::string> encryptTo,
                            bool doSign) override;
 
-    void dectyptFileNameToFileName(std::string fromPath, std::string toPath) override {
+    void dectyptFileNameToFileName(std::string fromPath, std::string toPath) override
+    {
         rbl->decryptFileToFile(fromPath, toPath);
     }
 
     void reEncryptFile(std::string pathFileToReEncrypt,
                        std::vector<std::string> encryptTo,
                        bool doSign) override;
+
+    bool getIsRnPgp() override { return true; }
 
 private:
     RnpCoreInterface *rbl;

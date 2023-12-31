@@ -64,9 +64,13 @@ public:
     virtual std::vector<GpgKeys> listKeys(const std::string pattern = "", bool secret_only = false)
         = 0;
 
+    
+    virtual bool getIsRnPgp()=0;
+    
     void setFullPath(std::string s);
 
     std::string getDecryptedSignedBy();
+
 
 protected:
     std::string fullPath, decrypted;

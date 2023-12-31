@@ -11,7 +11,7 @@ RnpCoreParams::RnpCoreParams()
 
 std::string RnpCoreParams::getHomeFolder()
 {
-#ifdef WINDOWS
+#ifdef WIN32
     std::string path = std::string(std::getenv("APPDATA")) + "\\gnupg";
     // use the path string as needed
     return path;

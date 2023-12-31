@@ -34,6 +34,8 @@ public:
         return g->listKeys(pattern, secret_only);
     }
 
+    bool getIsRnPgp() override { return false; }
+
 private:
     GpgFactory *g;
 

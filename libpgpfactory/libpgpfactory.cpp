@@ -159,10 +159,7 @@ GpgMeKeys::~GpgMeKeys()
     }
 }
 
-std::string GpgKeys::getKeyStr()
-{
-    return keyid + " # " + name + " <" + email + ">";
-}
+
 
 void GpgFactory::initPgpFactory()
 {

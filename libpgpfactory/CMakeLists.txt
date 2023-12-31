@@ -3,6 +3,8 @@ include(FeatureSummary)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+
 cmake_policy(SET CMP0003 NEW)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -33,9 +35,6 @@ if(UNIX)
 endif()
 
 
-
-
-
 set(libpgpfactory_SRCS    
     export/InterfacePassHelper.h
     InterfacePassHelper.cpp
@@ -46,10 +45,6 @@ set(libpgpfactory_SRCS
     InterfaceWatchWaitAndNoneWaitRunCmd.cpp
     export/InterfaceWatchWaitAndNoneWaitRunCmdItem.h
     InterfaceWatchWaitAndNoneWaitRunCmdItem.cpp
-    libpgpfactory.h
-    libpgpfactory.cpp
-    libpasshelper.h
-    libpasshelper.cpp   
     FileSearch.cpp
     export/FileSearch.h
     GpgIdManage.cpp
@@ -58,8 +53,6 @@ set(libpgpfactory_SRCS
     export/RunShellCmd.h
     uuid.cpp
     export/uuid.h
-    PassFile.h
-    PassFile.cpp
     WatchWaitAndNoneWaitRunCmdItem.h 
     WatchWaitAndNoneWaitRunCmdItem.cpp
     WatchWaitAndNoneWaitRunCmd.h 
@@ -72,6 +65,18 @@ set(libpgpfactory_SRCS
     PassFileRnp.cpp 
     # hygen srcs 
 )
+
+if(UNIX)
+    set(libpgpfactory_SRCS 
+    ${libpgpfactory_SRCS}
+    libpgpfactory.h
+    libpgpfactory.cpp
+    libpasshelper.h
+    libpasshelper.cpp   
+    PassFile.h
+    PassFile.cpp
+    )
+endif()
 
 # Declare the library
 add_library(libpgpfactory STATIC
