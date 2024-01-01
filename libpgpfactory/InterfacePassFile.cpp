@@ -26,7 +26,13 @@ void InterfacePassFile::encrypt(std::string s, std::vector<std::string> encryptT
     std::string tmpName = fullPath + uuid::generate_uuid_v4();
 
     decrypted = s;
-    encryptStringToFile(s, tmpName, encryptTo, doSign);
+    try {
+        encryptStringToFile(s, tmpName, encryptTo, doSign);
+    } catch (...) {
+        std::filesystem::remove(tmpName);
+        throw;
+    }
+
     std::filesystem::rename(tmpName, fullPath);
 }
 
