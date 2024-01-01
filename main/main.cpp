@@ -115,10 +115,10 @@ int main(int, char **)
 {
     std::string testFile = "/Volumes/RAM_Disk_4G/tmp/file.gpg";
 
-    PassSimpleBal bal{true};
+    PassSimpleBal bal{false};
     bal.setSigners({"1CA9424DDD85177F"});
     std::cout << "** from GnuPg \n";
-    bal.listKeys();
+    bal.listKeys("1CA9424DDD85177F");
     //std::cout<<bal.decryptTestFile(testFile)<<"\n";
     bal.encryptTextToFile("shalom\nolam\n",
                           "/Volumes/RAM_Disk_4G/tmp/shalom.gpg",

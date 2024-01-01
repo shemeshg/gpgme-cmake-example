@@ -550,12 +550,53 @@ bool RnpCoreBal::key_matches_flags(rnpffi::Key &key, int flags)
     return key.primary_grip().empty();
 }
 
+
+static bool
+key_matches_string(rnpffi::Key &key, const std::string &str){
+
+    std::string s=std::string{key.keyid()} + std::string{key.fprint()};
+    bool isFound = false;
+    if (s.find(str) != std::string::npos) {
+        isFound = true;
+    }
+
+    return isFound;
+    
+
+}
+
+
+
 bool RnpCoreBal::keys_matching(std::vector<rnp_key_handle_t> &keys,
                                const std::string &str,
                                int flags)
 {
-    // TODO **********************
-    return keys_matching(keys, flags);
+ rnpffi::FFI ffiobj(ffi, false);
+
+    /* iterate through the keys */
+    auto it = ffiobj.iterator_create("fingerprint");
+    if (!it) {
+        return false;
+    }
+
+    std::string fp;
+    while (it->next(fp)) {
+        auto key = ffiobj.locate_key("fingerprint", fp);
+        if (!key) {
+            continue;
+        }
+        if (!key_matches_flags(*key, flags) || !key_matches_string(*key, str)) {
+            continue;
+        }
+        if (!add_key_to_array(ffi, keys, key->handle(), flags)) {
+            return false;
+        }
+        key->release();
+        if (flags & CLI_SEARCH_FIRST_ONLY) {
+            return true;
+        }
+    }
+    return !keys.empty();
 }
 
 bool RnpCoreBal::keys_matching(std::vector<rnp_key_handle_t> &keys, int flags)
