@@ -3,8 +3,8 @@
 #include "RnpCoreInterface.h"
 #include "RnpCoreParams.h"
 #include "RnpKeys.h"
-#include "rnpcpp.hpp"
 #include "RnpLoginRequestException.h"
+#include "rnpcpp.hpp"
 
 #include <rnp/rnp.h>
 #include <rnp/rnp_err.h>
@@ -106,6 +106,17 @@ private:
 
     bool load_keyrings(bool loadsecret);
 
+    static bool key_matches_string(rnpffi::Key &key, const std::string &str)
+    {
+        std::string s = std::string{key.keyid()} + std::string{key.fprint()};
+        bool isFound = false;
+        if (s.find(str) != std::string::npos) {
+            isFound = true;
+        }
+
+        return isFound;
+    }
+
     std::function<std::string(std::string s)> passwordCallback = [&](std::string keyid) {
         std::cout << "******** " << keyid << " PASSWORD **********\n";
         std::string pass;
@@ -121,13 +132,13 @@ private:
             throw std::runtime_error(rnp_result_to_string(retVal));
         }
     }
-    void r_pass(std::function<int()> f,  RnpLoginRequestException  rre)
+    void r_pass(std::function<int()> f, RnpLoginRequestException rre)
     {
         int retVal = f();
-         if (retVal == RNP_ERROR_BAD_PASSWORD) {
+        if (retVal == RNP_ERROR_BAD_PASSWORD) {
             rre.lastKeyIdRequested = lastKeyIdRequested;
             throw rre;
-         }
+        }
         if (retVal != RNP_SUCCESS) {
             throw std::runtime_error(rnp_result_to_string(retVal));
         }

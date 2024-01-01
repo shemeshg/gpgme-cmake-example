@@ -550,28 +550,11 @@ bool RnpCoreBal::key_matches_flags(rnpffi::Key &key, int flags)
     return key.primary_grip().empty();
 }
 
-
-static bool
-key_matches_string(rnpffi::Key &key, const std::string &str){
-
-    std::string s=std::string{key.keyid()} + std::string{key.fprint()};
-    bool isFound = false;
-    if (s.find(str) != std::string::npos) {
-        isFound = true;
-    }
-
-    return isFound;
-    
-
-}
-
-
-
 bool RnpCoreBal::keys_matching(std::vector<rnp_key_handle_t> &keys,
                                const std::string &str,
                                int flags)
 {
- rnpffi::FFI ffiobj(ffi, false);
+    rnpffi::FFI ffiobj(ffi, false);
 
     /* iterate through the keys */
     auto it = ffiobj.iterator_create("fingerprint");
