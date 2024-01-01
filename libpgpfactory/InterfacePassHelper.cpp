@@ -1,5 +1,6 @@
 #include "InterfacePassHelper.h"
 #include "RnpHelper.h"
+#include "RnpLoginRequestException.h"
 #if defined(__APPLE__) || defined(__linux__)
 #include "libpasshelper.h"
 #endif
@@ -21,7 +22,7 @@ public:
     {
         if (helper == nullptr) {
 #if defined(__APPLE__) || defined(__linux__)
-            if ( isRnPgp) {
+            if (isRnPgp) {
                 helper = std::make_unique<RnpHelper>();
             } else {
                 helper = std::make_unique<PassHelper>();
@@ -43,10 +44,9 @@ private:
 };
 
 InterfaceLibgpgfactory *getInterfacePassHelper(bool isRnPgp)
-{   
-    Singleton& s = Singleton::getInstance();
+{
+    Singleton &s = Singleton::getInstance();
     return s.getHelper(isRnPgp);
-    
 }
 
 bool InterfaceLibgpgfactory::isGpgFile(std::string pathToFile)
@@ -204,8 +204,12 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
                     if (isMemCash) {
                         searchMemCash[memCashKey] = content;
                     }
+                } catch (RnpLoginRequestException &rlre) {
+                    throw;
                 } catch (const std::exception &e) {
                     throw std::runtime_error(path + ": " + e.what());
+                } catch (...) {
+                    throw;
                 }
             }
 

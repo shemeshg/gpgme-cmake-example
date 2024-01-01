@@ -10,34 +10,26 @@ void FileSearch::searchDown(std::string FolderToSearch,
 {
     const std::regex fileRegEx(fileRegExStr, std::regex_constants::icase);
 
-    try {
-        for (std::filesystem::recursive_directory_iterator it(FolderToSearch); it != end(it); ++it) {
-            auto entry = *it;
-            if (entry.is_directory() && isHidden(entry)) {
-                it.disable_recursion_pending();
-                continue;
-            }
+    for (std::filesystem::recursive_directory_iterator it(FolderToSearch); it != end(it); ++it) {
+        auto entry = *it;
+        if (entry.is_directory() && isHidden(entry)) {
+            it.disable_recursion_pending();
+            continue;
+        }
 
-            if (entry.is_regular_file() && !isHidden(entry)) {
-                std::string path{entry.path().u8string()};
-                std::string relativePath{
-                    std::filesystem::relative(entry.path(), FolderToSearch).generic_string()};
-                std::string relativePathNoExtention{
-                    std::filesystem::relative(entry.path(), FolderToSearch)
-                        .replace_extension()
-                        .generic_string()};
-                if (std::regex_match(relativePathNoExtention, fileRegEx)
-                    && contentSearch(entry.path().u8string())) {
-                    try {
-                        callback(entry.path().u8string());
-                    } catch (const std::exception &e) {
-                        std::throw_with_nested(
-                            std::runtime_error(entry.path().string() + ": " + e.what()));
-                    }
-                }
+        if (entry.is_regular_file() && !isHidden(entry)) {
+            std::string path{entry.path().u8string()};
+            std::string relativePath{
+                std::filesystem::relative(entry.path(), FolderToSearch).generic_string()};
+            std::string relativePathNoExtention{
+                std::filesystem::relative(entry.path(), FolderToSearch)
+                    .replace_extension()
+                    .generic_string()};
+            if (std::regex_match(relativePathNoExtention, fileRegEx)
+                && contentSearch(entry.path().u8string())) {
+                callback(entry.path().u8string());
             }
         }
-    } catch (std::filesystem::filesystem_error &fe) {
     }
 }
 
