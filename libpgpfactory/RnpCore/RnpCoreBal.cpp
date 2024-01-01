@@ -48,7 +48,10 @@ void RnpCoreBal::decryptFileToString(const std::string &filePath,
                                     "Rnp Login Request",
                                     "decryptFileToString",
                                     lastKeyIdRequested,
-                                    filePath,""));
+                                    filePath,
+                                    "",
+                                    {},
+                                    false));
 
     size_t sigcount = 0;
 
@@ -102,7 +105,9 @@ void RnpCoreBal::decryptFileToFile(const std::string &fromFilePath, const std::s
                                     "decryptFileToFile",
                                     lastKeyIdRequested,
                                     fromFilePath,
-                                    toFilePath));
+                                    toFilePath,
+                                    {},
+                                    false));
 
     rnp_input_destroy(input);
     rnp_output_destroy(output);
@@ -166,10 +171,15 @@ void RnpCoreBal::encryptSignStringToFile(const std::string &inStr,
         }
     }
 
-    /* execute encryption operation */
-    if (rnp_op_encrypt_execute(encrypt) != RNP_SUCCESS) {
-        throw std::runtime_error("encryption failed\n");
-    }
+    r_pass([&]() { return rnp_op_encrypt_execute(encrypt); },
+           RnpLoginRequestException(1003,
+                                    "Rnp Login Request",
+                                    "encryptSignStringToFile",
+                                    lastKeyIdRequested,
+                                    inStr,
+                                    outFilePath,
+                                    encryptTo,
+                                    doSign));
 
     clear_key_handles(signkeys);
     rnp_op_encrypt_destroy(encrypt);
@@ -230,10 +240,15 @@ void RnpCoreBal::encryptSignFileToFile(const std::string &inFilePath,
         rnp_key_handle_destroy(key);
     }
 
-    /* execute encryption operation */
-    if (rnp_op_encrypt_execute(encrypt) != RNP_SUCCESS) {
-        throw std::runtime_error("encryption failed\n");
-    }
+    r_pass([&]() { return rnp_op_encrypt_execute(encrypt); },
+           RnpLoginRequestException(1004,
+                                    "Rnp Login Request",
+                                    "encryptSignFileToFile",
+                                    lastKeyIdRequested,
+                                    inFilePath,
+                                    outFilePath,
+                                    encryptTo,
+                                    doSign));
 
     rnp_op_encrypt_destroy(encrypt);
     rnp_input_destroy(input);
@@ -430,7 +445,6 @@ bool RnpCoreBal::example_pass_provider(rnp_ffi_t ffi,
     libGpgFactoryRnp->lastKeyIdRequested = keyidStr;
 
     std::string pass = libGpgFactoryRnp->runPasswordCallback(keyidStr);
-    
 
     rnp_buffer_destroy(keyid);
 

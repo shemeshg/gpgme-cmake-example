@@ -25,9 +25,8 @@ public:
         }
     }
 
-    
     std::string promptForPasswordAndRetry(RnpLoginRequestException &e)
-    {      
+    {
         std::cout << "******** " << e.lastKeyIdRequested << " pass **********\n";
         std::string pass;
         SetStdinEcho(false);
@@ -37,8 +36,14 @@ public:
 
         if (e.functionName == "decryptFileToString") {
             return decryptTestFile(e.fromFilePath);
-        } else if ( e.functionName == "decryptFileToFile"){
-            decryptFileToFile(e.fromFilePath,e.toFilePath);
+        } else if (e.functionName == "decryptFileToFile") {
+            decryptFileToFile(e.fromFilePath, e.toFilePath);
+            return "";
+        } else if (e.functionName == "encryptSignStringToFile") {
+            encryptTextToFile(e.fromFilePath, e.toFilePath, e.encryptTo, e.doSign);
+            return "";
+        } else {
+            std::cout << "unknown function type " << e.functionName << "\n";
             return "";
         }
     }
@@ -84,6 +89,23 @@ public:
         }
     }
 
+    void encryptTextToFile(std::string text,
+                           std::string destPath,
+                           std::vector<std::string> encryptTo,
+                           bool doSign)
+    {
+        try {
+            auto pf = ph->getPassFile("");
+            pf->encryptStringToFile(text, destPath, encryptTo, doSign);
+        } catch (RnpLoginRequestException &rlre) {
+            promptForPasswordAndRetry(rlre);
+        } catch (...) {
+            throw;
+        }
+    }
+
+    void setSigners(std::vector<std::string> s) { ph->setCtxSigners(s); }
+
 private:
     InterfaceLibgpgfactory *ph;
     std::map<std::string, std::string> loginAndPasswordMap{};
@@ -93,17 +115,14 @@ int main(int, char **)
 {
     std::string testFile = "/Volumes/RAM_Disk_4G/tmp/file.gpg";
 
-    //PassSimpleBal gnuBal{false};
-    PassSimpleBal rnpBal{false};
-    //std::cout << "** from GnuPg \n";
-    //gnuBal.listKeys();
-    //std::cout<<gnuBal.decryptTestFile(testFile)<<"\n";
-    std::cout << "** from RnPgp \n";
-    rnpBal.listKeys();
-    //RnpLoginRequestException
-
-    std::cout << rnpBal.decryptTestFile(testFile) << "\n";
-    //rnpBal.decryptFileToFile(testFile, testFile + ".txt");
-
+    PassSimpleBal bal{true};
+    bal.setSigners({"1CA9424DDD85177F"});
+    std::cout << "** from GnuPg \n";
+    bal.listKeys();
+    //std::cout<<bal.decryptTestFile(testFile)<<"\n";
+    bal.encryptTextToFile("shalom\nolam\n",
+                          "/Volumes/RAM_Disk_4G/tmp/shalom.gpg",
+                          {"1CA9424DDD85177F"},
+                          true);
     return 0;
 }
