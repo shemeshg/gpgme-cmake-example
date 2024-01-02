@@ -18,7 +18,7 @@ public:
     PassSimpleBal(bool isRnPgp)
     {
         if (isRnPgp) {
-            ph = getInterfacePassHelper(true,"/Users/macos/.rnp");
+            ph = getInterfacePassHelper(true,"");
             ph->setPasswordCallback([&](std::string keyid) { return getPasswordFromMap(keyid); });
         } else {
             ph = getInterfacePassHelper(false,"");
@@ -116,7 +116,7 @@ int main(int, char **)
     std::string testFile = "/Volumes/RAM_Disk_4G/tmp/file.gpg";
 
     PassSimpleBal bal{true};
-    bal.listKeys("1CA9424DDD85177F");
+    bal.listKeys();
 /*
     bal.setSigners({"1CA9424DDD85177F"});
     std::cout << "** from GnuPg \n";

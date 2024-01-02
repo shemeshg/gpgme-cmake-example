@@ -71,7 +71,7 @@ public:
     }
 
     const std::string getRnpHomePath() const override {
-        return cfg.CFG_HOMEDIR;
+        return cfg.CFG_HOMEDIR.u8string();
     }
 
     void setRnpHomePath(std::string rnpHomePath){

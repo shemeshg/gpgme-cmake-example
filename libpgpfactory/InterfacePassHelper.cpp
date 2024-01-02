@@ -28,7 +28,7 @@ public:
                 helper = std::make_unique<PassHelper>();
             }
 #else
-            helper = std::make_unique<PassHelper>();
+            helper = std::make_unique<RnpHelper>(rnpHomePath);
 #endif
         }
         return helper.get();
