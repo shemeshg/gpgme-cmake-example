@@ -22,6 +22,10 @@ public:
         rblFactory->setCtxSigners(signedBy);
     }
 
+    bool useMultiThread() override {
+        return true;
+    }
+
     void exportPublicKey(std::string const &keyId, std::string const &filePath) override {
         rblFactory->exportPublicKey(keyId, filePath);
     }

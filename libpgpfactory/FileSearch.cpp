@@ -1,16 +1,26 @@
 #include "FileSearch.h"
-
+#include "BS_thread_pool.hpp"
+#include "RnpLoginRequestException.h"
 #include <regex>
 
 void FileSearch::searchDown(std::string FolderToSearch,
                             std::string fileRegExStr,
                             std::string contentRegExStr,
                             std::function<bool(std::string)> contentSearch,
-                            std::function<void(std::string)> callback)
+                            std::function<void(std::string)> callback,
+                            bool useMultiThread)
 {
+    bool errorInThread = false;
+    std::string errorInThreadMsg;
+    RnpLoginRequestException errThreadLoginReq{0, "", "", "", "", "", {}, false};
+    BS::thread_pool pool;
+
     const std::regex fileRegEx(fileRegExStr, std::regex_constants::icase);
 
     for (std::filesystem::recursive_directory_iterator it(FolderToSearch); it != end(it); ++it) {
+        if (errorInThread) {
+            break;
+        }
         auto entry = *it;
         if (entry.is_directory() && isHidden(entry)) {
             it.disable_recursion_pending();
@@ -25,10 +35,41 @@ void FileSearch::searchDown(std::string FolderToSearch,
                 std::filesystem::relative(entry.path(), FolderToSearch)
                     .replace_extension()
                     .generic_string()};
-            if (std::regex_match(relativePathNoExtention, fileRegEx)
-                && contentSearch(entry.path().u8string())) {
-                callback(entry.path().u8string());
+            if (std::regex_match(relativePathNoExtention, fileRegEx)) {
+                if (useMultiThread) {
+                    pool.detach_task([&errorInThread,
+                                      &errorInThreadMsg,
+                                      &errThreadLoginReq,
+                                      contentSearch,
+                                      entry,
+                                      callback] {
+                        try {
+                            if (contentSearch(entry.path().u8string())) {
+                                callback(entry.path().u8string());
+                            }
+                        } catch (RnpLoginRequestException &rlre) {
+                            errorInThread = true;
+                            errThreadLoginReq = rlre;
+                        } catch (const std::exception &e) {
+                            errorInThread = true;
+                            errorInThreadMsg = e.what();
+                        }
+                    });
+                } else {
+                    if (contentSearch(entry.path().u8string())) {
+                        callback(entry.path().u8string());
+                    }
+                }
             }
+        }
+    }
+    if (useMultiThread) {
+        pool.wait();
+        if (errorInThread) {
+            if (errThreadLoginReq.code) {
+                throw errThreadLoginReq;
+            }
+            throw std::runtime_error(errorInThreadMsg);
         }
     }
 }

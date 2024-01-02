@@ -19,7 +19,8 @@ public:
                     std::string fileRegExStr,
                     std::string contentRegExStr,
                     std::function<bool(std::string s)> contentSearch,
-                    std::function<void(std::string s)> callback);
+                    std::function<void(std::string s)> callback,
+                    bool useMultiThread);
 
     std::string searchUp(std::string fileOrFolderToSearch,
                          std::string currentPath,

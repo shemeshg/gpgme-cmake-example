@@ -79,7 +79,8 @@ void InterfaceLibgpgfactory::encryptFolderToFolder(std::string folderFrom,
             pf->encryptFileToFile(path, toPath.generic_string() + ".gpg", encryptTo, doSign);
 
             return true;
-        });
+        },
+        useMultiThread());
 }
 
 std::string InterfaceLibgpgfactory::getNearestTemplateGpg(std::string currentPath,
@@ -111,7 +112,7 @@ void InterfaceLibgpgfactory::decryptFolderToFolder(std::string folderFrom, std::
             pf->decryptToFile(toPath.replace_extension().u8string());
             //std::cout << path << " \n to" << toPath.parent_path() << "\n";
             return true;
-        });
+        },useMultiThread());
 }
 
 void InterfaceLibgpgfactory::reEncryptFile(std::string pathFileToReEncrypt,
@@ -144,7 +145,7 @@ void InterfaceLibgpgfactory::reEncryptStoreFolder(std::string nearestGpgIdFolder
             reEncryptFile(path, encryptTo, doSign);
             //std::cout << " Finished\n";
             return true;
-        });
+        },useMultiThread() );
 }
 
 void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
@@ -221,7 +222,7 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
 
             return a;
         },
-        callback);
+        callback,useMultiThread() );
 }
 
 std::string InterfaceLibgpgfactory::getNearestGpgId(std::string currentPath, std::string stopPath)

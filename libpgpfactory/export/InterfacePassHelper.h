@@ -20,6 +20,8 @@ public:
     virtual std::unique_ptr<InterfacePassFile> getPassFile(std::string fullPath) = 0;
     bool isGpgFile(std::string pathToFile);
 
+    virtual bool useMultiThread()=0;
+
     std::string getNearestGit(std::string currentPath, std::string stopPath);
 
     std::string getNearestGpgId(std::string currentPath, std::string stopPath);
@@ -29,7 +31,8 @@ public:
     void encryptFolderToFolder(std::string folderFrom,
                                std::string folderTo,
                                std::vector<std::string> encryptTo,
-                               bool doSign);
+                               bool doSign
+                               );
 
     virtual void decryptFolderToFolder(std::string folderFrom, std::string folderTo);
 
