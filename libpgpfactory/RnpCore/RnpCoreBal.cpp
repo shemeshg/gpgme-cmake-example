@@ -396,7 +396,7 @@ std::vector<RnpKeys> RnpCoreBal::listKeys(const std::string pattern, bool secret
 
     int flags = secret_only ? CLI_SEARCH_SECRET : 0;
     if (!keys_matching(keys, pattern, flags)) {
-        throw std::runtime_error("Key(s) not found.\n");
+        return retKeys;
     }
 
     for (auto key : keys) {
