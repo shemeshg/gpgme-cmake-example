@@ -70,6 +70,15 @@ public:
         passwordCallback = func;
     }
 
+    const std::string getRnpHomePath() const override {
+        return cfg.CFG_HOMEDIR;
+    }
+
+    void setRnpHomePath(std::string rnpHomePath){
+        if (!rnpHomePath.empty()){
+            cfg.CFG_HOMEDIR = rnpHomePath;
+        }
+    }
 private:
     RnpCoreParams cfg{};
     rnp_ffi_t ffi = NULL;

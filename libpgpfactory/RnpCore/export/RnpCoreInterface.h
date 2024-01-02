@@ -51,8 +51,10 @@ public:
         return {};
     };
 
+    virtual const std::string getRnpHomePath() const = 0;
+
     std::string lastKeyIdRequested;
 };
 
-std::unique_ptr<RnpCoreInterface> getRnpCoreInterface();
+std::unique_ptr<RnpCoreInterface> getRnpCoreInterface(std::string rnpHomePath);
 

@@ -71,7 +71,9 @@ public:
 
     std::string getDecryptedSignedBy();
 
-
+    virtual const std::string getRnpHomePath() const {
+        return "";
+    }
 protected:
     std::string fullPath, decrypted;
     std::vector<std::string> decryptedSignedBy = {};

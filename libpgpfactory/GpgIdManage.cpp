@@ -2,13 +2,14 @@
 #include <fstream>
 
 
-void GpgIdManage::init(std::string _currentPath, std::string _stopPath, bool _isRnPgp)
+void GpgIdManage::init(std::string _currentPath, std::string _stopPath, bool _isRnPgp, std::string _rnpHomePath)
 {
-    ph=getInterfacePassHelper(_isRnPgp);
+    ph=getInterfacePassHelper(_isRnPgp, _rnpHomePath);
 
     currentPath = _currentPath;
     stopPath = _stopPath;
     isRnPgp = _isRnPgp;
+    rnpHomePath = _rnpHomePath;
 
     keysFoundInGpgIdFile.clear();
     keysNotFoundInGpgIdFile.clear();
@@ -42,7 +43,7 @@ void GpgIdManage::importPublicKeyAndTrust(const std::string &filePath)
 
     ph->importPublicKey(filePath, true);
 
-    init(currentPath, stopPath, isRnPgp);
+    init(currentPath, stopPath, isRnPgp, rnpHomePath);
 }
 
 void GpgIdManage::ensureValidGpgIdFile()
@@ -97,7 +98,7 @@ void GpgIdManage::importAllGpgPubKeysFolder()
         ph->importPublicKey(entry.path().u8string(), true);
     }
 
-    init(currentPath, stopPath, isRnPgp);
+    init(currentPath, stopPath, isRnPgp, rnpHomePath);
 }
 
 void GpgIdManage::reEncryptFile(std::string pathFileToReEncrypt, bool doSign)

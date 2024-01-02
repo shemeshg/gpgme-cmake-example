@@ -4,8 +4,9 @@
 class GpgIdManage
 {
 public:
-    GpgIdManage(std::string _currentPath, std::string _stopPath, bool _isRnPgp) { 
-        init(_currentPath, _stopPath, _isRnPgp); 
+    GpgIdManage(std::string _currentPath, std::string _stopPath, bool _isRnPgp, std::string _rnpHomePath)
+    {
+        init(_currentPath, _stopPath, _isRnPgp, _rnpHomePath);
     }
 
     GpgIdManage(GpgIdManage const &) = delete;
@@ -15,7 +16,8 @@ public:
 
     ~GpgIdManage(){};
 
-    std::string currentPath, stopPath, nearestGpgIdFolder, gpgPubKeysFolder, nearestGpgIdFile;
+    std::string currentPath, stopPath, nearestGpgIdFolder, gpgPubKeysFolder, nearestGpgIdFile,
+        rnpHomePath;
     bool isRnPgp;
     bool gpgPubKeysFolderExists = false;
     bool classInitialized = false;
@@ -52,7 +54,10 @@ public:
     }
 
 private:
-    void init(std::string _currentPath, std::string _stopPath, bool _isRnPgp);
+    void init(std::string _currentPath,
+              std::string _stopPath,
+              bool _isRnPgp,
+              std::string _rnpHomePath);
 
     void populateKeysParsedInGpgIdFile();
 

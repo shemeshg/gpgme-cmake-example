@@ -49,6 +49,10 @@ public:
 
     bool getIsRnPgp() override { return true; }
 
+    const std::string getRnpHomePath() const override{
+        return rbl->getRnpHomePath();
+    }
+
 private:
     RnpCoreInterface *rbl;
 };

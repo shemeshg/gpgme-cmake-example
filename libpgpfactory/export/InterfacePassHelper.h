@@ -54,4 +54,4 @@ private:
     FileSearch fileSearch{};
 };
 
-InterfaceLibgpgfactory *getInterfacePassHelper(bool isRnPgp);
+InterfaceLibgpgfactory *getInterfacePassHelper(bool isRnPgp, std::string rnpHomePath);

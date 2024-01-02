@@ -76,7 +76,7 @@ void InterfacePassFile::openExternalEncryptWaitAsync(
         std::throw_with_nested(std::runtime_error("tmp folder not found"));
     }
     std::thread([=]() {
-        InterfaceLibgpgfactory *phLocal = getInterfacePassHelper(getIsRnPgp());
+        InterfaceLibgpgfactory *phLocal = getInterfacePassHelper(getIsRnPgp(), getRnpHomePath());
         
         if (!signerStr.empty()) {
             phLocal->setCtxSigners({signerStr});

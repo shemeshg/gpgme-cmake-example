@@ -18,10 +18,10 @@ public:
     PassSimpleBal(bool isRnPgp)
     {
         if (isRnPgp) {
-            ph = getInterfacePassHelper(true);
+            ph = getInterfacePassHelper(true,"/Users/macos/.rnp");
             ph->setPasswordCallback([&](std::string keyid) { return getPasswordFromMap(keyid); });
         } else {
-            ph = getInterfacePassHelper(false);
+            ph = getInterfacePassHelper(false,"");
         }
     }
 

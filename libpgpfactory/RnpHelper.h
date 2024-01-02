@@ -7,7 +7,10 @@
 class RnpHelper : public InterfaceLibgpgfactory
 {
 public:
-    RnpHelper() { rblFactory->initPgpFactory(); }
+    RnpHelper(std::string rnpHomePath) { 
+        rblFactory = getRnpCoreInterface(rnpHomePath);
+        rblFactory->initPgpFactory(); 
+    }
     ~RnpHelper() {}
 
     std::vector<GpgKeys> listKeys(const std::string pattern = "", bool secret_only = false) override
@@ -37,5 +40,5 @@ public:
         rblFactory->setPasswordCallback(func);
     }
 private:
-    std::unique_ptr<RnpCoreInterface> rblFactory = getRnpCoreInterface();
+    std::unique_ptr<RnpCoreInterface> rblFactory = nullptr;
 };
