@@ -9,7 +9,6 @@ class RnpHelper : public InterfaceLibgpgfactory
 public:
     RnpHelper(std::string rnpHomePath) { 
         rblFactory = getRnpCoreInterface(rnpHomePath);
-        rblFactory->initPgpFactory(); 
     }
     ~RnpHelper() {}
 

@@ -6,24 +6,14 @@
 
 RnpCoreBal::~RnpCoreBal()
 {
-    rnp_ffi_destroy(ffi);
+
 }
 
-RnpCoreBal::RnpCoreBal() {}
-
-void RnpCoreBal::initPgpFactory()
-{
-    if (!rnp_cfg_set_ks_info()) {
-        return;
-    }
-    // initialize FFI object
-    if (rnp_ffi_create(&ffi, cfg.CFG_KR_PUB_FORMAT.c_str(), cfg.CFG_KR_SEC_FORMAT.c_str())
-        != RNP_SUCCESS) {
-        return;
-    }
-    load_keyrings(true);
-    rnp_ffi_set_pass_provider(ffi, example_pass_provider, this);
+RnpCoreBal::RnpCoreBal(std::string rnpHomePath) {
+    ffiRaII = std::make_unique<FfiRaII>(rnpHomePath, this);
 }
+
+
 
 void RnpCoreBal::decryptFileToString(const std::string &filePath,
                                      std::string &decrypted,
@@ -40,7 +30,7 @@ void RnpCoreBal::decryptFileToString(const std::string &filePath,
 
     rnp_op_verify_t verify = NULL;
 
-    r([&]() { return rnp_op_verify_create(&verify, ffi, input, output); });
+    r([&]() { return rnp_op_verify_create(&verify, ffiRaII->getFfi() ,input, output); });
 
     lastKeyIdRequested = "klkl";
     r_pass([&]() { return rnp_op_verify_execute(verify); },
@@ -99,7 +89,7 @@ void RnpCoreBal::decryptFileToFile(const std::string &fromFilePath, const std::s
     r([&]() { return rnp_input_from_path(&input, fromFilePath.c_str()); });
     r([&]() { return rnp_output_to_path(&output, toFilePath.c_str()); });
 
-    r_pass([&]() { return rnp_decrypt(ffi, input, output); },
+    r_pass([&]() { return rnp_decrypt(ffiRaII->getFfi(), input, output); },
            RnpLoginRequestException(1002,
                                     "Rnp Login Request",
                                     "decryptFileToFile",
@@ -133,7 +123,7 @@ void RnpCoreBal::encryptSignStringToFile(const std::string &inStr,
 
     /* create encryption operation */
     rnp_op_encrypt_t encrypt = NULL;
-    if (rnp_op_encrypt_create(&encrypt, ffi, input, output) != RNP_SUCCESS) {
+    if (rnp_op_encrypt_create(&encrypt, ffiRaII->getFfi(), input, output) != RNP_SUCCESS) {
         throw std::runtime_error("failed to create encrypt operation\n");
     }
 
@@ -147,7 +137,7 @@ void RnpCoreBal::encryptSignStringToFile(const std::string &inStr,
 
     for (auto &eTo : encryptTo) {
         rnp_key_handle_t key = NULL;
-        if (rnp_locate_key(ffi, "keyid", eTo.c_str(), &key) != RNP_SUCCESS) {
+        if (rnp_locate_key(ffiRaII->getFfi(), "keyid", eTo.c_str(), &key) != RNP_SUCCESS) {
             throw std::runtime_error("failed to locate recipient key rsa@key.\n");
         }
 
@@ -205,7 +195,7 @@ void RnpCoreBal::encryptSignFileToFile(const std::string &inFilePath,
 
     /* create encryption operation */
     rnp_op_encrypt_t encrypt = NULL;
-    if (rnp_op_encrypt_create(&encrypt, ffi, input, output) != RNP_SUCCESS) {
+    if (rnp_op_encrypt_create(&encrypt, ffiRaII->getFfi(), input, output) != RNP_SUCCESS) {
         throw std::runtime_error("failed to create encrypt operation\n");
     }
 
@@ -219,7 +209,7 @@ void RnpCoreBal::encryptSignFileToFile(const std::string &inFilePath,
 
     for (auto &eTo : encryptTo) {
         rnp_key_handle_t key = NULL;
-        if (rnp_locate_key(ffi, "keyid", eTo.c_str(), &key) != RNP_SUCCESS) {
+        if (rnp_locate_key(ffiRaII->getFfi(), "keyid", eTo.c_str(), &key) != RNP_SUCCESS) {
             throw std::runtime_error("failed to locate recipient key rsa@key.\n");
         }
 
@@ -232,7 +222,7 @@ void RnpCoreBal::encryptSignFileToFile(const std::string &inFilePath,
     if (doSign) {
         rnp_key_handle_t key = NULL;
         if (!signer_fingerprint.empty()) {
-            if (rnp_locate_key(ffi, "keyid", signer_fingerprint.c_str(), &key) != RNP_SUCCESS) {
+            if (rnp_locate_key(ffiRaII->getFfi(), "keyid", signer_fingerprint.c_str(), &key) != RNP_SUCCESS) {
                 throw std::runtime_error("failed to locate recipient key rsa@key.\n");
             }
         }
@@ -330,12 +320,12 @@ finish:
 
 void RnpCoreBal::exportPublicKey(const std::string &keyId, const std::string &filePath)
 {
-    ffi_export_key(ffi, keyId.c_str(), false, filePath);
+    ffi_export_key(ffiRaII->getFfi(), keyId.c_str(), false, filePath);
 }
 
 void RnpCoreBal::importPublicKey(const std::string &filePath, bool doTrust)
 {
-    bool isSccussfull = import_keys(ffi, filePath, RNP_LOAD_SAVE_PUBLIC_KEYS);
+    bool isSccussfull = import_keys(ffiRaII->getFfi(), filePath, RNP_LOAD_SAVE_PUBLIC_KEYS);
     if (!isSccussfull) {
         throw std::runtime_error("Could not import key");
     }
@@ -429,28 +419,6 @@ std::vector<RnpKeys> RnpCoreBal::listKeys(const std::string pattern, bool secret
     return retKeys;
 }
 
-bool RnpCoreBal::example_pass_provider(rnp_ffi_t ffi,
-                                       void *app_ctx,
-                                       rnp_key_handle_t key,
-                                       const char *pgp_context,
-                                       char buf[],
-                                       size_t buf_len)
-{
-    // GpgFactoryInterface *libGpgFactoryRnp = static_cast<GpgFactoryInterface *>(app_ctx);
-    RnpCoreInterface *libGpgFactoryRnp = static_cast<RnpCoreInterface *>(app_ctx);
-    char *keyid = NULL;
-    rnp_key_get_keyid(key, &keyid);
-    std::string keyidStr{keyid};
-    keyidStr = libGpgFactoryRnp->getPrimaryKey(keyidStr);
-    libGpgFactoryRnp->lastKeyIdRequested = keyidStr;
-
-    std::string pass = libGpgFactoryRnp->runPasswordCallback(keyidStr);
-
-    rnp_buffer_destroy(keyid);
-
-    strncpy(buf, pass.c_str(), buf_len);
-    return true;
-}
 
 bool RnpCoreBal::import_keys(rnp_ffi_t ffi, const std::string &path, uint32_t flags)
 {
@@ -554,7 +522,7 @@ bool RnpCoreBal::keys_matching(std::vector<rnp_key_handle_t> &keys,
                                const std::string &str,
                                int flags)
 {
-    rnpffi::FFI ffiobj(ffi, false);
+    rnpffi::FFI ffiobj(ffiRaII->getFfi(), false);
 
     /* iterate through the keys */
     auto it = ffiobj.iterator_create("fingerprint");
@@ -571,7 +539,7 @@ bool RnpCoreBal::keys_matching(std::vector<rnp_key_handle_t> &keys,
         if (!key_matches_flags(*key, flags) || !key_matches_string(*key, str)) {
             continue;
         }
-        if (!add_key_to_array(ffi, keys, key->handle(), flags)) {
+        if (!add_key_to_array(ffiRaII->getFfi(), keys, key->handle(), flags)) {
             return false;
         }
         key->release();
@@ -584,7 +552,7 @@ bool RnpCoreBal::keys_matching(std::vector<rnp_key_handle_t> &keys,
 
 bool RnpCoreBal::keys_matching(std::vector<rnp_key_handle_t> &keys, int flags)
 {
-    rnpffi::FFI ffiobj(ffi, false);
+    rnpffi::FFI ffiobj(ffiRaII->getFfi(), false);
 
     /* iterate through the keys */
     auto it = ffiobj.iterator_create("fingerprint");
@@ -601,7 +569,7 @@ bool RnpCoreBal::keys_matching(std::vector<rnp_key_handle_t> &keys, int flags)
         if (!key_matches_flags(*key, flags)) {
             continue;
         }
-        if (!add_key_to_array(ffi, keys, key->handle(), flags)) {
+        if (!add_key_to_array(ffiRaII->getFfi(), keys, key->handle(), flags)) {
             return false;
         }
         key->release();
@@ -612,152 +580,6 @@ bool RnpCoreBal::keys_matching(std::vector<rnp_key_handle_t> &keys, int flags)
     return !keys.empty();
 }
 
-bool RnpCoreBal::rnp_cfg_set_ks_info()
-{
-    /* getting path to keyrings. If it is specified by user in 'homedir' param then it is
-     * considered as the final path */
-    bool defhomedir = false;
-    std::filesystem::path homedir = cfg.CFG_HOMEDIR;
-
-    /* detecting key storage format */
-    std::string ks_format = cfg.CFG_KEYSTOREFMT;
-    if (ks_format.empty()) {
-        char *pub_format = NULL;
-        char *sec_format = NULL;
-        char *pubpath = NULL;
-        char *secpath = NULL;
-        rnp_detect_homedir_info(homedir.generic_u8string().c_str(),
-                                &pub_format,
-                                &pubpath,
-                                &sec_format,
-                                &secpath);
-        bool detected = pub_format && sec_format && pubpath && secpath;
-        if (detected) {
-            cfg.CFG_KR_PUB_FORMAT = pub_format;
-            cfg.CFG_KR_SEC_FORMAT = sec_format;
-            cfg.CFG_KR_PUB_PATH = pubpath;
-            cfg.CFG_KR_SEC_PATH = secpath;
-        } else {
-            /* default to GPG */
-            ks_format = RNP_KEYSTORE_GPG;
-        }
-
-        rnp_buffer_destroy(pub_format);
-        rnp_buffer_destroy(sec_format);
-        rnp_buffer_destroy(pubpath);
-        rnp_buffer_destroy(secpath);
-        if (detected) {
-            return true;
-        }
-    }
-
-    std::string pub_format = RNP_KEYSTORE_GPG;
-    std::string sec_format = RNP_KEYSTORE_GPG;
-    std::string pubpath;
-    std::string secpath;
-
-    if (ks_format == RNP_KEYSTORE_GPG) {
-        pubpath = (homedir / PUBRING_GPG).generic_u8string();
-        secpath = (homedir / SECRING_GPG).generic_u8string();
-    } else if (ks_format == RNP_KEYSTORE_GPG21) {
-        pubpath = (homedir / PUBRING_KBX).generic_u8string();
-        secpath = (homedir / SECRING_G10).generic_u8string();
-        pub_format = RNP_KEYSTORE_KBX;
-        sec_format = RNP_KEYSTORE_G10;
-    } else if (ks_format == RNP_KEYSTORE_KBX) {
-        pubpath = (homedir / PUBRING_KBX).generic_u8string();
-        secpath = (homedir / SECRING_KBX).generic_u8string();
-        pub_format = RNP_KEYSTORE_KBX;
-        sec_format = RNP_KEYSTORE_KBX;
-    } else if (ks_format == RNP_KEYSTORE_G10) {
-        pubpath = (homedir / PUBRING_G10).generic_u8string();
-        secpath = (homedir / SECRING_G10).generic_u8string();
-        pub_format = RNP_KEYSTORE_G10;
-        sec_format = RNP_KEYSTORE_G10;
-    } else {
-        ERR_MSG("Unsupported keystore format: \"%s\"", ks_format.c_str());
-        return false;
-    }
-
-    /* Check whether homedir is empty */
-    if (std::filesystem::is_empty(homedir)) {
-        ERR_MSG("Keyring directory '%s' is empty.\nUse \"rnpkeys\" command to generate a new "
-                "key or import existing keys from the file or GnuPG keyrings.",
-                homedir.c_str());
-    }
-
-    cfg.CFG_KR_PUB_PATH = pubpath;
-    cfg.CFG_KR_SEC_PATH = secpath;
-    cfg.CFG_KR_PUB_FORMAT = pub_format;
-    return true;
-}
-
-bool RnpCoreBal::load_keyring(bool secret)
-{
-    const std::string &path = secret ? cfg.CFG_KR_SEC_PATH : cfg.CFG_KR_PUB_PATH;
-    bool dir = secret && (cfg.CFG_KR_SEC_FORMAT == RNP_KEYSTORE_G10);
-
-    if (!std::filesystem::exists(path) && std::filesystem::is_directory(path) != dir) {
-        return true;
-    }
-
-    rnp_input_t keyin = NULL;
-    if (rnp_input_from_path(&keyin, path.c_str())) {
-        ERR_MSG("Warning: failed to open keyring at path '%s' for reading.", path.c_str());
-        return true;
-    }
-
-    const char *format = secret ? cfg.CFG_KR_SEC_FORMAT.c_str() : cfg.CFG_KR_PUB_FORMAT.c_str();
-    uint32_t flags = secret ? RNP_LOAD_SAVE_SECRET_KEYS : RNP_LOAD_SAVE_PUBLIC_KEYS;
-
-    rnp_result_t ret = rnp_load_keys(ffi, format, keyin, flags);
-    if (ret) {
-        ERR_MSG("Error: failed to load keyring from '%s'", path.c_str());
-    }
-    rnp_input_destroy(keyin);
-
-    if (ret) {
-        return false;
-    }
-
-    size_t keycount = 0;
-    if (secret) {
-        (void) rnp_get_secret_key_count(ffi, &keycount);
-    } else {
-        (void) rnp_get_public_key_count(ffi, &keycount);
-    }
-    if (!keycount) {
-        ERR_MSG("Warning: no keys were loaded from the keyring '%s'.", path.c_str());
-    }
-    return true;
-}
-
-bool RnpCoreBal::load_keyrings(bool loadsecret)
-{
-    /* Read public keys */
-    if (rnp_unload_keys(ffi, RNP_KEY_UNLOAD_PUBLIC)) {
-        ERR_MSG("failed to clear public keyring");
-        return false;
-    }
-
-    if (!load_keyring(false)) {
-        return false;
-    }
-
-    /* Only read secret keys if we need to */
-    if (loadsecret) {
-        if (rnp_unload_keys(ffi, RNP_KEY_UNLOAD_SECRET)) {
-            ERR_MSG("failed to clear secret keyring");
-            return false;
-        }
-
-        if (!load_keyring(true)) {
-            return false;
-        }
-    }
-
-    return true;
-}
 
 std::string RnpCoreBal::getRnpVersionString()
 {

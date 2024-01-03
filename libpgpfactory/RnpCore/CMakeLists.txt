@@ -36,6 +36,8 @@ RnpCoreParams.h
 RnpCoreParams.cpp 
 RnpCoreBal.h 
 RnpCoreBal.cpp 
+FfiRaII.h
+FfiRaII.cpp
 export/RnpCoreInterface.h
 export/RnpKeys.h
 export/RnpLoginRequestException.h

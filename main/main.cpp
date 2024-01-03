@@ -117,15 +117,16 @@ int main(int, char **)
 
     PassSimpleBal bal{true};
     bal.listKeys();
-/*
+
     bal.setSigners({"1CA9424DDD85177F"});
     std::cout << "** from GnuPg \n";
     
     //std::cout<<bal.decryptTestFile(testFile)<<"\n";
+
     bal.encryptTextToFile("shalom\nolam\n",
                           "/Volumes/RAM_Disk_4G/tmp/shalom.gpg",
                           {"1CA9424DDD85177F"},
                           true);
+   
     return 0;
-*/
 }

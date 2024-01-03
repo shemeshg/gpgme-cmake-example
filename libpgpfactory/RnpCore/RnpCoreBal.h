@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FfiRaII.h"
 #include "RnpCoreInterface.h"
 #include "RnpCoreParams.h"
 #include "RnpKeys.h"
@@ -19,9 +20,9 @@ class RnpCoreBal : public RnpCoreInterface
 public:
     ~RnpCoreBal();
 
-    RnpCoreBal();
+    RnpCoreBal(std::string rnpHomePath);
 
-    void initPgpFactory() override;
+    void initPgpFactory() override{};
 
     void decryptFileToString(const std::string &filePath,
                              std::string &decrypted,
@@ -63,35 +64,28 @@ public:
 
     std::string getRnpVersionString() override;
 
-    std::string runPasswordCallback(std::string s) override { return passwordCallback(s); }
+    std::string runPasswordCallback(std::string s) override { return ffiRaII->passwordCallback(s); }
 
     void setPasswordCallback(std::function<std::string(std::string s)> func) override
     {
-        passwordCallback = func;
+        ffiRaII->passwordCallback = func;
     }
 
-    const std::string getRnpHomePath() const override {
-        return cfg.CFG_HOMEDIR.u8string();
-    }
+    const std::string getRnpHomePath() const override { return ffiRaII->getRnpHomePath(); }
 
-    void setRnpHomePath(std::string rnpHomePath){
-        if (!rnpHomePath.empty()){
-            cfg.CFG_HOMEDIR = rnpHomePath;
+    void setRnpHomePath(std::string rnpHomePath)
+    {
+        if (!rnpHomePath.empty()) {
+            ffiRaII = std::make_unique<FfiRaII>(rnpHomePath, this);
         }
     }
+
 private:
-    RnpCoreParams cfg{};
-    rnp_ffi_t ffi = NULL;
+    std::unique_ptr<FfiRaII> ffiRaII;
+
     int result = 1;
     std::string signer_fingerprint;
     bool isArmor = false;
-
-    static bool example_pass_provider(rnp_ffi_t ffi,
-                                      void *app_ctx,
-                                      rnp_key_handle_t key,
-                                      const char *pgp_context,
-                                      char buf[],
-                                      size_t buf_len);
 
     static bool import_keys(rnp_ffi_t ffi, const std::string &path, uint32_t flags);
 
@@ -109,12 +103,6 @@ private:
     bool keys_matching(std::vector<rnp_key_handle_t> &keys, const std::string &str, int flags);
     bool keys_matching(std::vector<rnp_key_handle_t> &keys, int flags);
 
-    bool rnp_cfg_set_ks_info();
-
-    bool load_keyring(bool secret);
-
-    bool load_keyrings(bool loadsecret);
-
     static bool key_matches_string(rnpffi::Key &key, const std::string &str)
     {
         std::string s = std::string{key.keyid()} + std::string{key.fprint()};
@@ -125,13 +113,6 @@ private:
 
         return isFound;
     }
-
-    std::function<std::string(std::string s)> passwordCallback = [&](std::string keyid) {
-        std::cout << "******** " << keyid << " PASSWORD **********\n";
-        std::string pass;
-        std::cin >> pass;
-        return pass;
-    };
 
     void r(std::function<int()> f)
     {
