@@ -1,3 +1,4 @@
+#include<cstring>
 #include "FfiRaII.h"
 #include "RnpCoreDefinitions.h"
 

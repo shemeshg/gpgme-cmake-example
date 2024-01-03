@@ -11,7 +11,7 @@ enable_testing()
 
 if(UNIX)
     # LibGpgError bug must include_directories on root, but can be linked in subdirectory
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/libpgpfactory/cMake)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/libpgpfactory/cmake)
     find_package(LibGpgError REQUIRED)
     include_directories(${LibGpgError_INCLUDE_DIRS})
     # End LibGpgError 

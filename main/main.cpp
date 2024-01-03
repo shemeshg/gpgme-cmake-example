@@ -116,8 +116,10 @@ int main(int, char **)
     std::string testFile = "/Volumes/RAM_Disk_4G/tmp/file.gpg";
 
     PassSimpleBal bal{true};
+    
     bal.listKeys();
-
+    /*
+   
     bal.setSigners({"1CA9424DDD85177F"});
     std::cout << "** from GnuPg \n";
     
@@ -127,6 +129,6 @@ int main(int, char **)
                           "/Volumes/RAM_Disk_4G/tmp/shalom.gpg",
                           {"1CA9424DDD85177F"},
                           true);
-   
+   */
     return 0;
 }

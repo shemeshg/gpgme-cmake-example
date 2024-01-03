@@ -11,7 +11,9 @@ class FfiRaII
 public:
     FfiRaII(std::string rnpHomePath, RnpCoreInterface *rnpCoreInterface);
 
-    ~FfiRaII() { rnp_ffi_destroy(ffi); }
+    ~FfiRaII() { 
+        //rnp_ffi_destroy(ffi); 
+    }
 
     void setPasswordCallback(std::function<std::string(std::string s)> func);
 
