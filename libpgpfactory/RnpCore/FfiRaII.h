@@ -22,7 +22,7 @@ public:
     const rnp_ffi_t getFfi() const { return ffi; }
     
     const std::string getRnpHomePath() const  {
-        return cfg.CFG_HOMEDIR.u8string();
+        return cfg.CFG_HOMEDIR.generic_string();
     }
 
 

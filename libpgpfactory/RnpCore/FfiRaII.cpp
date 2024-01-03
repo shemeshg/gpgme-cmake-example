@@ -120,7 +120,7 @@ bool FfiRaII::rnp_cfg_set_ks_info()
         char *sec_format = NULL;
         char *pubpath = NULL;
         char *secpath = NULL;
-        rnp_detect_homedir_info(homedir.generic_u8string().c_str(),
+        rnp_detect_homedir_info(homedir.generic_string().c_str(),
                                 &pub_format,
                                 &pubpath,
                                 &sec_format,
@@ -151,21 +151,21 @@ bool FfiRaII::rnp_cfg_set_ks_info()
     std::string secpath;
 
     if (ks_format == RNP_KEYSTORE_GPG) {
-        pubpath = (homedir / PUBRING_GPG).generic_u8string();
-        secpath = (homedir / SECRING_GPG).generic_u8string();
+        pubpath = (homedir / PUBRING_GPG).generic_string();
+        secpath = (homedir / SECRING_GPG).generic_string();
     } else if (ks_format == RNP_KEYSTORE_GPG21) {
-        pubpath = (homedir / PUBRING_KBX).generic_u8string();
-        secpath = (homedir / SECRING_G10).generic_u8string();
+        pubpath = (homedir / PUBRING_KBX).generic_string();
+        secpath = (homedir / SECRING_G10).generic_string();
         pub_format = RNP_KEYSTORE_KBX;
         sec_format = RNP_KEYSTORE_G10;
     } else if (ks_format == RNP_KEYSTORE_KBX) {
-        pubpath = (homedir / PUBRING_KBX).generic_u8string();
-        secpath = (homedir / SECRING_KBX).generic_u8string();
+        pubpath = (homedir / PUBRING_KBX).generic_string();
+        secpath = (homedir / SECRING_KBX).generic_string();
         pub_format = RNP_KEYSTORE_KBX;
         sec_format = RNP_KEYSTORE_KBX;
     } else if (ks_format == RNP_KEYSTORE_G10) {
-        pubpath = (homedir / PUBRING_G10).generic_u8string();
-        secpath = (homedir / SECRING_G10).generic_u8string();
+        pubpath = (homedir / PUBRING_G10).generic_string();
+        secpath = (homedir / SECRING_G10).generic_string();
         pub_format = RNP_KEYSTORE_G10;
         sec_format = RNP_KEYSTORE_G10;
     } else {
