@@ -25,6 +25,7 @@ bool RunShellCmd::replaceStr(std::string &str, const std::string &from, const st
     return true;
 }
 
+
 std::string RunShellCmd::exec(const char *cmd)
 {
     std::array<char, 128> buffer;
@@ -45,6 +46,7 @@ std::string RunShellCmd::exec(const char *cmd)
 
     return result;
 }
+
 
 std::string RunShellCmd::escapeshellarg(std::string str)
 {

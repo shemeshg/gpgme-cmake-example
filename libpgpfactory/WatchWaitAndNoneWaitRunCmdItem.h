@@ -11,7 +11,9 @@ public:
   WatchWaitAndNoneWaitRunCmdItem(std::string uniqueId, 
                 std::string fileName, 
                 std::string tmpFolder,
-                std::string vscodePath) : uniqueId{uniqueId}, fileName{fileName}, tmpFolder{tmpFolder}, vscodePath{vscodePath}
+                std::string vscodePath,
+                RunShellCmd *rsc) : uniqueId{uniqueId}, fileName{fileName}, 
+                  tmpFolder{tmpFolder}, vscodePath{vscodePath}, rsc{rsc}
   {
   }
 
@@ -33,12 +35,12 @@ public:
 
   void runWithWait() override
   {    
-    auto a = rsc.runCmd({vscodePath, "--wait", tfe.getFullFilePath().u8string()});
+    auto a = rsc->runCmd({vscodePath, "--wait", tfe.getFullFilePath().u8string()});
   }
 
   void runWithoutWait()
   {
-    auto a = rsc.runCmd({vscodePath, tfe.getFullFilePath().u8string()});
+    auto a = rsc->runCmd({vscodePath, tfe.getFullFilePath().u8string()});
   }
   
 
@@ -53,6 +55,6 @@ public:
   }
 
 private:
-  RunShellCmd rsc{};
+  RunShellCmd *rsc;
   TmpFileWacher tfe{};  
 };

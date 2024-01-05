@@ -41,7 +41,8 @@ void InterfacePassFile::openExternalEncryptWait(
     InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
     std::string tmpFolder,
     std::string vscodePath,
-    bool doSign)
+    bool doSign,
+    RunShellCmd *rsc)
 {
     try {
         std::filesystem::path p = fullPath;
@@ -50,7 +51,8 @@ void InterfacePassFile::openExternalEncryptWait(
             = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath,
                                                       p.filename().u8string(),
                                                       tmpFolder,
-                                                      vscodePath);
+                                                      vscodePath,
+                                                      rsc);
 
         wi->init();
         dectyptFileNameToFileName(fullPath, wi->getFullFilePath().u8string());
@@ -70,7 +72,8 @@ void InterfacePassFile::openExternalEncryptWaitAsync(
     std::string tmpFolder,
     std::string vscodePath,
     bool doSign,
-    std::string signerStr)
+    std::string signerStr,
+    RunShellCmd *rsc)
 {
     if (!std::filesystem::exists(tmpFolder)) {
         std::throw_with_nested(std::runtime_error("tmp folder not found"));
@@ -87,14 +90,16 @@ void InterfacePassFile::openExternalEncryptWaitAsync(
                                                 watchWaitAndNoneWaitRunCmd,
                                                 tmpFolder,
                                                 vscodePath,
-                                                doSign);
+                                                doSign,
+                                                rsc);
     }).detach();
 }
 
 std::string InterfacePassFile::openExternalEncryptNoWait(
     InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
     std::string tmpFolder,
-    std::string vscodePath)
+    std::string vscodePath,
+    RunShellCmd *rsc)
 {
     if (!std::filesystem::exists(tmpFolder)) {
         std::throw_with_nested(std::runtime_error("tmp folder not found"));
@@ -106,7 +111,8 @@ std::string InterfacePassFile::openExternalEncryptNoWait(
             = watchWaitAndNoneWaitRunCmd->addWithOutWait(fullPath,
                                                          p.filename().u8string(),
                                                          tmpFolder,
-                                                         vscodePath);
+                                                         vscodePath,
+                                                         rsc);
         wi->init();
         dectyptFileNameToFileName(fullPath, wi->getFullFilePath().u8string());
 

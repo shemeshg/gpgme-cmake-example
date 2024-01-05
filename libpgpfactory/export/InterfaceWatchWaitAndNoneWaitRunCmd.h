@@ -2,6 +2,7 @@
 #include <memory>
 #include <functional>
 #include "InterfaceWatchWaitAndNoneWaitRunCmdItem.h"
+#include "RunShellCmd.h"
 
 class InterfaceWatchWaitAndNoneWaitRunCmd {
     public:
@@ -10,9 +11,11 @@ class InterfaceWatchWaitAndNoneWaitRunCmd {
 
     virtual std::vector<std::string> getWaitItemsUids()=0;
     virtual std::vector<std::string> getNoneWaitItemsUids()=0;
-    virtual InterfaceWatchWaitAndNoneWaitRunCmdItem *addWithWait(std::string uniqueId, std::string fileName, std::string tmpFolder,std::string  vscodePath) = 0;
+    virtual InterfaceWatchWaitAndNoneWaitRunCmdItem *addWithWait(std::string uniqueId, std::string fileName, 
+        std::string tmpFolder,std::string  vscodePath, RunShellCmd *rsc) = 0;
     virtual void runWithWaitClear(InterfaceWatchWaitAndNoneWaitRunCmdItem &i)=0;
-    virtual InterfaceWatchWaitAndNoneWaitRunCmdItem *addWithOutWait(std::string uniqueId, std::string fileName, std::string tmpFolder,std::string  vscodePath) =0;
+    virtual InterfaceWatchWaitAndNoneWaitRunCmdItem *addWithOutWait(std::string uniqueId, std::string fileName,
+     std::string tmpFolder,std::string  vscodePath, RunShellCmd *rsc) =0;
     virtual InterfaceWatchWaitAndNoneWaitRunCmdItem *getNoneWaitItemsBuUiniqueId(std::string uniqueId) = 0;
     virtual void closeWithoutWaitItem(std::string uniqueId) = 0;
     virtual void clearWaitItemsAfterUnExpectedCrash(std::string uniqueId) =0;

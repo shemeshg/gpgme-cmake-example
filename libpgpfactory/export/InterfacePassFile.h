@@ -24,19 +24,22 @@ public:
                                  InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                  std::string tmpFolder,
                                  std::string vscodePath,
-                                 bool doSign);
+                                 bool doSign,
+                                 RunShellCmd *rsc);
 
     void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo,
                                       InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
                                       std::string tmpFolder,
                                       std::string vscodePath,
                                       bool doSign,
-                                      std::string signerStr);
+                                      std::string signerStr,
+                                      RunShellCmd *rsc);
 
     std::string openExternalEncryptNoWait(
         InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
         std::string tmpFolder,
-        std::string vscodePath);
+        std::string vscodePath,
+        RunShellCmd *rsc);
 
     void closeExternalEncryptNoWait(std::vector<std::string> encryptTo,
                                     InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,

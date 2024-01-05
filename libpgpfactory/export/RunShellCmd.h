@@ -19,7 +19,7 @@ public:
 
   std::string escapeshellarg(std::string str);
 
-  std::string exec(const char *cmd);
+  virtual std::string exec(const char *cmd);
 };
 
 

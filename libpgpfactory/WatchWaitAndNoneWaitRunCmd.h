@@ -1,6 +1,7 @@
 #pragma once
 #include "InterfaceWatchWaitAndNoneWaitRunCmdItem.h"
 #include "InterfaceWatchWaitAndNoneWaitRunCmd.h"
+#include "RunShellCmd.h"
 #include <mutex>
 
 
@@ -18,12 +19,12 @@ public:
 
 
     InterfaceWatchWaitAndNoneWaitRunCmdItem *addWithWait(std::string uniqueId,
-        std::string fileName, std::string tmpFolder,std::string  vscodePath) override;
+        std::string fileName, std::string tmpFolder,std::string  vscodePath, RunShellCmd *rsc) override;
 
     void runWithWaitClear(InterfaceWatchWaitAndNoneWaitRunCmdItem &i) override;
 
     InterfaceWatchWaitAndNoneWaitRunCmdItem *addWithOutWait(std::string uniqueId,
-        std::string fileName, std::string tmpFolder,std::string  vscodePath) override;
+        std::string fileName, std::string tmpFolder,std::string  vscodePath, RunShellCmd *rsc) override;
 
     InterfaceWatchWaitAndNoneWaitRunCmdItem *getNoneWaitItemsBuUiniqueId(std::string uniqueId) override;
 
