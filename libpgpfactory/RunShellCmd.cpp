@@ -30,7 +30,9 @@ std::string RunShellCmd::exec(const char *cmd)
     std::array<char, 128> buffer;
     std::string result;
 #ifdef _WIN32
-    std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen(cmd, "r"), _pclose);
+    std::string s = std::string{"'cmd /c' "} + cmd;
+    std::replace(s.begin(), s.end(), '\'', '\"');
+    std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen(s.c_str(), "r"), _pclose);
 #else
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
 #endif
