@@ -1,8 +1,9 @@
+#include "RnpCoreBal.h"
 #include "RnpCoreDefinitions.h"
 #include <filesystem>
+#include <fstream>
 #include <map>
-
-#include "RnpCoreBal.h"
+#include <sstream>
 
 class RnpInputFromPath
 {
@@ -80,12 +81,41 @@ RnpCoreBal::RnpCoreBal(std::string rnpHomePath)
     ffiRaII = std::make_unique<FfiRaII>(rnpHomePath, this);
 }
 
+class RnpStreamToMemory
+{
+public:
+    RnpStreamToMemory() { rnp_output_to_callback(&output, stream_out_writer, NULL, this); }
+
+    rnp_output_t *getOutput() { return &output; }
+
+    virtual ~RnpStreamToMemory() { rnp_output_destroy(output); }
+
+    static bool stream_out_writer(void *app_ctx, const void *buf, size_t len)
+    {
+        RnpStreamToMemory *rnpStreamToMemory = static_cast<class RnpStreamToMemory *>(app_ctx);
+
+        rnpStreamToMemory->oss.write((const char *) buf, len);
+        return !rnpStreamToMemory->oss.fail();
+    }
+
+    const std::string getOutStr() const
+    {
+        //
+        return oss.str();
+    }
+
+private:
+    rnp_output_t output = NULL;
+    std::ostringstream oss;
+};
+
 void RnpCoreBal::decryptFileToString(const std::string &filePath,
                                      std::string &decrypted,
                                      std::vector<std::string> &decryptedSignedBy)
 {
     RnpInputFromPath input{filePath};
-    RnpOutputToMemory output{};
+    //RnpOutputToMemory output{};
+    RnpStreamToMemory output{};
     uint8_t *buf = NULL;
     size_t buf_len = 0;
 
@@ -95,7 +125,7 @@ void RnpCoreBal::decryptFileToString(const std::string &filePath,
     r([&]() { return rnp_op_verify_create(&verify, ffiRaII->getFfi(),
      *input.getInput(), *output.getOutput()); });
 
-    lastKeyIdRequested = "klkl";
+    lastKeyIdRequested = "";
     r_pass([&]() { return rnp_op_verify_execute(verify); },
            RnpLoginRequestException(1002,
                                     "Rnp Login Request",
@@ -110,10 +140,12 @@ void RnpCoreBal::decryptFileToString(const std::string &filePath,
 
     r([&]() { return rnp_op_verify_get_signature_count(verify, &sigcount); });
 
-    // get the decrypted message from the output structure
-    r([&]() { return rnp_output_memory_get_buf(*output.getOutput(), &buf, &buf_len, false); });
+    // RNP BUG - no zero file len read
+    // r([&]() { return rnp_output_memory_get_buf(*output.getOutput(), &buf, &buf_len, false); });
+    // decrypted = std::string(buf, buf + buf_len);
+    r([&]() { return rnp_output_to_memory(output.getOutput(), 0); });
+    decrypted = output.getOutStr();
 
-    decrypted = std::string(buf, buf + buf_len);
     for (size_t i = 0; i < sigcount; i++) {
         rnp_op_verify_signature_t sig = NULL;
         rnp_result_t sigstatus = RNP_SUCCESS;
@@ -138,7 +170,6 @@ void RnpCoreBal::decryptFileToString(const std::string &filePath,
         rnp_buffer_destroy(keyid);
         rnp_key_handle_destroy(key);
     }
-
 }
 
 void RnpCoreBal::decryptFileToFile(const std::string &fromFilePath, const std::string &toFilePath)
@@ -166,6 +197,17 @@ void RnpCoreBal::encryptSignStringToFile(const std::string &inStr,
                                          std::vector<std::string> encryptTo,
                                          bool doSign)
 {
+    // Rnp bug, can not encrypt empty string
+    if (inStr.empty()) {
+        std::string inFilePath = outFilePath + ".enpty";
+        std::ofstream ofs(inFilePath);
+        ofs.close();
+
+        encryptSignFileToFile(inFilePath, outFilePath, encryptTo, doSign);
+        std::filesystem::remove(inFilePath);
+        return;
+    }
+    // END Rnp bug, can not encrypt empty string
     RnpInputFromMemory input{inStr};
     RnpOutputToPath output{outFilePath};
    
