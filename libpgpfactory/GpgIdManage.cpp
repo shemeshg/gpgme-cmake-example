@@ -153,5 +153,8 @@ std::string GpgIdManage::split(std::string str)
 
     // Print the results.
     trim(before);
+    if (before.find("0x") == 0) {
+        before = before.substr(2);
+    }
     return before;
 }
