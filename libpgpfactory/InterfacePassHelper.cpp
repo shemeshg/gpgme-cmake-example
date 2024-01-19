@@ -214,13 +214,18 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
                 }
             }
 
-            const std::regex contentRegEx(contentRegExStr, std::regex_constants::icase);
-
-            content = std::regex_replace(content, std::regex("\\r\\n|\\r|\\n"), "");
-
-            bool a = std::regex_match(content, contentRegEx);
-
-            return a;
+            std::regex regIsSimpleFindSearch("^\\.\\*[^\\.\\*]*\\.\\*$");
+            if (regex_match(contentRegExStr, regIsSimpleFindSearch)) {
+                std::regex matchExpresion("\\.\\*(.*)\\.\\*");
+                std::smatch m;
+                regex_search(contentRegExStr, m, matchExpresion);
+                std::string searchStr = m[1];
+                return (content.find(searchStr) != std::string::npos);
+            } else {
+                const std::regex contentRegEx(contentRegExStr, std::regex_constants::icase);
+                content = std::regex_replace(content, std::regex("\\r\\n|\\r|\\n"), "");
+                return std::regex_match(content, contentRegEx);
+            }
         },
         callback,useMultiThread() );
 }
