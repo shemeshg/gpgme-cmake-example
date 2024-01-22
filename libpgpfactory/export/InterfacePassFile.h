@@ -35,7 +35,7 @@ public:
                                       std::string signerStr,
                                       RunShellCmd *rsc);
 
-    std::string openExternalEncryptNoWait(
+    InterfaceWatchWaitAndNoneWaitRunCmdItem *openExternalEncryptNoWait(
         InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
         std::string tmpFolder,
         std::string vscodePath,

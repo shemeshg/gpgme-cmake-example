@@ -95,7 +95,7 @@ void InterfacePassFile::openExternalEncryptWaitAsync(
     }).detach();
 }
 
-std::string InterfacePassFile::openExternalEncryptNoWait(
+InterfaceWatchWaitAndNoneWaitRunCmdItem *InterfacePassFile::openExternalEncryptNoWait(
     InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
     std::string tmpFolder,
     std::string vscodePath,
@@ -116,7 +116,7 @@ std::string InterfacePassFile::openExternalEncryptNoWait(
         wi->init();
         dectyptFileNameToFileName(fullPath, wi->getFullFilePath().u8string());
 
-        return wi->getSubfolderPath().u8string();
+        return wi;
     } catch (const std::exception &e) {
         watchWaitAndNoneWaitRunCmd->clearWaitItemsAfterUnExpectedCrash(fullPath);
         throw;
