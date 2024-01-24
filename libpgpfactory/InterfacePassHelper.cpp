@@ -151,6 +151,7 @@ void InterfaceLibgpgfactory::reEncryptStoreFolder(std::string nearestGpgIdFolder
 void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
                                         std::string fileRegExStr,
                                         std::string contentRegExStr,
+                                        bool contentSearchUsingRegEx,
                                         const std::vector<std::string> &ignoreBinaryExtensions,
                                         bool isMemCash,
                                         std::map<std::string, std::string> &searchMemCash,
@@ -165,7 +166,8 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
         fileRegExStr,
         contentRegExStr,
         [&](std::string path) {
-            if (contentRegExStr == ".*.*") {
+            if (!contentSearchUsingRegEx && contentRegExStr == ""
+                || contentSearchUsingRegEx && contentRegExStr == ".*.*") {
                 return true;
             }
 
@@ -214,20 +216,16 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
                 }
             }
 
-            std::regex regIsSimpleFindSearch("^\\.\\*[^\\.\\*]*\\.\\*$");
-            if (regex_match(contentRegExStr, regIsSimpleFindSearch)) {
-                std::regex matchExpresion("\\.\\*(.*)\\.\\*");
-                std::smatch m;
-                regex_search(contentRegExStr, m, matchExpresion);
-                std::string searchStr = m[1];
-                return (content.find(searchStr) != std::string::npos);
-            } else {
+            if (contentSearchUsingRegEx) {
                 const std::regex contentRegEx(contentRegExStr, std::regex_constants::icase);
                 content = std::regex_replace(content, std::regex("\\r\\n|\\r|\\n"), "");
                 return std::regex_match(content, contentRegEx);
+            } else {
+                return (content.find(contentRegExStr) != std::string::npos);
             }
         },
-        callback,useMultiThread() );
+        callback,
+        useMultiThread());
 }
 
 std::string InterfaceLibgpgfactory::getNearestGpgId(std::string currentPath, std::string stopPath)

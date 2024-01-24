@@ -39,6 +39,7 @@ public:
     virtual void searchDown(std::string FolderToSearch,
                             std::string fileRegExStr,
                             std::string contentRegExStr,
+                            bool contentSearchUsingRegEx,
                             const std::vector<std::string> &ignoreBinaryExtensions,
                             bool isMemCash,
                             std::map<std::string, std::string> &searchMemCash,
