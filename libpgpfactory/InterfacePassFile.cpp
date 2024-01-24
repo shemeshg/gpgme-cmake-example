@@ -36,65 +36,6 @@ void InterfacePassFile::encrypt(std::string s, std::vector<std::string> encryptT
     std::filesystem::rename(tmpName, fullPath);
 }
 
-void InterfacePassFile::openExternalEncryptWait(
-    std::vector<std::string> encryptTo,
-    InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
-    std::string tmpFolder,
-    std::string vscodePath,
-    bool doSign,
-    RunShellCmd *rsc)
-{
-    try {
-        std::filesystem::path p = fullPath;
-        p = p.replace_extension();
-        InterfaceWatchWaitAndNoneWaitRunCmdItem *wi
-            = watchWaitAndNoneWaitRunCmd->addWithWait(fullPath,
-                                                      p.filename().u8string(),
-                                                      tmpFolder,
-                                                      vscodePath,
-                                                      rsc);
-
-        wi->init();
-        dectyptFileNameToFileName(fullPath, wi->getFullFilePath().u8string());
-
-        wi->runWithWait();
-        encryptFileToFile(wi->getFullFilePath().u8string(), fullPath, encryptTo, doSign);
-        watchWaitAndNoneWaitRunCmd->runWithWaitClear(*wi);
-    } catch (const std::exception &e) {
-        watchWaitAndNoneWaitRunCmd->clearWaitItemsAfterUnExpectedCrash(fullPath);
-        throw;
-    }
-}
-
-void InterfacePassFile::openExternalEncryptWaitAsync(
-    std::vector<std::string> encryptTo,
-    InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
-    std::string tmpFolder,
-    std::string vscodePath,
-    bool doSign,
-    std::string signerStr,
-    RunShellCmd *rsc)
-{
-    if (!std::filesystem::exists(tmpFolder)) {
-        std::throw_with_nested(std::runtime_error("tmp folder not found"));
-    }
-    std::thread([=]() {
-        InterfaceLibgpgfactory *phLocal = getInterfacePassHelper(getIsRnPgp(), getRnpHomePath());
-        
-        if (!signerStr.empty()) {
-            phLocal->setCtxSigners({signerStr});
-        }
-        std::unique_ptr<InterfacePassFile> pfLocal = phLocal->getPassFile(fullPath);
-        
-        return pfLocal->openExternalEncryptWait(encryptTo,
-                                                watchWaitAndNoneWaitRunCmd,
-                                                tmpFolder,
-                                                vscodePath,
-                                                doSign,
-                                                rsc);
-    }).detach();
-}
-
 InterfaceWatchWaitAndNoneWaitRunCmdItem *InterfacePassFile::openExternalEncryptNoWait(
     InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
     std::string tmpFolder,

@@ -13,18 +13,13 @@ public:
 
     std::mutex g_pages_mutex;
 
-    std::vector<std::string> getWaitItemsUids() override;
-
     std::vector<std::string> getNoneWaitItemsUids() override;
 
-
-    InterfaceWatchWaitAndNoneWaitRunCmdItem *addWithWait(std::string uniqueId,
-        std::string fileName, std::string tmpFolder,std::string  vscodePath, RunShellCmd *rsc) override;
-
-    void runWithWaitClear(InterfaceWatchWaitAndNoneWaitRunCmdItem &i) override;
-
     InterfaceWatchWaitAndNoneWaitRunCmdItem *addWithOutWait(std::string uniqueId,
-        std::string fileName, std::string tmpFolder,std::string  vscodePath, RunShellCmd *rsc) override;
+                                                            std::string fileName,
+                                                            std::string tmpFolder,
+                                                            std::string vscodePath,
+                                                            RunShellCmd *rsc) override;
 
     InterfaceWatchWaitAndNoneWaitRunCmdItem *getNoneWaitItemsBuUiniqueId(std::string uniqueId) override;
 
@@ -34,7 +29,6 @@ public:
     void clearWaitItemsAfterUnExpectedCrash(std::string uniqueId) override;
 
     private:
-        std::vector<std::unique_ptr<InterfaceWatchWaitAndNoneWaitRunCmdItem>> waitItems{};
         std::vector<std::unique_ptr<InterfaceWatchWaitAndNoneWaitRunCmdItem>> noneWaitItems{};
 };
 

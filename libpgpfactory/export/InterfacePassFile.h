@@ -20,21 +20,6 @@ public:
 
     void encrypt(std::string s, std::vector<std::string> encryptTo, bool doSign);
 
-    void openExternalEncryptWait(std::vector<std::string> encryptTo,
-                                 InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
-                                 std::string tmpFolder,
-                                 std::string vscodePath,
-                                 bool doSign,
-                                 RunShellCmd *rsc);
-
-    void openExternalEncryptWaitAsync(std::vector<std::string> encryptTo,
-                                      InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
-                                      std::string tmpFolder,
-                                      std::string vscodePath,
-                                      bool doSign,
-                                      std::string signerStr,
-                                      RunShellCmd *rsc);
-
     InterfaceWatchWaitAndNoneWaitRunCmdItem *openExternalEncryptNoWait(
         InterfaceWatchWaitAndNoneWaitRunCmd *watchWaitAndNoneWaitRunCmd,
         std::string tmpFolder,
