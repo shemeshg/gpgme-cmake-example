@@ -18,7 +18,7 @@ void FileSearch::searchDown(std::string FolderToSearch,
     const std::regex fileRegEx(fileRegExStr, std::regex_constants::icase);
 
     for (std::filesystem::recursive_directory_iterator it(FolderToSearch); it != end(it); ++it) {
-        if (errorInThread) {
+        if (errorInThread) {            
             break;
         }
         auto entry = *it;
@@ -42,17 +42,20 @@ void FileSearch::searchDown(std::string FolderToSearch,
                                       &errThreadLoginReq,
                                       contentSearch,
                                       entry,
-                                      callback] {
+                                      callback,
+                                      &pool] {
                         try {
                             if (contentSearch(entry.path().u8string())) {
                                 callback(entry.path().u8string());
                             }
-                        } catch (RnpLoginRequestException &rlre) {
+                        } catch (RnpLoginRequestException &rlre) {                            
                             errorInThread = true;
                             errThreadLoginReq = rlre;
+                            pool.purge();
                         } catch (const std::exception &e) {
                             errorInThread = true;
                             errorInThreadMsg = e.what();
+                            pool.purge();
                         }
                     });
                 } else {
@@ -65,7 +68,7 @@ void FileSearch::searchDown(std::string FolderToSearch,
     }
     if (useMultiThread) {
         pool.wait();
-        if (errorInThread) {
+        if (errorInThread) {            
             if (errThreadLoginReq.code) {
                 throw errThreadLoginReq;
             }
