@@ -5,6 +5,7 @@
 
 void FileSearch::searchDown(std::string FolderToSearch,
                             std::string fileRegExStr,
+                            const std::vector<std::string> &ignoreSearch,
                             std::string contentRegExStr,
                             std::function<bool(std::string)> contentSearch,
                             std::function<void(std::string)> callback,
@@ -27,8 +28,20 @@ void FileSearch::searchDown(std::string FolderToSearch,
             continue;
         }
 
+        std::string path{entry.path().u8string()};
+
+        bool isIgnoreSearch = false;
+        for (const auto &elem : ignoreSearch) {
+            if (path.find(elem) != std::string::npos) {
+                isIgnoreSearch = true;
+                break;
+            }
+        }
+        if (isIgnoreSearch) {
+            it.disable_recursion_pending();
+            continue;
+        }
         if (entry.is_regular_file() && !isHidden(entry)) {
-            std::string path{entry.path().u8string()};
             std::string relativePath{
                 std::filesystem::relative(entry.path(), FolderToSearch).generic_string()};
             std::string relativePathNoExtention{

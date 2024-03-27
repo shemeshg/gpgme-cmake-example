@@ -41,6 +41,7 @@ public:
                             std::string contentRegExStr,
                             bool contentSearchUsingRegEx,
                             const std::vector<std::string> &ignoreBinaryExtensions,
+                            const std::vector<std::string> &ignoreSearch,
                             bool isMemCash,
                             std::map<std::string, std::string> &searchMemCash,
                             std::function<void(std::string s)> callback);

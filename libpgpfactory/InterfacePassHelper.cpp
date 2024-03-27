@@ -69,6 +69,7 @@ void InterfaceLibgpgfactory::encryptFolderToFolder(std::string folderFrom,
     fileSearch.searchDown(
         folderFrom,
         ".*.*",
+        {},
         ".*.*",
         [&](std::string path) { return true; },
         [&](std::string path) {
@@ -95,6 +96,7 @@ void InterfaceLibgpgfactory::decryptFolderToFolder(std::string folderFrom, std::
     fileSearch.searchDown(
         folderFrom,
         ".*.*",
+        {},
         ".*.*",
         [&](std::string path) {
             if (!isGpgFile(path)) {
@@ -112,7 +114,8 @@ void InterfaceLibgpgfactory::decryptFolderToFolder(std::string folderFrom, std::
             pf->decryptToFile(toPath.replace_extension().u8string());
             //std::cout << path << " \n to" << toPath.parent_path() << "\n";
             return true;
-        },useMultiThread());
+        },
+        useMultiThread());
 }
 
 void InterfaceLibgpgfactory::reEncryptFile(std::string pathFileToReEncrypt,
@@ -131,6 +134,7 @@ void InterfaceLibgpgfactory::reEncryptStoreFolder(std::string nearestGpgIdFolder
     fileSearch.searchDown(
         nearestGpgIdFolder,
         ".*.*",
+        {},
         ".*.*",
         [&](std::string path) {
             if (!isGpgFile(path)) {
@@ -145,7 +149,8 @@ void InterfaceLibgpgfactory::reEncryptStoreFolder(std::string nearestGpgIdFolder
             reEncryptFile(path, encryptTo, doSign);
             //std::cout << " Finished\n";
             return true;
-        },useMultiThread() );
+        },
+        useMultiThread());
 }
 
 void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
@@ -153,6 +158,7 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
                                         std::string contentRegExStr,
                                         bool contentSearchUsingRegEx,
                                         const std::vector<std::string> &ignoreBinaryExtensions,
+                                        const std::vector<std::string> &ignoreSearch,
                                         bool isMemCash,
                                         std::map<std::string, std::string> &searchMemCash,
                                         std::function<void(std::string)> callback)
@@ -164,6 +170,7 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
     fileSearch.searchDown(
         FolderToSearch,
         fileRegExStr,
+        ignoreSearch,
         contentRegExStr,
         [&](std::string path) {
             if (!contentSearchUsingRegEx && contentRegExStr == ""

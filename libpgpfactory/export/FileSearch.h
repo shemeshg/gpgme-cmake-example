@@ -17,6 +17,7 @@ public:
 
     void searchDown(std::string FolderToSearch,
                     std::string fileRegExStr,
+                    const std::vector<std::string> &ignoreSearch,
                     std::string contentRegExStr,
                     std::function<bool(std::string s)> contentSearch,
                     std::function<void(std::string s)> callback,
