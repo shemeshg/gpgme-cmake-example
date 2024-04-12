@@ -59,11 +59,10 @@ void FileSearch::searchDown(std::string FolderToSearch,
                     pool.detach_task([&errorInThread,
                                       &errorInThreadMsg,
                                       &errThreadLoginReq,
+                                      &pool,
                                       contentSearch,
-                                      entry,
                                       callback,
-                                      path,
-                                      &pool] {
+                                      path] {
                         try {
                             if (contentSearch(path)) {
                                 callback(path);
