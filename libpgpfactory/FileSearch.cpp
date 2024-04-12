@@ -3,6 +3,9 @@
 #include "RnpLoginRequestException.h"
 #include <regex>
 
+
+
+
 void FileSearch::searchDown(std::string FolderToSearch,
                             std::string fileRegExStr,
                             const std::vector<std::string> &ignoreSearch,
@@ -29,6 +32,8 @@ void FileSearch::searchDown(std::string FolderToSearch,
         }
 
         std::string path{entry.path().u8string()};
+        std::replace( path.begin(), path.end(), '\\', '/');
+
 
         bool isIgnoreSearch = false;
         for (const auto &elem : ignoreSearch) {
@@ -48,6 +53,7 @@ void FileSearch::searchDown(std::string FolderToSearch,
                 std::filesystem::relative(entry.path(), FolderToSearch)
                     .replace_extension()
                     .generic_string()};
+
             if (std::regex_match(relativePathNoExtention, fileRegEx)) {
                 if (useMultiThread) {
                     pool.detach_task([&errorInThread,
@@ -56,10 +62,11 @@ void FileSearch::searchDown(std::string FolderToSearch,
                                       contentSearch,
                                       entry,
                                       callback,
+                                      path,
                                       &pool] {
                         try {
-                            if (contentSearch(entry.path().u8string())) {
-                                callback(entry.path().u8string());
+                            if (contentSearch(path)) {
+                                callback(path);
                             }
                         } catch (RnpLoginRequestException &rlre) {                            
                             errorInThread = true;
@@ -72,8 +79,8 @@ void FileSearch::searchDown(std::string FolderToSearch,
                         }
                     });
                 } else {
-                    if (contentSearch(entry.path().u8string())) {
-                        callback(entry.path().u8string());
+                    if (contentSearch(path)) {
+                        callback(path);
                     }
                 }
             }
