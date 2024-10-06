@@ -167,6 +167,8 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
         searchMemCash.clear();
     }
     std::unique_ptr<InterfacePassFile> pf = getPassFile("");
+
+    std::mutex mtx;
     fileSearch.searchDown(
         FolderToSearch,
         fileRegExStr,
@@ -212,6 +214,7 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
 
                     content = pf->getDecrypted();
                     if (isMemCash) {
+                        std::lock_guard<std::mutex> lock(mtx);
                         searchMemCash[memCashKey] = content;
                     }
                 } catch (RnpLoginRequestException &rlre) {
