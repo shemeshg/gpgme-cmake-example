@@ -14,7 +14,7 @@ void FileSearch::searchDown(std::string FolderToSearch,
                             std::function<void(std::string)> callback,
                             bool useMultiThread)
 {
-    bool errorInThread = false;
+    std::atomic<bool> errorInThread = false;
     std::string errorInThreadMsg;
     RnpLoginRequestException errThreadLoginReq{0, "", "", "", "", "", {}, false};
     BS::thread_pool pool;
