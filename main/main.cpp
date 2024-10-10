@@ -18,10 +18,10 @@ public:
     PassSimpleBal(bool isRnPgp)
     {
         if (isRnPgp) {
-            ph = getInterfacePassHelper(true,"");
+            ph = getInterfacePassHelper(true, "");
             ph->setPasswordCallback([&](std::string keyid) { return getPasswordFromMap(keyid); });
         } else {
-            ph = getInterfacePassHelper(false,"");
+            ph = getInterfacePassHelper(false, "");
         }
     }
 
@@ -106,6 +106,27 @@ public:
 
     void setSigners(std::vector<std::string> s) { ph->setCtxSigners(s); }
 
+    void searchDown(std::string FolderToSearch,
+                    std::string fileRegExStr,
+                    std::string contentRegExStr)
+    {
+        std::map<std::string, std::string> emptyMap;
+
+        ph->searchDown(FolderToSearch,
+                       fileRegExStr,
+                       contentRegExStr,
+                       true,
+                       {},
+                       {},
+                       false,
+                       emptyMap,
+                       [&](std::string path) {
+                           std::cout << "found in " << path << " mth " << ph->useMultiThread()
+                                     << "\n";
+                           return true;
+                       });
+    }
+
 private:
     InterfaceLibgpgfactory *ph;
     std::map<std::string, std::string> loginAndPasswordMap{};
@@ -116,8 +137,16 @@ int main(int, char **)
     std::string testFile = "/Volumes/RAM_Disk_4G/tmp/file.gpg";
 
     PassSimpleBal bal{true};
-    
+
     bal.listKeys();
+    for (int i = 0; i < 10; ++i) {
+        std::string s = bal.decryptTestFile("/Volumes/RAM_Disk_4G/tmpRepo/template.gpg");
+        std::cout << "yes" << "\n";
+    }
+    for (int i = 0; i < 10; ++i) {
+        bal.searchDown("/Volumes/RAM_Disk_4G/tmpRepo/", ".*.*",
+                       ".*a.*"); 
+    }
     /*
    
     bal.setSigners({"1CA9424DDD85177F"});

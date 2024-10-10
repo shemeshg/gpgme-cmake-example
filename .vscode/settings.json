@@ -100,7 +100,9 @@
     "charconv": "cpp",
     "csignal": "cpp",
     "valarray": "cpp",
-    "__memory": "cpp"
+    "__memory": "cpp",
+    "execution": "cpp",
+    "print": "cpp"
   },
   "cmake.configureOnOpen": true
 }
