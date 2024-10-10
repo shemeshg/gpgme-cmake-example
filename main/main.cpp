@@ -143,10 +143,12 @@ int main(int, char **)
         std::string s = bal.decryptTestFile("/Volumes/RAM_Disk_4G/tmpRepo/template.gpg");
         std::cout << "yes" << "\n";
     }
+    /*
     for (int i = 0; i < 10; ++i) {
         bal.searchDown("/Volumes/RAM_Disk_4G/tmpRepo/", ".*.*",
                        ".*a.*"); 
     }
+    */
     /*
    
     bal.setSigners({"1CA9424DDD85177F"});
