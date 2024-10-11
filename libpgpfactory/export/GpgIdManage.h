@@ -4,9 +4,11 @@
 class GpgIdManage
 {
 public:
-    GpgIdManage(std::string _currentPath, std::string _stopPath, bool _isRnPgp, std::string _rnpHomePath)
+    GpgIdManage(std::string _currentPath,
+                std::string _stopPath, bool _isRnPgp, std::string _rnpHomePath,
+                std::function<bool(RnpLoginRequestException &e)> rnpPasswdPrompt)
     {
-        init(_currentPath, _stopPath, _isRnPgp, _rnpHomePath);
+        init(_currentPath, _stopPath, _isRnPgp, _rnpHomePath, rnpPasswdPrompt);
     }
 
     GpgIdManage(GpgIdManage const &) = delete;
@@ -18,6 +20,7 @@ public:
 
     std::string currentPath, stopPath, nearestGpgIdFolder, gpgPubKeysFolder, nearestGpgIdFile,
         rnpHomePath;
+    std::function<bool(RnpLoginRequestException &)> rnpPasswdPrompt;
     bool isRnPgp;
     bool gpgPubKeysFolderExists = false;
     bool classInitialized = false;
@@ -57,7 +60,8 @@ private:
     void init(std::string _currentPath,
               std::string _stopPath,
               bool _isRnPgp,
-              std::string _rnpHomePath);
+              std::string _rnpHomePath,
+              std::function<bool(RnpLoginRequestException &e)> _rnpPasswdPrompt );
 
     void populateKeysParsedInGpgIdFile();
 

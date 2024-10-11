@@ -18,35 +18,19 @@ public:
     PassSimpleBal(bool isRnPgp)
     {
         if (isRnPgp) {
-            ph = getInterfacePassHelper(true, "");
+            ph = getInterfacePassHelper(true, "",[=](RnpLoginRequestException &e){
+                passwordPrompt(e);
+                return true;
+            });
             ph->setPasswordCallback([&](std::string keyid) { return getPasswordFromMap(keyid); });
         } else {
-            ph = getInterfacePassHelper(false, "");
+            ph = getInterfacePassHelper(false, "",[=](RnpLoginRequestException &e){
+                return false;
+            });
         }
     }
 
-    std::string promptForPasswordAndRetry(RnpLoginRequestException &e)
-    {
-        std::cout << "******** " << e.lastKeyIdRequested << " pass **********\n";
-        std::string pass;
-        SetStdinEcho(false);
-        std::cin >> pass;
-        SetStdinEcho(true);
-        loginAndPasswordMap[e.lastKeyIdRequested] = pass;
 
-        if (e.functionName == "decryptFileToString") {
-            return decryptTestFile(e.fromFilePath);
-        } else if (e.functionName == "decryptFileToFile") {
-            decryptFileToFile(e.fromFilePath, e.toFilePath);
-            return "";
-        } else if (e.functionName == "encryptSignStringToFile") {
-            encryptTextToFile(e.fromFilePath, e.toFilePath, e.encryptTo, e.doSign);
-            return "";
-        } else {
-            std::cout << "unknown function type " << e.functionName << "\n";
-            return "";
-        }
-    }
 
     std::string getPasswordFromMap(std::string keyid)
     {
@@ -64,14 +48,24 @@ public:
         }
     }
 
+
+    void  passwordPrompt(RnpLoginRequestException &e)
+    {
+        
+        std::cout << "******** " << e.lastKeyIdRequested << " pass **********\n";
+        std::string pass;
+        SetStdinEcho(false);
+        std::cin >> pass;
+        SetStdinEcho(true);
+        loginAndPasswordMap[e.lastKeyIdRequested] = pass;
+    }
+
     std::string decryptTestFile(std::string testFile)
     {
         try {
-            auto pf = ph->getPassFile(testFile);
+            auto pf = ph->getPassFile(testFile);      
             pf->decrypt();
             return pf->getDecrypted();
-        } catch (RnpLoginRequestException &rlre) {
-            return promptForPasswordAndRetry(rlre);
         } catch (...) {
             throw;
         }
@@ -79,14 +73,8 @@ public:
 
     void decryptFileToFile(std::string testFile, std::string to)
     {
-        try {
             auto pf = ph->getPassFile(testFile);
             pf->decryptToFile(to);
-        } catch (RnpLoginRequestException &rlre) {
-            promptForPasswordAndRetry(rlre);
-        } catch (...) {
-            throw;
-        }
     }
 
     void encryptTextToFile(std::string text,
@@ -94,14 +82,8 @@ public:
                            std::vector<std::string> encryptTo,
                            bool doSign)
     {
-        try {
             auto pf = ph->getPassFile("");
             pf->encryptStringToFile(text, destPath, encryptTo, doSign);
-        } catch (RnpLoginRequestException &rlre) {
-            promptForPasswordAndRetry(rlre);
-        } catch (...) {
-            throw;
-        }
     }
 
     void setSigners(std::vector<std::string> s) { ph->setCtxSigners(s); }
@@ -139,16 +121,18 @@ int main(int, char **)
     PassSimpleBal bal{true};
 
     bal.listKeys();
-    for (int i = 0; i < 10; ++i) {
+    /*
+    for (int i = 0; i < 3; ++i) {
         std::string s = bal.decryptTestFile("/Volumes/RAM_Disk_4G/tmpRepo/template.gpg");
         std::cout << "yes" << "\n";
     }
-    /*
-    for (int i = 0; i < 10; ++i) {
-        bal.searchDown("/Volumes/RAM_Disk_4G/tmpRepo/", ".*.*",
-                       ".*a.*"); 
-    }
     */
+
+
+    bal.searchDown("/Volumes/RAM_Disk_4G/tmpRepo/", ".*.*",
+                       ".*a.*"); 
+
+    
     /*
    
     bal.setSigners({"1CA9424DDD85177F"});

@@ -55,8 +55,12 @@ public:
                                       std::function<void(std::string)> func,
                                       bool doSign);
 
+    std::function<bool(RnpLoginRequestException &e)> rnpPasswdPrompt  = [](RnpLoginRequestException &e){
+        return false;
+    };
+
 private:
     FileSearch fileSearch{};
 };
 
-InterfaceLibgpgfactory *getInterfacePassHelper(bool isRnPgp, std::string rnpHomePath);
+InterfaceLibgpgfactory *getInterfacePassHelper(bool isRnPgp, std::string rnpHomePath,std::function<bool(RnpLoginRequestException &e)> rnpPasswdPrompt);

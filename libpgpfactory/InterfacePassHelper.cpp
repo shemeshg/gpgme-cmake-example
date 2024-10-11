@@ -18,12 +18,14 @@ public:
         return instance;
     }
 
-    InterfaceLibgpgfactory *getHelper(bool isRnPgp, std::string rnpHomePath)
+    InterfaceLibgpgfactory *getHelper(bool isRnPgp,
+      std::string rnpHomePath,std::function<bool(RnpLoginRequestException &e)> rnpPasswdPrompt )
     {
         if (helper == nullptr) {
 #if defined(__APPLE__) || defined(__linux__)
             if (isRnPgp) {
                 helper = std::make_unique<RnpHelper>(rnpHomePath);
+                helper->rnpPasswdPrompt = rnpPasswdPrompt;
             } else {
                 helper = std::make_unique<PassHelper>();
             }
@@ -43,10 +45,11 @@ private:
     ~Singleton() {}
 };
 
-InterfaceLibgpgfactory *getInterfacePassHelper(bool isRnPgp, std::string rnpHomePath)
+InterfaceLibgpgfactory *getInterfacePassHelper(bool isRnPgp, std::string rnpHomePath,
+                                               std::function<bool(RnpLoginRequestException &e)> rnpPasswdPrompt )
 {
     Singleton &s = Singleton::getInstance();
-    return s.getHelper(isRnPgp, rnpHomePath);
+    return s.getHelper(isRnPgp, rnpHomePath,rnpPasswdPrompt);
 }
 
 bool InterfaceLibgpgfactory::isGpgFile(std::string pathToFile)

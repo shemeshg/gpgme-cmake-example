@@ -38,7 +38,7 @@ private:
 
 
 
-    static bool example_pass_provider(rnp_ffi_t ffi,
+    static bool pass_provider(rnp_ffi_t ffi,
                                       void *app_ctx,
                                       rnp_key_handle_t key,
                                       const char *pgp_context,

@@ -1,6 +1,7 @@
 #pragma once
 #include "InterfaceWatchWaitAndNoneWaitRunCmd.h"
 #include "GpgKeys.h"
+#include "RnpLoginRequestException.h"
 #include <string>
 #include <vector>
 
@@ -62,6 +63,10 @@ public:
     virtual const std::string getRnpHomePath() const {
         return "";
     }
+
+    std::function<bool(RnpLoginRequestException &e)> rnpPasswdPrompt  = [](RnpLoginRequestException &e){
+        return false;
+    };
 protected:
     std::string fullPath, decrypted;
     std::vector<std::string> decryptedSignedBy = {};

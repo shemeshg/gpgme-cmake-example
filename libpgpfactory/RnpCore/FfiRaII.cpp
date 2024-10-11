@@ -17,7 +17,7 @@ void FfiRaII::setPasswordCallback(std::function<std::string(std::string)> func)
     passwordCallback = func;
 }
 
-bool FfiRaII::example_pass_provider(rnp_ffi_t ffi,
+bool FfiRaII::pass_provider(rnp_ffi_t ffi,
                                     void *app_ctx,
                                     rnp_key_handle_t key,
                                     const char *pgp_context,
@@ -197,5 +197,5 @@ void FfiRaII::initPgpFactory()
         return;
     }
     load_keyrings(true);
-    rnp_ffi_set_pass_provider(ffi, example_pass_provider, this);
+    rnp_ffi_set_pass_provider(ffi, pass_provider, this);
 }

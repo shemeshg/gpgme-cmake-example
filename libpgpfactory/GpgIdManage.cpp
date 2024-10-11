@@ -2,14 +2,17 @@
 #include <fstream>
 
 
-void GpgIdManage::init(std::string _currentPath, std::string _stopPath, bool _isRnPgp, std::string _rnpHomePath)
+void GpgIdManage::init(std::string _currentPath, std::string _stopPath,
+                       bool _isRnPgp, std::string _rnpHomePath,
+                       std::function<bool(RnpLoginRequestException &)> _rnpPasswdPrompt)
 {
-    ph=getInterfacePassHelper(_isRnPgp, _rnpHomePath);
+    ph=getInterfacePassHelper(_isRnPgp, _rnpHomePath, _rnpPasswdPrompt);
 
     currentPath = _currentPath;
     stopPath = _stopPath;
     isRnPgp = _isRnPgp;
     rnpHomePath = _rnpHomePath;
+    rnpPasswdPrompt = _rnpPasswdPrompt;
 
     keysFoundInGpgIdFile.clear();
     keysNotFoundInGpgIdFile.clear();
@@ -43,7 +46,7 @@ void GpgIdManage::importPublicKeyAndTrust(const std::string &filePath)
 
     ph->importPublicKey(filePath, true);
 
-    init(currentPath, stopPath, isRnPgp, rnpHomePath);
+    init(currentPath, stopPath, isRnPgp, rnpHomePath, ph->rnpPasswdPrompt);
 }
 
 void GpgIdManage::ensureValidGpgIdFile()
@@ -98,7 +101,7 @@ void GpgIdManage::importAllGpgPubKeysFolder()
         ph->importPublicKey(entry.path().u8string(), true);
     }
 
-    init(currentPath, stopPath, isRnPgp, rnpHomePath);
+    init(currentPath, stopPath, isRnPgp, rnpHomePath, ph->rnpPasswdPrompt);
 }
 
 void GpgIdManage::reEncryptFile(std::string pathFileToReEncrypt, bool doSign)

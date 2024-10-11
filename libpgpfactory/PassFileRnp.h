@@ -3,6 +3,7 @@
 #include "RnpCoreInterface.h"
 #include <string>
 #include <vector>
+#include <mutex>
 
 class PassFileRnp : public InterfacePassFile
 {
@@ -52,4 +53,11 @@ public:
 
 private:
     RnpCoreInterface *rbl;
+    std::mutex mtx; 
+    std::atomic<bool> isMultiThreadError;
+    void _decrypt();
+    void _dectyptFileNameToFileName(std::string fromPath, std::string toPath);
+    void _reEncryptFile(std::string pathFileToReEncrypt,
+                                std::vector<std::string> encryptTo,
+                                bool doSign);
 };

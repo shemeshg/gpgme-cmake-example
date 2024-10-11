@@ -7,7 +7,7 @@
 class RnpHelper : public InterfaceLibgpgfactory
 {
 public:
-    RnpHelper(std::string rnpHomePath) { 
+    RnpHelper(std::string rnpHomePath) {
         rblFactory = getRnpCoreInterface(rnpHomePath);
     }
     ~RnpHelper() {}
@@ -36,7 +36,9 @@ public:
 
     std::unique_ptr<InterfacePassFile> getPassFile(std::string fullPath) override
     {
-        return std::make_unique<PassFileRnp>(fullPath, rblFactory.get());
+        auto r = std::make_unique<PassFileRnp>(fullPath, rblFactory.get());
+        r->rnpPasswdPrompt = rnpPasswdPrompt;
+        return r;
     }
 
     void setPasswordCallback(std::function<std::string(std::string s)> func) override {
