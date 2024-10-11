@@ -38,10 +38,7 @@ public:
                            std::vector<std::string> encryptTo,
                            bool doSign) override;
 
-    void dectyptFileNameToFileName(std::string fromPath, std::string toPath) override
-    {
-        rbl->decryptFileToFile(fromPath, toPath);
-    }
+    void dectyptFileNameToFileName(std::string fromPath, std::string toPath) override;
 
     void reEncryptFile(std::string pathFileToReEncrypt,
                        std::vector<std::string> encryptTo,

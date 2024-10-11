@@ -21,12 +21,18 @@ void PassFileRnp::encryptFileToFile(std::string fromFileName,
     rbl->encryptSignFileToFile(fromFileName, toFileName, encryptTo, doSign);
 }
 
+
 void PassFileRnp::encryptStringToFile(std::string s,
                                       std::string toFileName,
                                       std::vector<std::string> encryptTo,
                                       bool doSign)
 {
     rbl->encryptSignStringToFile(s, toFileName, encryptTo, doSign);
+}
+
+void PassFileRnp::dectyptFileNameToFileName(std::string fromPath, std::string toPath)
+{
+    rbl->decryptFileToFile(fromPath, toPath);
 }
 
 void PassFileRnp::decrypt()

@@ -18,8 +18,8 @@ FetchContent_GetProperties(rnp)
 
 if(NOT rnp_POPULATED)
   message(STATUS "Fetching rnp...")
-  FetchContent_Populate(rnp)
-  add_subdirectory(${rnp_SOURCE_DIR} ${rnp_BINARY_DIR})
+  FetchContent_MakeAvailable(rnp)
+  #add_subdirectory(${rnp_SOURCE_DIR} ${rnp_BINARY_DIR})
 endif()
 
 
