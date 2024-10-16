@@ -169,7 +169,7 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
     if (!isMemCash) {
         searchMemCash.clear();
     }
-    std::unique_ptr<InterfacePassFile> pf = getPassFile("");
+    
 
     std::mutex mtx;
     fileSearch.searchDown(
@@ -178,6 +178,7 @@ void InterfaceLibgpgfactory::searchDown(std::string FolderToSearch,
         ignoreSearch,
         contentRegExStr,
         [&](std::string path) {
+            std::unique_ptr<InterfacePassFile> pf = getPassFile("");
             if (!contentSearchUsingRegEx && contentRegExStr == ""
                 || contentSearchUsingRegEx && contentRegExStr == ".*.*") {
                 return true;
