@@ -21,6 +21,7 @@ void FileSearch::searchDown(std::string FolderToSearch,
 
     const std::regex fileRegEx(fileRegExStr, std::regex_constants::icase);
 
+    bool firstTestItem = true;
     for (std::filesystem::recursive_directory_iterator it(FolderToSearch); it != end(it); ++it) {
         if (errorInThread) {            
             break;
@@ -55,7 +56,7 @@ void FileSearch::searchDown(std::string FolderToSearch,
                     .generic_string()};
 
             if (std::regex_match(relativePathNoExtention, fileRegEx)) {
-                if (useMultiThread) {
+                if (useMultiThread && !firstTestItem) {
                     pool.detach_task([&errorInThread,
                                       &errorInThreadMsg,
                                       &errThreadLoginReq,
@@ -78,6 +79,7 @@ void FileSearch::searchDown(std::string FolderToSearch,
                         }
                     });
                 } else {
+                    firstTestItem = false;
                     if (contentSearch(path)) {
                         callback(path);
                     }
