@@ -20,12 +20,14 @@ public:
         if (isRnPgp) {
             ph = getInterfacePassHelper(true, "",[=](RnpLoginRequestException &e){
                 passwordPrompt(e);
-                return true;
+                return true; //Rnpgp - Dont abort all multithread, try recover error in specific thread
+                            // This introduce extra complexity, espacialy in gui
+                            // better return false
             });
             ph->setPasswordCallback([&](std::string keyid) { return getPasswordFromMap(keyid); });
         } else {
             ph = getInterfacePassHelper(false, "",[=](RnpLoginRequestException &e){
-                return false;
+                return false; // Gnupg has no multithreading
             });
         }
     }
