@@ -22,7 +22,11 @@ public:
     }
 
     bool useMultiThread() override {
-        return true;
+        return m_isMultiThread;
+    }
+
+    void setUseMultiThread(bool isMultiThread) override{
+        m_isMultiThread = isMultiThread;
     }
 
     void exportPublicKey(std::string const &keyId, std::string const &filePath) override {
@@ -46,4 +50,5 @@ public:
     }
 private:
     std::unique_ptr<RnpCoreInterface> rblFactory = nullptr;
+    bool m_isMultiThread;
 };

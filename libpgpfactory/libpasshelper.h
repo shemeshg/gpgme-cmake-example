@@ -26,6 +26,9 @@ public:
     bool useMultiThread() override {
         return false;
     }
+    void setUseMultiThread(bool isMultiThread) override{
+        return;
+    }
 private:
     std::unique_ptr<GpgFactory> gpgFactory = std::make_unique<GpgFactory>();
 };

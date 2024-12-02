@@ -21,6 +21,7 @@ public:
     bool isGpgFile(std::string pathToFile);
 
     virtual bool useMultiThread()=0;
+    virtual void setUseMultiThread(bool isMultiThread)=0;
 
     std::string getNearestGit(std::string currentPath, std::string stopPath);
 
