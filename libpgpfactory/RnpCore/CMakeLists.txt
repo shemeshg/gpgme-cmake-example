@@ -12,7 +12,7 @@ include(FetchContent)
 FetchContent_Declare(
   rnp
   GIT_REPOSITORY https://github.com/rnpgp/rnp.git
-  GIT_TAG v0.17.1
+  GIT_TAG main
 )
 FetchContent_GetProperties(rnp)
 
