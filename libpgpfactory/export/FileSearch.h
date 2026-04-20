@@ -20,8 +20,7 @@ public:
                     const std::vector<std::string> &ignoreSearch,
                     std::string contentRegExStr,
                     std::function<bool(std::string s)> contentSearch,
-                    std::function<void(std::string s)> callback,
-                    bool useMultiThread);
+                    std::function<void(std::string s)> callback);
 
     std::string searchUp(std::string fileOrFolderToSearch,
                          std::string currentPath,

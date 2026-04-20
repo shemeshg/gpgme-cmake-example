@@ -1,5 +1,4 @@
 #include "FileSearch.h"
-#include "BS_thread_pool.hpp"
 #include "RnpLoginRequestException.h"
 #include <regex>
 
@@ -11,17 +10,15 @@ void FileSearch::searchDown(std::string FolderToSearch,
                             const std::vector<std::string> &ignoreSearch,
                             std::string contentRegExStr,
                             std::function<bool(std::string)> contentSearch,
-                            std::function<void(std::string)> callback,
-                            bool useMultiThread)
+                            std::function<void(std::string)> callback)
 {
     std::atomic<bool> errorInThread = false;
     std::string errorInThreadMsg;
     RnpLoginRequestException errThreadLoginReq{0, "", "", "", "", "", {}, false};
-    BS::thread_pool pool;
+
 
     const std::regex fileRegEx(fileRegExStr, std::regex_constants::icase);
 
-    bool firstTestItem = true;
     for (std::filesystem::recursive_directory_iterator it(FolderToSearch); it != end(it); ++it) {
         if (errorInThread) {            
             break;
@@ -56,46 +53,14 @@ void FileSearch::searchDown(std::string FolderToSearch,
                     .generic_string()};
 
             if (std::regex_match(relativePathNoExtention, fileRegEx)) {
-                if (useMultiThread && !firstTestItem) {
-                    pool.detach_task([&errorInThread,
-                                      &errorInThreadMsg,
-                                      &errThreadLoginReq,
-                                      &pool,
-                                      contentSearch,
-                                      callback,
-                                      path] {
-                        try {
-                            if (contentSearch(path)) {
-                                callback(path);
-                            }
-                        } catch (RnpLoginRequestException &rlre) {                            
-                            errorInThread = true;
-                            errThreadLoginReq = rlre;
-                            pool.purge();
-                        } catch (const std::exception &e) {
-                            errorInThread = true;
-                            errorInThreadMsg = e.what();
-                            pool.purge();
-                        }
-                    });
-                } else {
-                    firstTestItem = false;
                     if (contentSearch(path)) {
                         callback(path);
                     }
-                }
+
             }
         }
     }
-    if (useMultiThread) {
-        pool.wait();
-        if (errorInThread) {            
-            if (errThreadLoginReq.code) {
-                throw errThreadLoginReq;
-            }
-            throw std::runtime_error(errorInThreadMsg);
-        }
-    }
+
 }
 
 std::string FileSearch::searchUp(std::string fileOrFolderToSearch,

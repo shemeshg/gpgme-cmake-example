@@ -23,12 +23,6 @@ public:
 
     void setPasswordCallback(std::function<std::string(std::string s)> func) override {}
 
-    bool useMultiThread() override {
-        return false;
-    }
-    void setUseMultiThread(bool isMultiThread) override{
-        return;
-    }
 private:
     std::unique_ptr<GpgFactory> gpgFactory = std::make_unique<GpgFactory>();
 };
