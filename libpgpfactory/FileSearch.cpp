@@ -12,17 +12,12 @@ void FileSearch::searchDown(std::string FolderToSearch,
                             std::function<bool(std::string)> contentSearch,
                             std::function<void(std::string)> callback)
 {
-    std::atomic<bool> errorInThread = false;
-    std::string errorInThreadMsg;
     RnpLoginRequestException errThreadLoginReq{0, "", "", "", "", "", {}, false};
 
 
     const std::regex fileRegEx(fileRegExStr, std::regex_constants::icase);
 
     for (std::filesystem::recursive_directory_iterator it(FolderToSearch); it != end(it); ++it) {
-        if (errorInThread) {            
-            break;
-        }
         auto entry = *it;
         if (entry.is_directory() && isHidden(entry)) {
             it.disable_recursion_pending();
